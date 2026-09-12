@@ -489,17 +489,22 @@ addLayer("plv", {
     tooltip() { 
         return "Player Level " + formatWhole(player[this.layer].points); 
     },
-    effectDescription() {
+        effectDescription() {
         let baseAmount = player.points.log10().max(0);
         let prestigeMult = player.p.points.sqrt().max(1); 
+        let timeExponent = new Decimal(player.timePlayed).pow(0.01).max(1);
 
-        return "which is based on:<br> log10(money) (+" + format(baseAmount) + ")<br> sqrt(prestige) (x" + format(prestigeMult) + ")<br><br><small>oh yeah, it does nothing :D</small>";
+        return "which is based on:<br>log10(money) (+" + format(baseAmount) + ")<br>sqrt(prestige) (x" + format(prestigeMult) + ")<br>playtime^0.01 (^" + format(timeExponent) + ")";
     },
+    
     update(diff) {
         let baseAmount = player.points.log10().max(0);
         let prestigeMult = player.p.points.sqrt().max(1); 
+        let timeExponent = new Decimal(player.timePlayed).pow(0.01).max(1);
+        let baseCombined = baseAmount.mul(prestigeMult);
+        let calculatedLevel = baseCombined.pow(timeExponent).floor().max(1);
         
-        let calculatedLevel = baseAmount.mul(prestigeMult).floor().max(1);
         player[this.layer].points = calculatedLevel;
     },
+
 })
