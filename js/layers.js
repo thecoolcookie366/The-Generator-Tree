@@ -494,7 +494,7 @@ addLayer("plv", {
         let prestigeMult = player.p.points.sqrt().max(1); 
         let timeExponent = new Decimal(player.timePlayed).pow(0.01).max(1);
 
-        return "which is based on:<br>log10(money) (+" + format(baseAmount) + ")<br>sqrt(prestige) (x" + format(prestigeMult) + ")<br>playtime^0.01 (^" + format(timeExponent) + ")";
+        return "which is based on:<br>log10(money) (+" + format(baseAmount) + ")<br>sqrt(prestige) (x" + format(prestigeMult) + ")<br>playtime^0.01 (^" + format(timeExponent) + ")<br><br><small>oh yeah, it does nothing :D</small>";
     },
     
     update(diff) {
