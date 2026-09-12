@@ -131,13 +131,11 @@ addLayer("terri", {
     resetsNothing() {return hasMilestone('p',1)},
     autoPrestige() {return hasMilestone('p',1)},
     canBuyMax() {return hasMilestone('p',1)},
-    clickables: {
-        11: {
-           display() { return "Terrible Generators are adding<br>+" + (player.terri.points.pow(0.5)) + "<br>to your money base" + "" },
-           tooltip() { return false},
-           canClick() { return false },
-           color() { return "#000000" },
-        },
+    effect() {
+        return player[this.layer].points.pow(0.5);
+    },
+    effectDescription() {
+        return "<br><br>Terrible Generators are adding +" + format(tmp[this.layer].effect) + " to your money base";
     },
     upgrades: {
         11: {
@@ -279,13 +277,11 @@ addLayer("awf", {
     resetsNothing() {return hasMilestone('p',3)},
     autoPrestige() {return hasMilestone('p',3)},
     canBuyMax() {return hasMilestone('p',3)},
-        clickables: {
-        11: {
-           display() { return "Awful Generators are multiplying your money by <br>x" + (player.awf.points.add(1)) + "" },
-           tooltip() { return false},
-           canClick() { return false },
-           color() { return "#000000" },
-        },
+    effect() {
+        return player[this.layer].points.add(1);
+    },
+    effectDescription() {
+        return "<br><br>Awful Generators are multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
@@ -343,13 +339,11 @@ addLayer("med", {
     resetsNothing() {return hasMilestone('p',6)},
     autoPrestige() {return hasMilestone('p',6)},
     canBuyMax() {return hasMilestone('p',6)},
-    clickables: {
-        11: {
-           display() { return "Mediocre Generators and Money are multiplying your money by <br>x" + (player.med.points.add(1).mul(player.points.pow(0.01))) + "" },
-           tooltip() { return false},
-           canClick() { return false },
-           color() { return "#000000" },
-        },
+    effect() {
+        return player[this.layer].points.add(1).mul(player.points.pow(0.01));
+    },
+    effectDescription() {
+        return "<br><br>Mediocre Generators and Money are multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
@@ -401,13 +395,11 @@ addLayer("alr", {
     resetsNothing() {return hasMilestone('p',10)},
     autoPrestige() {return hasMilestone('p',10)},
     canBuyMax() {return hasMilestone('p',10)},
-    clickables: {
-        11: {
-           display() { return "Alright Generators and Money are multiplying your money by <br>x" + (player.alr.points.add(1).mul(player.points.pow(0.05))) + "" },
-           tooltip() { return false},
-           canClick() { return false },
-           color() { return "#000000" },
-        },
+    effect() {
+        return player[this.layer].points.add(1).mul(player.points.pow(0.05));
+    },
+    effectDescription() {
+        return "<br><br>Alright Generators and Money are multiplying your money by x" + format(tmp[this.layer].effect);
     },
     branches:['med'],
     row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -451,13 +443,11 @@ addLayer("dia", {
     resetsNothing() {return hasMilestone('p',4)},
     autoPrestige() {return hasMilestone('p',4)},
     canBuyMax() {return hasMilestone('p',4)},
-    clickables: {
-        11: {
-           display() { return "Diamonds are multiplying your money by <br>x" + (player.dia.points.add(1).pow(2.5)) + "" },
-           tooltip() { return false},
-           canClick() { return false },
-           color() { return "#000000" },
-        },
+    effect() {
+        return player[this.layer].points.add(1).pow(2.5);
+    },
+    effectDescription() {
+        return "<br><br>Diamonds are multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
