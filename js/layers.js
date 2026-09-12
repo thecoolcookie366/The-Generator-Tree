@@ -490,7 +490,7 @@ addLayer("plv", {
         return "Player Level " + formatWhole(player[this.layer].points); 
     },
         effectDescription() {
-        let baseAmount = player.points.log10().max(0);
+        let baseAmount = player.points.add(1).log10().max(0);
         let prestigeMult = player.p.points.sqrt().max(1); 
         let timeExponent = new Decimal(player.timePlayed).pow(0.01).max(1);
 
@@ -498,7 +498,7 @@ addLayer("plv", {
     },
     
     update(diff) {
-        let baseAmount = player.points.log10().max(0);
+        let baseAmount = player.points.add(1).log10().max(0);
         let prestigeMult = player.p.points.sqrt().max(1); 
         let timeExponent = new Decimal(player.timePlayed).pow(0.01).max(1);
         let baseCombined = baseAmount.mul(prestigeMult);
