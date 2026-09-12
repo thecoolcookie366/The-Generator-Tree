@@ -184,7 +184,7 @@ addLayer("terri", {
             title: "The finale",
             description: "x9 money.",
             cost: new Decimal(32),
-            unlocked(){return hasMilestone('p',4)},
+            unlocked(){return hasMilestone('p',5)},
         },
         31: {
             title: "The end is never",
