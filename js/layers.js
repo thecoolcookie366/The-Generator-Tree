@@ -135,7 +135,7 @@ addLayer("terri", {
         return player[this.layer].points.pow(0.5);
     },
     effectDescription() {
-        return "<br><br>Terrible Generators are adding +" + format(tmp[this.layer].effect) + " to your money base";
+        return "adding +" + format(tmp[this.layer].effect) + " to your money base";
     },
     upgrades: {
         11: {
@@ -281,7 +281,7 @@ addLayer("awf", {
         return player[this.layer].points.add(1);
     },
     effectDescription() {
-        return "<br><br>Awful Generators are multiplying your money by x" + format(tmp[this.layer].effect);
+        return "multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
@@ -343,7 +343,7 @@ addLayer("med", {
         return player[this.layer].points.add(1).mul(player.points.pow(0.01));
     },
     effectDescription() {
-        return "<br><br>Mediocre Generators and Money are multiplying your money by x" + format(tmp[this.layer].effect);
+        return "and with the help of money, it is multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
@@ -399,7 +399,7 @@ addLayer("alr", {
         return player[this.layer].points.add(1).mul(player.points.pow(0.05));
     },
     effectDescription() {
-        return "<br><br>Alright Generators and Money are multiplying your money by x" + format(tmp[this.layer].effect);
+        return "and with the help of money, it is multiplying your money by x" + format(tmp[this.layer].effect);
     },
     branches:['med'],
     row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -447,7 +447,7 @@ addLayer("dia", {
         return player[this.layer].points.add(1).pow(2.5);
     },
     effectDescription() {
-        return "<br><br>Diamonds are multiplying your money by x" + format(tmp[this.layer].effect);
+        return "multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
