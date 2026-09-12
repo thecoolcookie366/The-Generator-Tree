@@ -423,7 +423,7 @@ addLayer("dia", {
         borderColor: "rgba(0,0,0,0.5)",
        color: "rgb(0, 0, 0)",
     },
-     tooltip() { 
+    tooltip() { 
         return formatWhole(player[this.layer].points) + " Diamonds"; 
     },
     requires: new Decimal(1e6), // Can be a function that takes requirement increases into account
@@ -468,4 +468,38 @@ addLayer("dia", {
     layerShown(){return hasMilestone('p',4)},
 
 
+})
+
+addLayer("plv", {
+    symbol: "∅",
+    position: 1,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+    }},
+    color: "#c388e1",
+    nodeStyle: {
+        background: "linear-gradient( #c388e1, #3e0e56)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(0,0,0,0.5)",
+        color: "rgb(0, 0, 0)",
+    },
+    resource: "player levels", 
+    row: "side",
+    tooltip() { 
+        return "Player Level " + formatWhole(player[this.layer].points); 
+    },
+    effectDescription() {
+        let baseAmount = player.points.log10().max(0);
+        let prestigeMult = player.p.points.sqrt().max(1); 
+
+        return "which is based on:<br> log10(money) (+" + format(baseAmount) + ")<br> sqrt(prestige) (x" + format(prestigeMult) + ")<br><br><small>oh yeah, it does nothing :D</small>";
+    },
+    update(diff) {
+        let baseAmount = player.points.log10().max(0);
+        let prestigeMult = player.p.points.sqrt().max(1); 
+        
+        let calculatedLevel = baseAmount.mul(prestigeMult).floor().max(1);
+        player[this.layer].points = calculatedLevel;
+    },
 })
