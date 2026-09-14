@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.00",
-	name: "The [noname] Update",
+	num: "1.01",
+	name: "The Leveling Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -23,6 +23,11 @@ let changelog = `<h1>Changelog:</h1><br>
 	B = medium update <br>
 	C = small update <br>
 	<br>
+	<h2>v1.01</h2><br>
+		- Added XP and Levels.<br>
+		- Added 2 new generators.<br>
+		- A bunch of other stuff.<br>
+		<br>
 	<h1>v1.00</h1><br>
 		- I made this game... hi<br>
 		<br>`
@@ -66,17 +71,42 @@ function getPointGen() {
 	if (hasUpgrade('terri', 42)) gain = gain.mul(15)
 	if (hasUpgrade('terri', 43)) gain = gain.mul(16)
 	if (hasUpgrade('terri', 44)) gain = gain.mul(170)
+	if (hasUpgrade('terri', 51)) gain = gain.mul(2500)
+	if (hasUpgrade('terri', 52)) gain = gain.mul(25000)
+	if (hasUpgrade('terri', 53)) gain = gain.mul(2.5e6)
 	if (hasUpgrade('awf', 11)) gain = gain.mul(25)
 	if (hasUpgrade('awf', 12)) gain = gain.mul(50)
+	if (hasUpgrade('awf', 13)) gain = gain.mul(75)
+	if (hasUpgrade('awf', 14)) gain = gain.mul(100)
+	if (hasUpgrade('awf', 21)) gain = gain.mul(1e7)
+	if (hasUpgrade('awf', 31)) gain = gain.mul(100)
+	if (hasUpgrade('awf', 34)) gain = gain.mul(1e10)
+	if (hasUpgrade('awf', 41)) gain = gain.mul(10)
+	if (hasUpgrade('awf', 42)) gain = gain.mul(1e10)
+	if (hasUpgrade('awf', 43)) gain = gain.mul(1e100)
+	if (hasUpgrade('awf', 44)) gain = gain.mul("1e10000")
 	if (hasUpgrade('med', 11)) gain = gain.mul(100)
+	if (hasUpgrade('med', 12)) gain = gain.mul(1000)
+	if (hasUpgrade('med', 13)) gain = gain.mul(1e8)
+	if (hasUpgrade('alr', 11)) gain = gain.mul(12345)
 	if (hasUpgrade('dia', 11)) gain = gain.mul(42)
 	if (hasUpgrade('dia', 12)) gain = gain.mul(4.2)
+	if (hasUpgrade('xp', 11)) gain = gain.mul(12.1212)
+	if (hasUpgrade('xp', 12)) gain = gain.mul(225)
+	if (hasUpgrade('xp', 13)) gain = gain.mul(550)
+	if (hasUpgrade('xp', 14)) gain = gain.mul(1e45)
 	if (hasMilestone('p', 7)) gain = gain.mul(10)
 	if (hasMilestone('p', 10)) gain = gain.mul(3.333)
+	if (hasMilestone('p', 13)) gain = gain.mul(1.00001)
 	gain = gain.mul(player.awf.points.add(1))
 	if (hasMilestone('p', 6)) gain = gain.mul(player.med.points.add(1).mul(player.points.pow(0.01)))
 	if (hasMilestone('p', 10)) gain = gain.mul(player.alr.points.add(1).mul(player.points.pow(0.05)))
+	if (hasMilestone('p', 19)) gain = gain.mul(player.alr.points.add(1).mul(player.points.pow(0.1)))
 	gain = gain.mul(player.dia.points.add(1).pow(2.5))
+	if (hasMilestone('xp', 2)) gain = gain.mul(player.xp.points.add(1).pow(0.2))
+	else if (hasMilestone('xp', 0)) gain = gain.mul(player.xp.points.add(1).pow(0.02))
+	if (hasMilestone('lv', 1)) gain = gain.mul(10)
+	if (hasAchievement('plv', 11)) gain = gain.mul(25)
 	return gain
 }
 
@@ -90,7 +120,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.p.points.gte(new Decimal("11"))
+	return player.p.points.gte(new Decimal("210"))
 }
 
 
