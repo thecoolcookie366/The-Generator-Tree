@@ -31,8 +31,10 @@ addLayer("p", {
         return exp
     },
     resetsNothing() {return true},
-    canBuyMax() {return hasMilestone('p',27)},
+    canBuyMax() {return hasMilestone('p',27) || hasMilestone('a',0)},
+    autoPrestige() {return hasMilestone('snd',0) || hasMilestone('a',0)},
     onReset() {if (player.points.lte(1)) player.points = new Decimal (1)},
+    onReset() {if (hasUpgrade('per', 24)) player.p.points = player.p.points.mul(11)},
     effectDescription() {
         return 'here is the color index:<br>'+
                '<span style="color: #5cb85c; font-weight: bold; font-size: 14px;">Green</span> means first milestone.<br>' +
@@ -214,7 +216,7 @@ addLayer("p", {
             },
         },
         11: {
-        requirementDescription: "<h3><span style='color:#000088;'>Prestige XII</span></h3>",
+        requirementDescription: "<h3><span style='color:#0000bb;'>Prestige XII</span></h3>",
         effectDescription: "<i>Unlock XP.</i>",
         done() { return player.p.points.gte(12) },
         style() {
@@ -229,7 +231,7 @@ addLayer("p", {
             },
         },
         12: {
-        requirementDescription: "<h3><span style='color:#880000;'>Prestige XIII</span></h3>",
+        requirementDescription: "<h3><span style='color:#bb0000;'>Prestige XIII</span></h3>",
         effectDescription: "<i>Unlock Levels.</i>",
         done() { return player.p.points.gte(13) },
         style() {
@@ -444,7 +446,7 @@ addLayer("p", {
             },
         },
         26: {
-        requirementDescription: "<h3><span style='color:#000088;'>Prestige XXVII</span></h3>",
+        requirementDescription: "<h3><span style='color:#0000bb;'>Prestige XXVII</span></h3>",
         effectDescription: "<i>How much XP? Yeah increase the cap by ^5.</i>",
         done() { return player.p.points.gte(27) },
         style() {
@@ -474,7 +476,7 @@ addLayer("p", {
             },
         },
         28: {
-        requirementDescription: "<h3><span style='color:#880000;'>Prestige LX</span></h3>",
+        requirementDescription: "<h3><span style='color:#bb0000;'>Prestige LX</span></h3>",
         effectDescription: "<i>You can now bulk buy levels.</i>",
         done() { return player.p.points.gte(60) },
         style() {
@@ -495,6 +497,96 @@ addLayer("p", {
         style() {
                 if (hasMilestone(this.layer, this.id)) {
                     return {
+                        'background-color': '#544e08',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ffff00',
+                        'border-color': '#ffff00'
+                    }
+                }
+            },
+        },
+        30: {
+        requirementDescription: "<h3><span style='color:#455666;'>Prestige CCXL</span></h3>",
+        effectDescription: "<i>Unlock Primary.</i>",
+        done() { return player.p.points.gte(240) },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#080954',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #0000ff',
+                        'border-color': '#0000ff'
+                    }
+                }
+            },
+        },
+        31: {
+        requirementDescription: "<h3><span style='color:#35658d;'>Prestige CCLXX</span></h3>",
+        effectDescription: "<i>Unlock Secondary, also unlock auto Primary.</i>",
+        done() { return player.p.points.gte(270) },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#080954',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #0000ff',
+                        'border-color': '#0000ff'
+                    }
+                }
+            },
+        },
+        32: {
+        requirementDescription: "<h3><span style='color:#a95600;'>Prestige DLXVI</span></h3>",
+        effectDescription: "<i>Mediocre Generator Upgrades...?</i>",
+        done() { return player.p.points.gte(566) },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#542d08',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff8800',
+                        'border-color': '#ff8800'
+                    }
+                }
+            },
+        },
+        33: {
+        requirementDescription: "<h3><span style='color:#7e8100;'>Prestige MCXXIX</span></h3>",
+        effectDescription: "<i>Something's like, very wrong... (Alright Generators)</i>",
+        done() { return player.p.points.gte(1129) },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#542d08',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff8800',
+                        'border-color': '#ff8800'
+                    }
+                }
+            },
+        },
+        34: {
+        requirementDescription: "<h3><span style='color:#00ff00;'>Prestige MCXCVIII</span></h3>",
+        effectDescription: "<i>After all this time... Perfect Generators.</i>",
+        done() { return player.p.points.gte(1198) },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#544e08',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ffff00',
+                        'border-color': '#ffff00'
+                    }
+                }
+            },
+        },
+        35: {
+        requirementDescription: "<h3><span>The Finale (Prestige 1e1,500)</span></h3>",
+        effectDescription: "<i>^1e6 money. Also unlock a new peculiar layer...</i>",
+        done() { return player.p.points.gte("1e1500") },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
                         'background-color': '#540808',
                         'color': '#ffffff',
                         'box-shadow': '0px 0px 15px #ff0000',
@@ -510,6 +602,121 @@ addLayer("p", {
     layerShown(){return true},
 
 
+})
+
+addLayer("a", {
+    name: "ascension", 
+    symbol: "A", 
+    position: 1, 
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#9a9797",
+    nodeStyle: {
+        background: "linear-gradient( #ff6200, #000000, #d400ff)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(0,0,0,0.5)",
+        color: "rgb(255, 255, 255)",
+    },
+    tooltip() { 
+        return "Ascension " + formatWhole(player[this.layer].points); 
+    },
+    requires() {
+        let costs = [
+            new Decimal("5e9999"), 
+            new Decimal("5e99999"),
+            new Decimal("5e199999"),
+            new Decimal("(e^1.79e308)2"),
+        ]
+        let currentPoints = player[this.layer].points.toNumber()
+        return costs[currentPoints]
+    },
+    resource: "ascensions", 
+    baseResource: "prestiges", 
+    baseAmount() { return player.p.points }, 
+    type: "static", 
+    onPrestige(gain) {
+        if (layers["per"] !== undefined) {
+            layerDataReset("terri");
+            layerDataReset("p");
+            layerDataReset("awf");
+            layerDataReset("dia");
+            layerDataReset("med");
+            layerDataReset("xp");
+            layerDataReset("alr");
+            layerDataReset("lv");
+            layerDataReset("dec");
+            layerDataReset("pri");
+            layerDataReset("good");
+            layerDataReset("snd");
+            layerDataReset("per");
+        }
+        document.body.style.background = "radial-gradient( #000000, #ffffff)";
+        document.body.style.transition = "none";
+        setTimeout(() => {
+            document.body.style.transition = "background 1s ease";
+            document.body.style.background = ""; 
+        }, 500);
+    },
+    gainMult() { 
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { 
+        let exp = new Decimal(1)
+        return exp
+    },
+    milestones: {
+        0: {
+            requirementDescription: "<h3><span>Ascension I</span></h3>",
+            effectDescription: "<i>Welcome back! Here is what you get:<br>1. Keep most QoL such as buy max prestiges.<br>2. Generator upgrades are automatic now.<br>3. ^2 money, but ^1e303 if above 1.79e308 prestiges.<br>How's that sound?</i>",
+            done() { return player.a.points.gte(1) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#543008',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff8800',
+                        'border-color': '#ff8800'
+                    }
+                }
+            },
+        },
+        1: {
+            requirementDescription: "<h3><span>Ascension II</span></h3>",
+            effectDescription: "<i>hey bro this is the endgame... have some patience?<br><br>right. i almost forgot your exquisite generator...</i>",
+            done() { return player.a.points.gte(2) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#540854',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #d400ff',
+                        'border-color': '#d400ff'
+                    }
+                }
+            },
+        },
+        2: {
+            requirementDescription: "<h3><span>Ascension III</span></h3>",
+            effectDescription: "<i>what (true endgame)</i>",
+            done() { return player.a.points.gte(3) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#543008',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff8800',
+                        'border-color': '#ff8800'
+                    }
+                }
+            },
+        },
+    },
+    branches: ['per'], 
+    row: 6, 
+    layerShown(){ return hasMilestone('p', 35) || hasMilestone('a', 0)},
 })
 
 addLayer("terri", {
@@ -547,6 +754,7 @@ addLayer("terri", {
     resetsNothing() {return hasMilestone('p',1)},
     autoPrestige() {return hasMilestone('p',1)},
     canBuyMax() {return hasMilestone('p',1)},
+    autoUpgrade() {return hasMilestone('a', 0)},
     effect() {
         return player[this.layer].points.pow(0.5);
     },
@@ -559,7 +767,11 @@ addLayer("terri", {
         if (hasUpgrade('awf',22)) Gen = 10
         if (hasUpgrade('awf',23)) Gen = 100
         if (hasUpgrade('awf',24)) Gen = 1000
-        if (player.terri.points.gte(1e6)) Gen = 0
+        if (hasUpgrade('dia',14)) Gen = 1e6
+        if (hasUpgrade('alr',14)) Gen = player.terri.points.mag
+        if (player.terri.points.gte(1e6) && (!hasUpgrade('dia',14))) Gen = 0
+        if (player.terri.points.gte(1e9) && (!hasUpgrade('alr',14))) Gen = 0
+        if (player.terri.points.gte(9.0071993e15)) Gen = 0
         return Gen
     },
     upgrades: {
@@ -758,6 +970,40 @@ addLayer("terri", {
             },
         },
     },
+    milestones: {
+        0: {
+        requirementDescription: "100,000,000 Terrible Generators",
+        effectDescription: "<i>The second ever exponent boost! ^1.25 money. <s>Exponents apply after all boosts.</s></i>",
+        done() { return player.terri.points.gte(100e6) },
+        unlocked(){return hasMilestone('snd',0)},
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#7d0000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff0000',
+                        'border-color': '#ff0000'
+                    }
+                }
+            },
+        },
+        1: {
+        requirementDescription: "9e15 Terrible Generators",
+        effectDescription: "<i>+1 square. Sorry! I meant ^1.025 money.</i>",
+        done() { return player.terri.points.gte(9e15) },
+        unlocked(){return hasUpgrade('alr', 14)},
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#7d0000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff0000',
+                        'border-color': '#ff0000'
+                    }
+                }
+            },
+        },
+    },
     branches:['p'],
     row: 0, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',1)},
@@ -800,6 +1046,7 @@ addLayer("awf", {
     resetsNothing() {return hasMilestone('p',3)},
     autoPrestige() {return hasMilestone('p',3)},
     canBuyMax() {return hasMilestone('p',3)},
+    autoUpgrade() {return hasMilestone('a', 0)},
     effect() {
         return player[this.layer].points.add(1);
     },
@@ -811,7 +1058,9 @@ addLayer("awf", {
         if (hasUpgrade('alr',12)) Gen = 1
         if (hasUpgrade('alr',13)) Gen = 10
         if (hasUpgrade('awf',33)) Gen = 100
-        if (player.awf.points.gte(1e4)) Gen = 0
+        if (hasUpgrade('dia',21)) Gen = 1e4
+        if (player.awf.points.gte(1e4) && (!hasUpgrade('dia',21))) Gen = 0
+        if (player.awf.points.gte(1.0005e6) && (hasUpgrade('dia',21))) Gen = 0
         return Gen
     },
     upgrades: {
@@ -943,7 +1192,7 @@ addLayer("awf", {
             currencyInternalName: "points",
             currencyLocation() { return player },
             currencyDisplayName: "money",
-            unlocked() { return hasUpgrade('dec', 11) },
+            unlocked() { return hasUpgrade('awf', 41) },
             style() {
                 if (hasUpgrade(this.layer, this.id)) {
                     return {
@@ -960,7 +1209,7 @@ addLayer("awf", {
             currencyInternalName: "points",
             currencyLocation() { return player },
             currencyDisplayName: "money",
-            unlocked() { return hasUpgrade('dec', 11) },
+            unlocked() { return hasUpgrade('awf', 42) },
             style() {
                 if (hasUpgrade(this.layer, this.id)) {
                     return {
@@ -977,11 +1226,45 @@ addLayer("awf", {
             currencyInternalName: "points",
             currencyLocation() { return player },
             currencyDisplayName: "money",
-            unlocked() { return hasUpgrade('dec', 11) },
+            unlocked() { return hasUpgrade('awf', 43) },
             style() {
                 if (hasUpgrade(this.layer, this.id)) {
                     return {
                         'background-color': '#000000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #d42a00',
+                        'border-color': '#d42a00'
+                    }
+                }
+            },
+        },
+    },
+    milestones: {
+        0: {
+        requirementDescription: "250,000 Awful Generators",
+        effectDescription: "<i>Don't you love milestones that are in the wrong spot?<br>Unlock some new Mediocre Generator Upgrades.</i>",
+        done() { return player.awf.points.gte(250e3) },
+        unlocked(){return hasMilestone('snd',0)},
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#811a00',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #d42a00',
+                        'border-color': '#d42a00'
+                    }
+                }
+            },
+        },
+        1: {
+        requirementDescription: "1,000,000 Awful Generators",
+        effectDescription: "<i>The first ever exponent boost! ^1.05 money. Exponents apply after all boosts.</i>",
+        done() { return player.awf.points.gte(1e6) },
+        unlocked(){return hasMilestone('snd',0)},
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#811a00',
                         'color': '#ffffff',
                         'box-shadow': '0px 0px 15px #d42a00',
                         'border-color': '#d42a00'
@@ -1045,6 +1328,7 @@ addLayer("med", {
     resetsNothing() {return hasMilestone('p',6)},
     autoPrestige() {return hasMilestone('p',6)},
     canBuyMax() {return hasMilestone('p',6)},
+    autoUpgrade() {return hasMilestone('a', 0)},
     passiveGeneration() {
         let Gen = 0
         if (hasMilestone('xp',3)) Gen = 1
@@ -1081,6 +1365,30 @@ addLayer("med", {
             description: "^3 the xp cap.",
             cost: new Decimal(25),
             unlocked(){return hasMilestone('p',19)},
+        },
+        21: {
+            title: "Welcome back!",
+            description: "^1.01 the xp cap.",
+            cost: new Decimal(105),
+            unlocked(){return hasMilestone('awf',0)},
+        },
+        22: {
+            title: "Did you forget about these upgrades?",
+            description: "^3.33 the xp cap.",
+            cost: new Decimal(114),
+            unlocked(){return hasMilestone('awf',0)},
+        },
+        23: {
+            title: "Wait, no more xp cap?",
+            description: "^1.5 money.",
+            cost: new Decimal(115),
+            unlocked(){return hasMilestone('p',32)},
+        },
+        24: {
+            title: "The new meta (wait we did this before)",
+            description: "^1.1 money.",
+            cost: new Decimal(116),
+            unlocked(){return hasMilestone('p',32)},
         },
     },
     branches:['awf'],
@@ -1125,6 +1433,7 @@ addLayer("alr", {
     resetsNothing() {return hasMilestone('p',10)},
     autoPrestige() {return hasMilestone('p',10)},
     canBuyMax() {return hasMilestone('p',10)},
+    autoUpgrade() {return hasMilestone('a', 0)},
     effect() {
         return player[this.layer].points.add(1).mul(player.points.pow(0.05));
     },
@@ -1165,6 +1474,12 @@ addLayer("alr", {
                     }
                 }
             },
+        },
+        14: {
+            title: "hey bro do the thing",
+            description: "The possibilities are limitless. You can now generate up to 9.0071993e15 terrible generators, and you generate terrible generators based on themselfs.",
+            cost: new Decimal(13),
+            unlocked(){return hasMilestone('p',33)},
         },
     },
     branches:['med'],
@@ -1209,11 +1524,12 @@ addLayer("dec", {
     resetsNothing() {return hasMilestone('p',19)},
     autoPrestige() {return hasMilestone('p',19)},
     canBuyMax() {return hasMilestone('p',19)},
+    autoUpgrade() {return hasMilestone('a', 0)},
     effect() {
-        return player[this.layer].points.add(1).mul(player.points.pow(0.1));
+        return player.alr.points.add(1).mul(player.points.pow(0.1));
     },
     effectDescription() {
-        return "and with the help of money, it is multiplying your money by x" + format(tmp[this.layer].effect);
+        return "and with the help of money and alright gens, it is multiplying your money by x" + format(tmp[this.layer].effect);
     },
     upgrades: {
         11: {
@@ -1273,16 +1589,263 @@ addLayer("good", {
     resetsNothing() {return hasMilestone('p',29)},
     autoPrestige() {return hasMilestone('p',29)},
     canBuyMax() {return hasMilestone('p',29)},
-    //effect() {
-    //    return player[this.layer].points.add(1).mul(player.points.pow(0.1));
-    //},
+    autoUpgrade() {return hasMilestone('a', 0)},
+    effect() {
+        return player[this.layer].points.add(1).mul(player.points.pow(0.2));
+    },
     effectDescription() {
-        //return "and with the help of money, it is multiplying your money by x" + format(tmp[this.layer].effect);
-        return "boosting literally nothing until v1.02 comes out."
+        return "and with the help of money, it is multiplying your money by x" + format(tmp[this.layer].effect);
     },
     branches:['dec'],
     row: 5, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',29)},
+
+
+})
+
+addLayer("per", {
+    name: "per", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "η", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#00ff00",
+    //nodeStyle: {
+    //    background: "linear-gradient( #ff0000, #0000ff)",
+    //    backgroundOrigin: "border-box",
+    //    borderColor: "rgba(0,0,0,0.5)",
+    //    color: "rgb(255, 255, 255)",
+    //},
+    tooltip() { 
+        return formatWhole(player[this.layer].points) + " Perfect Generators"; 
+    },
+    requires: new Decimal(2), // Can be a function that takes requirement increases into account
+    resource: "perfect generators", // Name of prestige currency
+    baseResource: "good generators", // Name of resource prestige is based on
+    baseAmount() {return player.good.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal (1)
+        return exp
+    },
+    resetsNothing() {return hasMilestone('p',34)},
+    autoPrestige() {return hasMilestone('p',34)},
+    canBuyMax() {return hasMilestone('p',34)},
+    autoUpgrade() {return player.p.points.gte("1.796e308")},
+    effectDescription() {
+        return "which is doing nothing, unfortunately, to prevent inflation.<br><br>Well, at least you can find all sorts of upgrades here!"
+    },
+    upgrades: {
+        11: {
+            title: "Welcome.",
+            description: "So how do you like the exponents? ^1.025 money, again.",
+            cost: new Decimal(0),
+            unlocked(){return hasMilestone('p',34)},
+        },
+        12: {
+            title: "Did you really expect something other than an exponent?",
+            description: "^1.2 money.",
+            cost: new Decimal("1e491640"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        13: {
+            title: "Cubes.. stuff like that",
+            description: "^3 money. How unexpected!",
+            cost: new Decimal("1e9.0071993e15"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        14: {
+            title: " ",
+            description: "<h1>Inflate.</h1>",
+            cost: new Decimal("1e1000"),
+            currencyInternalName: "points",
+            currencyLocation() { return player.p },
+            currencyDisplayName: "prestiges",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        21: {
+            title: "But it looks great (generator)!",
+            description: "Why wouldn't this cost great generators? ^1.0025 money",
+            cost: new Decimal("1e6754565"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        22: {
+            title: "Tesseracts.. wait what",
+            description: "^4 money.",
+            cost: new Decimal("1e9.999e32"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        23: {
+            title: "VOID",
+            description: "The void is coming.",
+            cost: new Decimal(1.79e308),
+            currencyInternalName: "points",
+            currencyLocation() { return player.p },
+            currencyDisplayName: "prestiges",
+            style() {
+                return {
+                        'background-color': '#000000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff0000',
+                        'border-color': '#ff0000'
+                }
+            },
+            unlocked(){return hasMilestone('p',34)},
+        },
+        24: {
+            title: "Why...",
+            description: "You've gone too far. Start elevenfolding your prestiges every frame. <i>Why are you like this...</i>",
+            cost: new Decimal(2.44e154),
+            currencyInternalName: "points",
+            currencyLocation() { return player.p },
+            currencyDisplayName: "prestiges",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        31: {
+            title: "xp :shock:",
+            description: "^1,000 xp cap.",
+            cost: new Decimal("1e1e100"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        32: {
+            title: "VOID",
+            description: "The void is coming.",
+            cost: new Decimal(1.79e308),
+            currencyInternalName: "points",
+            currencyLocation() { return player.p },
+            currencyDisplayName: "prestiges",
+            style() {
+                return {
+                        'background-color': '#000000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff0000',
+                        'border-color': '#ff0000'
+                }
+            },
+            unlocked(){return hasMilestone('p',34)},
+        },
+        33: {
+            title: "Red and blue, staying true!",
+            description: "Really, why did we need a reference? Just take the ^1.005 money and move on...",
+            cost: new Decimal("1e8e6"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        34: {
+            title: "Remember that terrible milestone that gave you a square?",
+            description: "^2 money.",
+            cost: new Decimal("1e1.01e9"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        41: {
+            title: "Limitless XP",
+            description: "^1.79e308 xp cap.",
+            cost: new Decimal("1e1e200"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        42: {
+            title: "Can finally forget about primary (you already did)",
+            description: "^1.001 money.",
+            cost: new Decimal(5),
+            currencyInternalName: "points",
+            currencyLocation() { return player.pri },
+            currencyDisplayName: "primary",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        43: {
+            title: "Enough with the powers! It's going to inflate!",
+            description: "^1.01 money... or something???",
+            cost: new Decimal("1e12632000"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked(){return hasMilestone('p',34)},
+        },
+        44: {
+            title: "Upgrade in 5",
+            description: "This upgrade is impossible",
+            cost: new Decimal(1),
+            unlocked(){return hasMilestone('p',34)},
+        },
+    },
+    branches:['good'],
+    row: 6, // Row the layer is in on the tree (0 is the first row)
+    layerShown(){return hasMilestone('p',34)},
+
+
+})
+
+addLayer("exc", {
+    name: "exc", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "θ", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#00aa55",
+    //nodeStyle: {
+    //    background: "linear-gradient( #ff0000, #0000ff)",
+    //    backgroundOrigin: "border-box",
+    //    borderColor: "rgba(0,0,0,0.5)",
+    //    color: "rgb(255, 255, 255)",
+    //},
+    tooltip() { 
+        return formatWhole(player[this.layer].points) + " Exquisite Generators"; 
+    },
+    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    resource: "exquisite generators", // Name of prestige currency
+    baseResource: "perfect generators", // Name of resource prestige is based on
+    baseAmount() {return player.per.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1.25, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal (1)
+        return exp
+    },
+    resetsNothing() {return hasMilestone('a',1)},
+    autoPrestige() {return hasMilestone('a',1)},
+    canBuyMax() {return hasMilestone('a',1)},
+    effectDescription() {
+        return "and it looks like you still haven't gotten a perfect generator, what the hell are you doing"
+    },
+    branches:['per'],
+    row: 7, // Row the layer is in on the tree (0 is the first row)
+    layerShown(){return hasMilestone('a',1)},
 
 
 })
@@ -1383,6 +1946,34 @@ addLayer("dia", {
                 }
             },
         },
+        14: {
+            title: "<h3><span style='color:#00ffff;'>Hi</span></h3>",
+            description: "You can now generate up to 1e9 terrible generators. Start generating 1,000,000 terrible gens/s.",
+            cost: new Decimal(436),
+            unlocked(){return hasMilestone('snd',0)},
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#666666',
+                        'color': '#ffffff',
+                    }
+                }
+            },
+        },
+        21: {
+            title: "<h3><span style='color:#00ffff;'>Hey wait you're not supposed to get this!</span></h3>",
+            description: "You can now generate up to 1,000,500 awful generators. Start generating 10,000 awful gens/s.",
+            cost: new Decimal(444),
+            unlocked(){return hasUpgrade('dia',14)},
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#666666',
+                        'color': '#ffffff',
+                    }
+                }
+            },
+        },
     },
     branches:['awf'],
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -1399,9 +1990,9 @@ addLayer("xp", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#000088",
+    color: "#0000bb",
     nodeStyle: {
-        background: "radial-gradient( #000088, #000000)",
+        background: "radial-gradient( #0000bb, #000000)",
        backgroundOrigin: "border-box",
         borderColor: "rgba(0,0,0,0.5)",
        color: "rgb(0, 0, 0)",
@@ -1527,9 +2118,9 @@ addLayer("lv", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#880000",
+    color: "#bb0000",
     nodeStyle: {
-        background: "radial-gradient( #880000, #000000)",
+        background: "radial-gradient( #bb0000, #000000)",
        backgroundOrigin: "border-box",
         borderColor: "rgba(0,0,0,0.5)",
        color: "rgb(0, 0, 0)",
@@ -1576,6 +2167,18 @@ addLayer("lv", {
         if (hasUpgrade('dia', 13)) {
             totalCap = totalCap.pow(2);
         }
+        if (hasUpgrade('med', 21)) {
+            totalCap = totalCap.pow(1.01);
+        }
+        if (hasUpgrade('med', 22)) {
+            totalCap = totalCap.pow(3.33);
+        }
+        if (hasUpgrade('per', 31)) {
+            totalCap = totalCap.pow(1000);
+        }
+        if (hasUpgrade('per', 41)) {
+            totalCap = totalCap.pow(1.79e308);
+        }
         return totalCap.sub(baseCap);
     },
 
@@ -1583,7 +2186,8 @@ addLayer("lv", {
         return "increasing your xp gain cap by +" + format(tmp[this.layer].effect);
     },
     resetsNothing() {return hasMilestone('p',12)},
-    canBuyMax() {return hasMilestone('p',28)},
+    canBuyMax() {return hasMilestone('p',28) || hasMilestone('a',0)},
+    autoPrestige() {return hasMilestone('lv',3) || hasMilestone('a',0)},
     milestones: {
         0: {
         requirementDescription: "<h3><span>Level 5</span></h3>",
@@ -1610,10 +2214,302 @@ addLayer("lv", {
                 }
             },
         },
+        3: {
+        requirementDescription: "<h3><span>e1.796e308 money</span></h3>",
+        effectDescription: "<i>Auto levels...</i>",
+        done() { return player.points.gte("1e1.796e308") },
+        unlocked() { return player.points.gte("1e1e300") },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#000000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #ff0000',
+                        'border-color': '#ff0000'
+                    }
+                }
+            },
+        },
     },
     branches:['alr'],
     row: 3, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',12)},
+
+
+})
+
+addLayer("pri", {
+    name: "primary", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "1st", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+        clickOrder: [],
+    }},
+    color: "#455666",
+    nodeStyle: {
+        background: "radial-gradient( #455666, #000000)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(0,0,0,0.5)",
+        color: "rgb(0, 0, 0)",
+    },
+    tooltip() { 
+        return formatWhole(player[this.layer].points) + "/5 Primary"; 
+    },
+    requires() {
+    if (player[this.layer].points.gte(5)) return new Decimal(Infinity); 
+    return new Decimal(240);
+    }, 
+    resource: "primary", // Name of prestige currency
+    baseResource: "prestiges", // Name of resource prestige is based on
+    baseAmount() {return player.p.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal (1)
+        return exp
+    },
+    effect() {
+        let order = player[this.layer].clickOrder;
+        let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+        if (!isCorrect) return new Decimal(1); 
+        return player.p.points.add(1).pow(1250); 
+    },
+    effectDescription() {
+        let order = player[this.layer].clickOrder;
+        let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+        if (isCorrect) {
+            return "and with the help of your prestiges it is boosting your money by x" + format(tmp[this.layer].effect);
+        }
+        if (order.length >= 4) {
+            return "and unfortunately, that code was wrong. Hint: island. (code: " + order.join("") + ")";
+        }
+        return "and a code is required to progress further. (code: " + (order.join("") || "...i'm still waiting") + ")";
+    },
+    upgrades: {
+        11: {
+            title: "2",
+            description: "type '2', however this is one-use.",
+            cost: new Decimal(1),
+            canAfford() { return player[this.layer].points.gte(1) && !player[this.layer].clickOrder.includes(2) },
+            pay() { player[this.layer].points = player[this.layer].points.sub(1) },
+            onPurchase() { player[this.layer].clickOrder.push(2) },
+            unlocked() {
+                let order = player[this.layer].clickOrder;
+                let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+                return !isCorrect;
+            }
+        },
+        12: {
+            title: "3",
+            description: "type '3', however this is one-use.",
+            cost: new Decimal(1),
+            canAfford() { return player[this.layer].points.gte(1) && !player[this.layer].clickOrder.includes(3) },
+            pay() { player[this.layer].points = player[this.layer].points.sub(1) },
+            onPurchase() { player[this.layer].clickOrder.push(3) },
+            unlocked() {
+                let order = player[this.layer].clickOrder;
+                let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+                return !isCorrect;
+            }
+        },
+        13: {
+            title: "6",
+            description: "type '6', however this is one-use.",
+            cost: new Decimal(1),
+            canAfford() { return player[this.layer].points.gte(1) && !player[this.layer].clickOrder.includes(6) },
+            pay() { player[this.layer].points = player[this.layer].points.sub(1) },
+            onPurchase() { player[this.layer].clickOrder.push(6) },
+            unlocked() {
+                let order = player[this.layer].clickOrder;
+                let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+                return !isCorrect;
+            }
+        },
+        14: {
+            title: "7",
+            description: "type '7', however this is one-use.",
+            cost: new Decimal(1),
+            canAfford() { return player[this.layer].points.gte(1) && !player[this.layer].clickOrder.includes(7) },
+            pay() { player[this.layer].points = player[this.layer].points.sub(1) },
+            onPurchase() { player[this.layer].clickOrder.push(7) },
+            unlocked() {
+                let order = player[this.layer].clickOrder;
+                let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+                return !isCorrect;
+            }
+        }
+    },
+   clickables: {
+        11: {
+            title: "Refund",
+            display() { return "Press this and get your numbers back. (you won't get your Primary back!)" },
+            canClick() { return player[this.layer].clickOrder.length > 0 },
+            onClick() {
+                player[this.layer].clickOrder = [];
+                let puzzleUpgrades = [11, 12, 13, 14];
+                player[this.layer].upgrades = player[this.layer].upgrades.filter(id => !puzzleUpgrades.includes(Number(id)));
+            },
+            style: { "background-color": "#552222", "color": "#ffffff", "border-radius": "10px" },
+            unlocked() {
+                let order = player[this.layer].clickOrder;
+                let isCorrect = order.length === 4 && order[0] === 2 && order[1] === 7 && order[2] === 6 && order[3] === 3;
+                return !isCorrect;
+            }
+        }
+    },
+    resetsNothing() {return hasMilestone('p',30)},
+    autoPrestige() {return hasMilestone('p',31)},
+    canBuyMax() {return hasMilestone('p',30)},
+    branches:['dec'],
+    row: 4, // Row the layer is in on the tree (0 is the first row)
+    layerShown(){return hasMilestone('p',30)},
+
+
+})
+
+addLayer("snd", {
+    name: "second", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "2nd", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    solution: "THECOOLCOOKIE366", 
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+        typedCode: "",
+    }},
+    color: "#35658d",
+    nodeStyle: {
+        background: "radial-gradient( #35658d, #000000)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(0,0,0,0.5)",
+        color: "rgb(0, 0, 0)",
+    },
+    tooltip() { 
+        return formatWhole(player[this.layer].points) + "/1 Secondary"; 
+    },
+    requires() {
+        if (player[this.layer].points.gte(1)) return new Decimal(Infinity);
+        return new Decimal(270);
+    },
+    resource: "secondary", // Name of prestige currency
+    baseResource: "prestiges", // Name of resource prestige is based on
+    baseAmount() {return player.p.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal (1)
+        return exp
+    },
+    effect() {
+        let isCorrect = player[this.layer].typedCode === tmp[this.layer].solution; 
+        if (!isCorrect) return new Decimal(1);
+    },
+    effectDescription() {
+        let isCorrect = player[this.layer].typedCode === tmp[this.layer].solution;
+        if (isCorrect) {
+            return "which is giving you boosts via milestones!";
+        }
+        return "and you're doing something... but what are you doing?<br> (code: " + (player[this.layer].typedCode || "...i'm being patient") + ")<br> Hint: Think outside the box, maybe... who made this?<br><small>Note: code is supposed to be lowercase, but there is only uppercase.</small>";
+    },
+    clickables:{
+        11: { title: "1", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "1" } },
+        12: { title: "2", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "2" } },
+        13: { title: "3", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "3" } },
+        14: { title: "4", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "4" } },
+        21: { title: "5", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "5" } },
+        22: { title: "6", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "6" } },
+        23: { title: "7", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "7" } },
+        24: { title: "8", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "8" } },
+        31: { title: "9", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "9" } },
+        32: { title: "0", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "0" } },
+        33: { title: "!", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "!" } },
+        34: { title: "@", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "@" } },
+        41: { title: "#", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "#" } },
+        42: { title: "$", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "$" } },
+        43: { title: "%", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "%" } },
+        44: { title: "^", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "^" } },
+        51: { title: "&", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "&" } },
+        52: { title: "*", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "*" } },
+        53: { title: "(", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "(" } },
+        54: { title: ")", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += ")" } },
+        61: { title: "-", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "-" } },
+        62: { title: "_", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "_" } },
+        63: { title: "=", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "=" } },
+        64: { title: "+", style: { "background-color": "#00ff00", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "+" } },
+        71: { title: "A", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "A" } },
+        72: { title: "B", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "B" } },
+        73: { title: "C", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "C" } },
+        74: { title: "D", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "D" } },
+        81: { title: "E", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "E" } },
+        82: { title: "F", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "F" } },
+        83: { title: "G", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "G" } },
+        84: { title: "H", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "H" } },
+        91: { title: "I", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "I" } },
+        92: { title: "J", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "J" } },
+        93: { title: "K", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "K" } },
+        94: { title: "L", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "L" } },
+        101: { title: "M", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "M" } },
+        102: { title: "N", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "N" } },
+        103: { title: "O", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "O" } },
+        104: { title: "P", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "P" } },
+        111: { title: "Q", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "Q" } },
+        112: { title: "R", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "R" } },
+        113: { title: "S", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "S" } },
+        114: { title: "T", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "T" } },
+        121: { title: "U", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "U" } },
+        122: { title: "V", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "V" } },
+        123: { title: "W", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "W" } },
+        124: { title: "X", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "X" } },
+        131: { title: "Y", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "Y" } },
+        132: { title: "Z", style: { "background-color": "#0000ff", "color": "#ffffff" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "Z" } },
+        133: {
+            title: "SPACE",
+            style: { "background-color": "#808080", "color": "#ffffff" },
+            unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution },
+            canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution },
+            onClick() { player[this.layer].typedCode += " " }
+        },
+        134: { 
+            title: "CLR", 
+            style: { "background-color": "#552222", "color": "#ffffff" },
+            unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution },
+            canClick() { return player[this.layer].typedCode.length > 0 && player[this.layer].typedCode !== tmp[this.layer].solution }, 
+            onClick() { player[this.layer].typedCode = "" }
+        }
+    },
+    milestones: {
+        0: {
+        requirementDescription: "Complete the puzzle",
+        effectDescription: "<i>Welcome to the first milestone that gives multiple boosts.<br>1. Get auto prestige. Yay!<br>2. x2.22e22,222 money. What else?<br>3. Some new upgrades in diamonds.</i>",
+        done() { return player[this.layer].typedCode === tmp[this.layer].solution },
+        style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    return {
+                        'background-color': '#ffffff',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 15px #000000',
+                        'border-color': '#000000'
+                    }
+                }
+            },
+        },
+    },
+    resetsNothing() {return hasMilestone('p',31)},
+    autoPrestige() {return hasMilestone('p',32)},
+    canBuyMax() {return hasMilestone('p',31)},
+    branches:['good'],
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    layerShown(){return hasMilestone('p',31)},
 
 
 })
@@ -1647,13 +2543,13 @@ addLayer("plv", {
             rewardsText += "Stage 1 completion reward: x25 money.<br>";
         }
         if (hasAchievement(this.layer, 12)) {
-            rewardsText += "Stage 2 completion reward: You need to touch grass bro.<br>";
+            rewardsText += "Stage 2 completion reward: Nothing unfortunately...<br>";
         }
         if (hasAchievement(this.layer, 13)) {
-            rewardsText += "Stage 3 completion reward: [soon]<br>";
+            rewardsText += "Stage 3 completion reward: ^1.011 money.<br>";
         }
         if (hasAchievement(this.layer, 14)) {
-            rewardsText += "Stage 4 completion reward: [soon]<br>";
+            rewardsText += "Stage 4 completion reward: Literally nothing, since ascension is so strong.<br>";
         }
         if (hasAchievement(this.layer, 21)) {
             rewardsText += "Stage 5 completion reward: [soon]<br>";
@@ -1668,7 +2564,7 @@ addLayer("plv", {
             rewardsText += "Stage 8 completion reward: [soon]<br>";
         }
         
-        return "which is based on:<br>log10(money) (+" + format(baseAmount) + ")<br>sqrt(prestige) (x" + format(prestigeMult) + ")<br>playtime^0.01 (^" + format(timeExponent) + ")<br><br>You are currently at Stage " + currentStage + "/10.<br>" + rewardsText + "<br><br>";
+        return "which is based on:<br>log10(money) (+" + format(baseAmount) + ")<br>sqrt(prestige) (x" + format(prestigeMult) + ")<br>playtime^0.01 (^" + format(timeExponent) + ")<br><br>You are currently at Stage " + currentStage + "/10.<br>" + rewardsText + "<br><br>There are some new themes in the game, and here's how to unlock them:<br>normal, binary - free<br>softcap, softcap2, softcap3, hardcap - reach the corresponding softcaps<br>purelight, puredark - reach softcap 3 or the easier way, ????????<br>terrible, awful, mediocre... - unlock that generator";
     },
     update(diff) {
         let baseAmount = player.points.add(1).log10().max(0);
@@ -1699,7 +2595,7 @@ addLayer("plv", {
             name: "Stage 2 Complete",
             done() { return player.plv.points.gte(1e6) },
             tooltip: "Get Player Level 1,000,000.",
-            unlocked() { return player.plv.points.gte(1e3)},
+            unlocked() { return player.plv.points.gte(1e3) || player.a.points.gte(1)},
             style() {
                 if (hasAchievement(this.layer, this.id)) {
                     return {
@@ -1714,8 +2610,8 @@ addLayer("plv", {
         13: {
             name: "Stage 3 Complete",
             done() { return player.plv.points.gte(1e11) },
-            tooltip: "Get Player Level 1e11. You wouldn't do it this update anyway, wouldn't you?",
-            unlocked() { return player.plv.points.gte(1e6)},
+            tooltip: "Get Player Level 1e11.",
+            unlocked() { return player.plv.points.gte(1e6) || player.a.points.gte(1)},
             style() {
                 if (hasAchievement(this.layer, this.id)) {
                     return {
@@ -1723,6 +2619,22 @@ addLayer("plv", {
                         'color': '#ffffff',
                         'box-shadow': '0px 0px 15px #ffff00',
                         'border-color': '#ffff00'
+                    }
+                }
+            },
+        },
+        14: {
+            name: "Stage 4 Complete",
+            done() { return player.a.points.gte(1) },
+            tooltip: "Ascend once.",
+            unlocked() { return player.plv.points.gte(1e11) || player.a.points.gte(1)},
+            style() {
+                if (hasAchievement(this.layer, this.id)) {
+                    return {
+                        'background-color': '#000000',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #00ff00',
+                        'border-color': '#00ff00'
                     }
                 }
             },
