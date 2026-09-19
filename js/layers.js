@@ -49,6 +49,16 @@ addLayer("p", {
                'The text colors on a milestone mean what layer the milestone affects.<br>'+
                'No color means it is a general boost.'
     },
+    onPrestige(gain) {
+        if (!hasMilestone('a',0) && !hasMilestone('snd',0)) {
+            document.body.style.background = "linear-gradient( #ff0000, #000000, #0000ff)";
+            document.body.style.transition = "none";
+            setTimeout(() => {
+                document.body.style.transition = "background 0.5s ease";
+                document.body.style.background = ""; 
+            }, 250);
+        }
+    },
     milestones: {
         0: {
         requirementDescription: "<h3><span>Prestige I</span></h3>",
