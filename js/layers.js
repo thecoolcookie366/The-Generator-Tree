@@ -652,7 +652,7 @@ addLayer("a", {
             layerDataReset("snd");
             layerDataReset("per");
         }
-        document.body.style.background = "radial-gradient( #000000, #ffffff)";
+        document.body.style.background = "linear-gradient( #ff6200, #000000, #d400ff)";
         document.body.style.transition = "none";
         setTimeout(() => {
             document.body.style.transition = "background 1s ease";
