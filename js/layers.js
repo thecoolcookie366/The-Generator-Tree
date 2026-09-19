@@ -2286,10 +2286,17 @@ addLayer("pri", {
         if (isCorrect) {
             return "and with the help of your prestiges it is boosting your money by x" + format(tmp[this.layer].effect);
         }
+        let spoilerHTML = `
+            <br><br>
+            <details style="background: #1c1c1c; border: 2px solid #66ff47; padding: 8px 12px; border-radius: 6px; cursor: pointer; max-width: 280px; margin: 8px auto; text-align: center; display: inline-block;">
+                <summary style="font-weight: bold; color: #dfdfdf; outline: none; user-select: none; font-size: 0.95em;">stuck? click here to reveal answer</summary>
+                <div style="margin-top: 6px; color: #ff6b6b; font-size: 1.15em; font-weight: bold; letter-spacing: 2px;">2763</div>
+            </details>
+        `;
         if (order.length >= 4) {
-            return "and unfortunately, that code was wrong. Hint: island. (code: " + order.join("") + ")";
+            return "and unfortunately, that code was wrong. Hint: a battle for an island. (code: " + order.join("") + ")" + spoilerHTML;
         }
-        return "and a code is required to progress further. (code: " + (order.join("") || "...i'm still waiting") + ")";
+        return "and a code is required to progress further. (code: " + (order.join("") || "...i'm still waiting") + ")" + spoilerHTML;
     },
     upgrades: {
         11: {
@@ -2419,7 +2426,14 @@ addLayer("snd", {
         if (isCorrect) {
             return "which is giving you boosts via milestones!";
         }
-        return "and you're doing something... but what are you doing?<br> (code: " + (player[this.layer].typedCode || "...i'm being patient") + ")<br> Hint: Think outside the box, maybe... who made this?<br><small>Note: code is supposed to be lowercase, but there is only uppercase.</small>";
+        let spoilerHTML = `
+            <br><br>
+            <details style="background: #1c1c1c; border: 2px solid #66ff47; padding: 8px 12px; border-radius: 6px; cursor: pointer; max-width: 280px; margin: 8px auto; text-align: center; display: inline-block;">
+                <summary style="font-weight: bold; color: #dfdfdf; outline: none; user-select: none; font-size: 0.95em;">stuck? click here to reveal answer</summary>
+                <div style="margin-top: 6px; color: #ff6b6b; font-size: 1.15em; font-weight: bold; letter-spacing: 2px;">thecoolcookie366</div>
+            </details>
+        `;
+        return "and you're doing something... but what are you doing?<br> (code: " + (player[this.layer].typedCode || "...i'm being patient") + ")<br> Hint: Think outside the box, maybe... who made this?<br><small>Note: code is supposed to be lowercase, but there is only uppercase.</small>" + spoilerHTML;
     },
     clickables:{
         11: { title: "1", style: { "background-color": "#ff0000", "color": "#000000" }, unlocked() { return player[this.layer].typedCode !== tmp[this.layer].solution }, canClick() { return player[this.layer].typedCode !== tmp[this.layer].solution }, onClick() { player[this.layer].typedCode += "1" } },
