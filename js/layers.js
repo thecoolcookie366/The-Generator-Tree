@@ -2982,7 +2982,7 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.speed1.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>+50 ores/s</span>" : 
-                "<br>very simple upgrade. +50 ores/s.<br><br>cost:<br><span style='color:#ff4933; font-weight: bold;'>1,000 of 10^1</span>";
+                "<br>very simple upgrade. +50 ores/s.<br><br>Cost:<br><span style='color:#ff4933; font-weight: bold;'>1,000 of 10^1</span>";
             },
             canClick() { return player.cmg.speed1.lt(1) && player.cmg.minedOres.p1.gte(1000) },
             onClick() {
@@ -3173,12 +3173,12 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.luck5.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>ur did it, if you see this you got x2.5 variant luck and a special role in the discord server</span>" : 
-                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>1 of 10^12</span><br><span style='color: #e100ff; font-weight: bold;'>1 of Spectral 10^8</span>";
+                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>5 of 10^12</span><br><span style='color: #e100ff; font-weight: bold;'>1,000 of Spectral 10^8</span>";
             },
-            canClick() { return player.cmg.luck5.lt(1) && player.cmg.minedOres.p12.gte(1) && player.cmg.minedOres.p8_spectral.gte(1) },
+            canClick() { return player.cmg.luck5.lt(1) && player.cmg.minedOres.p12.gte(5) && player.cmg.minedOres.p8_spectral.gte(1000) },
             onClick() {
-                player.cmg.minedOres.p12 = player.cmg.minedOres.p12.sub(1);
-                player.cmg.minedOres.p8_spectral = player.cmg.minedOres.p8_spectral.sub(1);
+                player.cmg.minedOres.p12 = player.cmg.minedOres.p12.sub(5);
+                player.cmg.minedOres.p8_spectral = player.cmg.minedOres.p8_spectral.sub(1000);
                 player.cmg.luck5 = new Decimal(1);
             },
             style() {
@@ -3189,7 +3189,7 @@ addLayer("cmg", {
                     color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
                 }
             }
-        }
+        },
     },
     tabFormat: [
     "blank",
