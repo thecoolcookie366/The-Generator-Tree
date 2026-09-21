@@ -2665,3 +2665,667 @@ addLayer("plv", {
         },
     },
 })
+
+addLayer("cmg", {
+    symbol: "⛏",
+    position: 2,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        timeAccumulated: new Decimal(0),
+        cooldown: new Decimal(0),
+        lastRunLog: "",
+        bestDrop: "None",
+        bestDropChance: 0,
+        currentTab: "mining",
+        luck1: new Decimal(0),
+        speed1: new Decimal(0),
+        luck2: new Decimal(0),
+        speed2: new Decimal(0),
+        luck3: new Decimal(0),
+        speed3: new Decimal(0),
+        luck4: new Decimal(0),
+        speed4: new Decimal(0),
+        luck5: new Decimal(0),
+        speed5: new Decimal(0),
+        minedOres: {
+            p0: new Decimal(0), p0_ionized: new Decimal(0), p0_spectral: new Decimal(0),
+            p1: new Decimal(0), p1_ionized: new Decimal(0), p1_spectral: new Decimal(0),
+            p2: new Decimal(0), p2_ionized: new Decimal(0), p2_spectral: new Decimal(0),
+            p3: new Decimal(0), p3_ionized: new Decimal(0), p3_spectral: new Decimal(0),
+            p4: new Decimal(0), p4_ionized: new Decimal(0), p4_spectral: new Decimal(0),
+            p5: new Decimal(0), p5_ionized: new Decimal(0), p5_spectral: new Decimal(0),
+            p6: new Decimal(0), p6_ionized: new Decimal(0), p6_spectral: new Decimal(0),
+            p7: new Decimal(0), p7_ionized: new Decimal(0), p7_spectral: new Decimal(0),
+            p8: new Decimal(0), p8_ionized: new Decimal(0), p8_spectral: new Decimal(0),
+            p9: new Decimal(0), p9_ionized: new Decimal(0), p9_spectral: new Decimal(0),
+            p10: new Decimal(0), p10_ionized: new Decimal(0), p10_spectral: new Decimal(0),
+            p11: new Decimal(0), p11_ionized: new Decimal(0), p11_spectral: new Decimal(0),
+            p12: new Decimal(0), p12_ionized: new Decimal(0), p12_spectral: new Decimal(0)
+        }
+    }},
+    color: "#89e188",
+    nodeStyle: {
+        background: "linear-gradient( #89e188, #315131)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(0,0,0,0.5)",
+        color: "rgb(0, 0, 0)",
+    },
+    resource: "ores",
+    row: "side",
+    tooltip() { 
+        return "Cookie's Mining Game" 
+    },
+    getMiningRate() {
+        let rate = new Decimal(16);
+        if (player.cmg.speed1.gte(1)) rate = rate.add(50);
+        if (player.cmg.speed3.gte(1)) rate = rate.add(500);
+        if (player.cmg.speed5.gte(1)) rate = rate.add(5000);
+        
+        if (player.cmg.speed2.gte(1)) rate = rate.mul(2);
+        if (player.cmg.speed4.gte(1)) rate = rate.mul(3);
+        return rate;
+    },
+    update(diff) {
+        if (player.cmg.unlocked) {
+            player.cmg.timeAccumulated = player.cmg.timeAccumulated.add(new Decimal(diff));
+            if (player.cmg.timeAccumulated.gt(172800)) {
+                player.cmg.timeAccumulated = new Decimal(172800);
+            }
+            if (player.cmg.cooldown.gt(0)) {
+                player.cmg.cooldown = player.cmg.cooldown.sub(diff).max(0);
+            }
+        }
+    },
+    clickables: {
+        11: {
+            title() { return "<h2>press here to mine</h2>" },
+                        display() { 
+                if (player.cmg.cooldown.gt(0)) {
+                    return `<br><b style="color: #ff4444; font-size: 1.1em;">to prevent stupidity there's a cooldown: ${player.cmg.cooldown.toFixed(1)}s</b>`;
+                }
+                
+                let currentRate = layers.cmg.getMiningRate();
+                let ops = player.cmg.timeAccumulated.mul(currentRate).floor(); 
+                
+                let seconds = player.cmg.timeAccumulated.toNumber();
+                let days = Math.floor(seconds / 86400);
+                let hours = Math.floor((seconds % 86400) / 3600);
+                let minutes = Math.floor((seconds % 3600) / 60);
+                let secs = Math.floor(seconds % 60);
+                
+                let timeString = "";
+                if (days > 0) timeString += days + "d ";
+                if (hours > 0 || days > 0) timeString += hours + "h ";
+                if (minutes > 0 || hours > 0 || days > 0) timeString += minutes + "m ";
+                timeString += secs + "s";
+
+                return `<br>ready: you will mine <b>${formatWhole(ops)}</b> ores if you click now<br>time waiting for good ores: <b>${timeString}</b><br>(+${format(currentRate)}/sec, max 2 days)`;
+            },
+            canClick() { 
+                return player.cmg.timeAccumulated.gte(1) && player.cmg.cooldown.lte(0); 
+            },
+            onClick() {
+                let currentRate = layers.cmg.getMiningRate();
+                let ops = player.cmg.timeAccumulated.mul(currentRate).floor().toNumber();
+                let secondsConsumed = ops / currentRate.toNumber();
+                player.cmg.timeAccumulated = player.cmg.timeAccumulated.sub(secondsConsumed);
+                
+                player.cmg.cooldown = new Decimal(10);
+
+                let pool = [
+                    { id: "p12", name: "10^12", chance: 1000000000000, value: new Decimal("1e12") },
+                    { id: "p11", name: "10^11", chance: 100000000000,  value: new Decimal("1e11") },
+                    { id: "p10", name: "10^10", chance: 10000000000,   value: new Decimal("1e10") },
+                    { id: "p9",  name: "10^9",  chance: 1000000000,    value: new Decimal("1e9") },
+                    { id: "p8",  name: "10^8",  chance: 100000000,     value: new Decimal("1e8") },
+                    { id: "p7",  name: "10^7",  chance: 10000000,      value: new Decimal("1e7") },
+                    { id: "p6",  name: "10^6",  chance: 1000000,       value: new Decimal("1e6") },
+                    { id: "p5",  name: "10^5",  chance: 100000,        value: new Decimal("1e5") },
+                    { id: "p4",  name: "10^4",  chance: 10000,         value: new Decimal("1e4") },
+                    { id: "p3",  name: "10^3",  chance: 1000,          value: new Decimal("1e3") },
+                    { id: "p2",  name: "10^2",  chance: 100,           value: new Decimal("1e2") },
+                    { id: "p1",  name: "10^1",  chance: 10,            value: new Decimal("1e1") },
+                    { id: "p0",  name: "10^0",  chance: 1,             value: new Decimal("1e0") }
+                ];
+
+                let counts = {};
+                pool.forEach(ore => {
+                    counts[ore.id] = 0;
+                    counts[ore.id + "_ionized"] = 0;
+                    counts[ore.id + "_spectral"] = 0;
+                });
+
+                let totalOresGained = new Decimal(0);
+                let highestRarityThisRun = 0;
+                let topOreNameThisRun = "None";
+
+                let remainingOps = ops;
+
+                for (let ore of pool) {
+                    if (remainingOps <= 0) break;
+                    let b = player.cmg.buyables || {};
+                    
+                    let ionizedDiv = 50;
+                    if ((b[52] || new Decimal(0)).gte(1)) ionizedDiv /= 2;
+                    if ((b[61] || new Decimal(0)).gte(1)) ionizedDiv /= 2;
+                    if ((b[62] || new Decimal(0)).gte(1)) ionizedDiv /= 1.5;
+                    if ((b[71] || new Decimal(0)).gte(1)) ionizedDiv /= 2;
+                    if ((b[72] || new Decimal(0)).gte(1)) ionizedDiv /= 2.5;
+
+                    let spectralDiv = 2500;
+                    if ((b[52] || new Decimal(0)).gte(1)) spectralDiv /= 2;
+                    if ((b[61] || new Decimal(0)).gte(1)) spectralDiv /= 2;
+                    if ((b[62] || new Decimal(0)).gte(1)) spectralDiv /= 1.5;
+                    if ((b[71] || new Decimal(0)).gte(1)) spectralDiv /= 2;
+                    if ((b[72] || new Decimal(0)).gte(1)) spectralDiv /= 2.5;
+
+                    let expected = remainingOps / ore.chance;
+                    let amountFound = 0;
+
+                    if (expected > 20) {
+                        let sd = Math.sqrt(expected * (1 - 1 / ore.chance));
+                        let u1 = Math.random();
+                        let u2 = Math.random();
+                        let normalValue = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                        amountFound = Math.max(0, Math.floor(expected + normalValue * sd));
+                    } else {
+                        for (let j = 0; j < remainingOps; j++) {
+                            if (Math.random() < (1 / ore.chance)) {
+                                amountFound++;
+                            }
+                        }
+                    }
+
+                    if (amountFound > remainingOps) amountFound = remainingOps;
+                    
+                    if (amountFound > 0) {
+                        remainingOps -= amountFound;
+
+                        let specCount = 0;
+                        let ionCount = 0;
+                        let normCount = 0;
+
+                        if (amountFound > 20) {
+                            let expSpec = amountFound / spectralDiv;
+                            let sdSpec = Math.sqrt(expSpec * (1 - 1 / spectralDiv));
+                            let nu1 = Math.random(); let nu2 = Math.random();
+                            let normSpec = Math.sqrt(-2.0 * Math.log(nu1)) * Math.cos(2.0 * Math.PI * nu2);
+                            specCount = Math.max(0, Math.floor(expSpec + normSpec * sdSpec));
+                            if (specCount > amountFound) specCount = amountFound;
+
+                            let remAfterSpec = amountFound - specCount;
+                            let expIon = remAfterSpec / ionizedDiv;
+                            let sdIon = Math.sqrt(expIon * (1 - 1 / ionizedDiv));
+                            let ni1 = Math.random(); let ni2 = Math.random();
+                            let normIon = Math.sqrt(-2.0 * Math.log(ni1)) * Math.cos(2.0 * Math.PI * ni2);
+                            ionCount = Math.max(0, Math.floor(expIon + normIon * sdIon));
+                            if (ionCount > remAfterSpec) ionCount = remAfterSpec;
+
+                            normCount = remAfterSpec - ionCount;
+                        } else {
+                            for (let k = 0; k < amountFound; k++) {
+                                let r = Math.random();
+                                if (r < (1 / spectralDiv)) {
+                                    specCount++;
+                                } else if (r < (1 / ionizedDiv)) {
+                                    ionCount++;
+                                } else {
+                                    normCount++;
+                                }
+                            }
+                        }
+
+                        counts[ore.id] = normCount;
+                        counts[ore.id + "_ionized"] = ionCount;
+                        counts[ore.id + "_spectral"] = specCount;
+
+                        totalOresGained = totalOresGained.add(ore.value.mul(normCount));
+                        totalOresGained = totalOresGained.add(ore.value.mul(50).mul(ionCount));
+                        totalOresGained = totalOresGained.add(ore.value.mul(2500).mul(specCount));
+
+                        if (specCount > 0 && (ore.chance * spectralDiv) > highestRarityThisRun) {
+                            highestRarityThisRun = ore.chance * spectralDiv;
+                            topOreNameThisRun = "Spectral " + ore.name;
+                        } else if (ionCount > 0 && (ore.chance * ionizedDiv) > highestRarityThisRun) {
+                            highestRarityThisRun = ore.chance * ionizedDiv;
+                            topOreNameThisRun = "Ionized " + ore.name;
+                        } else if (normCount > 0 && ore.chance > highestRarityThisRun) {
+                            highestRarityThisRun = ore.chance;
+                            topOreNameThisRun = ore.name;
+                        }
+                    }
+                }
+
+                player.cmg.points = player.cmg.points.add(totalOresGained);
+                for (let id in counts) {
+                    player.cmg.minedOres[id] = player.cmg.minedOres[id].add(counts[id]);
+                }
+
+                if (highestRarityThisRun > 0 && (player.cmg.bestDrop === "None" || highestRarityThisRun > player.cmg.bestDropChance)) {
+                    player.cmg.bestDrop = `${topOreNameThisRun} (1/${format(highestRarityThisRun)})`;
+                    player.cmg.bestDropChance = highestRarityThisRun;
+                }
+
+                let log = `welcome back player! you have mined ${formatWhole(ops)} ores!\n`;
+                log += `--------------------------------------------------\n`;
+                pool.forEach(ore => {
+                    if (counts[ore.id + "_spectral"] > 0) {
+                        log += `<span style="color: #e100ff; font-weight: bold;">Spectral ${ore.name}: ${formatWhole(counts[ore.id + "_spectral"])} found!!!</span>\n`;
+                    }
+                    if (counts[ore.id + "_ionized"] > 0) {
+                        log += `<span style="color: #00b8ff; font-weight: bold;">Ionized ${ore.name}: ${formatWhole(counts[ore.id + "_ionized"])} found!</span>\n`;
+                    }
+                    if (counts[ore.id] > 0) {
+                        if (ore.id === "p12") {
+                            log += `<h1>10^12: ${formatWhole(counts[ore.id])} found!</h1>\n`;
+                        } else {
+                            log += `${ore.name}: ${formatWhole(counts[ore.id])} found\n`;
+                        }
+                    }
+                });
+                log += `--------------------------------------------------\n`;
+                if (highestRarityThisRun > 0) {
+                    log += `<span style="color: #ffee33; font-weight: bold; text-shadow: 0 0 5px rgba(255,238,51,0.3);">rarest ore: ${topOreNameThisRun} (1/${format(highestRarityThisRun)})</span>`;
+                }
+                player.cmg.lastRunLog = log;
+            },
+            style() {
+                let baseStyle = {
+                    width: "400px",
+                    height: "115px",
+                    borderRadius: "8px",
+                    color: "#89e188",
+                    borderColor: "#89e188",
+                    transition: "all 0.2s",
+                    cursor: "pointer"
+                };
+                if (player.cmg.cooldown.gt(0)) {
+                    baseStyle.backgroundColor = "#241414";
+                    baseStyle.borderColor = "#ff4444";
+                    baseStyle.color = "#ff4444";
+                    baseStyle.cursor = "not-allowed";
+                } else {
+                    baseStyle.backgroundColor = "#315131";
+                }
+                return baseStyle;
+            }
+        },
+        21: {
+            title() { return "mining" },
+            canClick() { return player.cmg.currentTab !== "mining" },
+            onClick() { player.cmg.currentTab = "mining" },
+            style() {
+                return {
+                    width: "180px", height: "40px", borderRadius: "5px", margin: "5px",
+                    backgroundColor: player.cmg.currentTab === "mining" ? "#315131" : "#151a15",
+                    color: player.cmg.currentTab === "mining" ? "#89e188" : "#a0a0a0",
+                    borderColor: "#315131", cursor: "pointer"
+                }
+            }
+        },
+        22: {
+            title() { return "upgrades" },
+            canClick() { return player.cmg.currentTab !== "upgrades" },
+            onClick() { player.cmg.currentTab = "upgrades" },
+            style() {
+                return {
+                    width: "180px", height: "40px", borderRadius: "5px", margin: "5px",
+                    backgroundColor: player.cmg.currentTab === "upgrades" ? "#315131" : "#151a15",
+                    color: player.cmg.currentTab === "upgrades" ? "#89e188" : "#a0a0a0",
+                    borderColor: "#315131", cursor: "pointer"
+                }
+            }
+        },
+        31: {
+            title() { return "<h3>Mining go brr</h3>" },
+            display() {
+                let bought = player.cmg.speed1.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>+50 ores/s</span>" : 
+                "<br>very simple upgrade. +50 ores/s.<br><br>cost:<br><span style='color:#ff4933; font-weight: bold;'>1,000 of 10^1</span>";
+            },
+            canClick() { return player.cmg.speed1.lt(1) && player.cmg.minedOres.p1.gte(1000) },
+            onClick() {
+                player.cmg.minedOres.p1 = player.cmg.minedOres.p1.sub(1000);
+                player.cmg.speed1 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.speed1.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        32: {
+            title() { return "<h3>:shock:</h3>" },
+            display() {
+                let bought = player.cmg.speed2.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>ore speed has automagically doubled</span>" : 
+                "<br>x2 ores/s.<br><br>Cost:<br><span style='color:#ff9633; font-weight: bold;'>500 of 10^2</span><br><span style='color:#00b8ff; font-weight: bold;'>5 of Ionized 10^2</span>";
+            },
+            canClick() { return player.cmg.speed2.lt(1) && player.cmg.minedOres.p2.gte(500) && player.cmg.minedOres.p2_ionized.gte(5) },
+            onClick() {
+                player.cmg.minedOres.p2 = player.cmg.minedOres.p2.sub(500);
+                player.cmg.minedOres.p2_ionized = player.cmg.minedOres.p2_ionized.sub(5);
+                player.cmg.speed2 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.speed2.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        41: {
+            title() { return "<h3>lag machine >:)</h3>" },
+            display() {
+                let bought = player.cmg.speed3.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>+500 ores/s</span>" : 
+                "<br>+500 ores/s. warning: this will increaase lag.<br><br>Cost:<br><span style='color:#b5ff33; font-weight: bold;'>5,000 of 10^4</span>";
+            },
+            canClick() { return player.cmg.speed3.lt(1) && player.cmg.minedOres.p4.gte(5000) },
+            onClick() {
+                player.cmg.minedOres.p4 = player.cmg.minedOres.p4.sub(5000);
+                player.cmg.speed3 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.speed3.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        42: {
+            title() { return "<h3>how much lag do you want? cookie: yes</h3>" },
+            display() {
+                let bought = player.cmg.speed4.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>x3 ores/s! how wonderful</span>" : 
+                "<br>x3 ores/s. why do you need this?<br><br>Cost:<br><span style='color:#33ffcc; font-weight: bold;'>500 of 10^6</span><br><span style='color:#e100ff; font-weight: bold;'>2 of Spectral 10^4</span>";
+            },
+            canClick() { return player.cmg.speed4.lt(1) && player.cmg.minedOres.p6.gte(500) && player.cmg.minedOres.p4_spectral.gte(2) },
+            onClick() {
+                player.cmg.minedOres.p6 = player.cmg.minedOres.p6.sub(500);
+                player.cmg.minedOres.p4_spectral = player.cmg.minedOres.p4_spectral.sub(2);
+                player.cmg.speed4 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.speed4.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        51: {
+            title() { return "<h3>it's the FINAL lag machine!</h3>" },
+            display() {
+                let bought = player.cmg.speed5.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>+5,000 ores/s. man is your device that good or...</span>" : 
+                "<br>+5,000 ores/s. big warning: a full 2 day mine can take a minute to load<br><br>Cost:<br><span style='color:#ff33ec; font-weight: bold;'>10,000 of 10^11</span>";
+            },
+            canClick() { return player.cmg.speed5.lt(1) && player.cmg.minedOres.p11.gte(10000) },
+            onClick() {
+                player.cmg.minedOres.p11 = player.cmg.minedOres.p11.sub(10000);
+                player.cmg.speed5 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.speed5.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        52: {
+            title() { return "<h3>Magnet</h3>" },
+            display() {
+                let bought = player.cmg.luck1.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>you now get x2 luck on ore variants!</span>" : 
+                "<br>ionized and spectral ores are x2 more common.<br><br>Cost:<br><span style='color:#00b8ff; font-weight: bold;'>50 of Ionized 10^0</span>";
+            },
+            canClick() { return player.cmg.luck1.lt(1) && player.cmg.minedOres.p0_ionized.gte(50) },
+            onClick() {
+                player.cmg.minedOres.p0_ionized = player.cmg.minedOres.p0_ionized.sub(50);
+                player.cmg.luck1 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.luck1.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        61: {
+            title() { return "<h3>Magnet but it's the same</h3>" },
+            display() {
+                let bought = player.cmg.luck2.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>enjoy this luck boost!</span>" : 
+                "<br>x2 variant luck again. what<br><br>Cost:<br><span style='color:#ff9633; font-weight: bold;'>10 of Ionized 10^6</span>";
+            },
+            canClick() { return player.cmg.luck2.lt(1) && player.cmg.minedOres.p6_ionized.gte(10) },
+            onClick() {
+                player.cmg.minedOres.p6_ionized = player.cmg.minedOres.p6_ionized.sub(10);
+                player.cmg.luck2 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.luck2.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        62: {
+            title() { return "<h3>how much variant luck?!!?</h3>" },
+            display() {
+                let bought = player.cmg.luck3.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>it's all variant luck! x1.5 of it.</span>" : 
+                "<br>x1.5 variant luck. you're insane.<br><br>Cost:<br><span style='color:#b833ff; font-weight: bold;'>2,500 of 10^10</span>";
+            },
+            canClick() { return player.cmg.luck3.lt(1) && player.cmg.minedOres.p10.gte(2500) },
+            onClick() {
+                player.cmg.minedOres.p10 = player.cmg.minedOres.p10.sub(2500);
+                player.cmg.luck3 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.luck3.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        71: {
+            title() { return "<h3>yo chill</h3>" },
+            display() {
+                let bought = player.cmg.luck4.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>that's too much luck man.. but fine, x2.</span>" : 
+                "<br>variants are x2 more common, again!<br><br>Cost:<br><span style='color:#ff33ec; font-weight: bold;'>100 of Ionized 10^11</span>";
+            },
+            canClick() { return player.cmg.luck4.lt(1) && player.cmg.minedOres.p11_ionized.gte(100) },
+            onClick() {
+                player.cmg.minedOres.p11_ionized = player.cmg.minedOres.p11_ionized.sub(100);
+                player.cmg.luck4 = new Decimal(1);
+            },
+            style() {
+                let bought = player.cmg.luck4.gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        },
+        72: {
+            title() { return "<h3>if you buy this, you're insane</h3>" },
+            display() {
+                let bought = player.cmg.luck5.gte(1);
+                return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>ur did it, if you see this you got x2.5 variant luck and a special role in the discord server</span>" : 
+                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>1 of 10^12 Ore</span><br><span style='color: #e100ff; font-weight: bold;'>1 of Spectral 10^8</span>";
+            },
+            canClick() { return player.cmg.luck5.lt(1) && player.cmg.minedOres.p12.gte(1) && player.cmg.minedOres.p8_spectral.gte(1) },
+            onClick() {
+                player.cmg.minedOres.p12 = player.cmg.minedOres.p12.sub(1);
+                player.cmg.minedOres.p8_spectral = player.cmg.minedOres.p8_spectral.sub(1);
+                player.cmg.luck5 = new Decimal(1);
+            },
+            style() {
+                let bought = (player.cmg.luck5 || new Decimal(0)).gte(1);
+                return {
+                    width: "220px", height: "140px", borderRadius: "6px", margin: "10px", padding: "10px",
+                    backgroundColor: bought ? "#1d2d1d" : (this.canClick() ? "#315131" : "#222"),
+                    color: bought ? "#89e188" : "#fff", borderColor: "#315131", cursor: bought ? "not-allowed" : (this.canClick() ? "pointer" : "not-allowed")
+                }
+            }
+        }
+    },
+    tabFormat: [
+    "blank",
+    ["display-text", function() {
+        return `
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+            <button onclick="player.cmg.currentTab = 'mining'" 
+                    style="width: 180px; height: 40px; border-radius: 5px; border: 1px solid #315131; cursor: pointer; font-family: monospace; font-size: 14px; font-weight: bold; transition: all 0.2s;
+                    background-color: ${player.cmg.currentTab === 'mining' ? '#315131' : '#151a15'};
+                    color: ${player.cmg.currentTab === 'mining' ? '#89e188' : '#a0a0a0'};">
+                mining
+            </button>
+            <button onclick="player.cmg.currentTab = 'upgrades'" 
+                    style="width: 180px; height: 40px; border-radius: 5px; border: 1px solid #315131; cursor: pointer; font-family: monospace; font-size: 14px; font-weight: bold; transition: all 0.2s;
+                    background-color: ${player.cmg.currentTab === 'upgrades' ? '#315131' : '#151a15'};
+                    color: ${player.cmg.currentTab === 'upgrades' ? '#89e188' : '#a0a0a0'};">
+                upgrades
+            </button>
+        </div>
+        `;
+    }],
+    "blank", 
+    ["column", [
+        ["row", [["clickable", function() { return player.cmg.currentTab === "mining" ? 11 : null }]]],
+        ["display-text", function() {
+           if (player.cmg.currentTab !== "mining") return "";
+            return `
+                <div style="height: 30px;"></div>
+                <h3 style="margin: 0 auto; display: block;">[ last mine ]</h3>
+            `
+        }],
+        "blank",
+        ["display-text", function() {
+            if (player.cmg.currentTab !== "mining") return "";
+            return player.cmg.lastRunLog ? 
+                `<div style="text-align: left; background: #0c0f0c; color: #89e188; padding: 15px; border-radius: 5px; font-family: monospace; border: 1px solid #315131; width: 450px; margin: 0 auto; white-space: pre-wrap; font-size: 13px;">${player.cmg.lastRunLog}</div>` : 
+                `<div style="color: #a0a0a0; font-style: italic; margin-bottom: 10px;">hi bro are you ready to mine</div>`;
+        }],
+        ["display-text", function() {
+            if (player.cmg.currentTab !== "upgrades") return "";
+            return "<h3>[ upgrades oooooo ]<h3><br>";
+        }],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 31 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 32 : null }]
+        ]],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 41 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 42 : null }]
+        ]],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 51 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 52 : null }]
+        ]],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 61 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 62 : null }]
+        ]],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 71 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 72 : null }]
+        ]]
+    ]],
+        "blank",
+        "blank",
+        ["display-text", "<h3>[ ores ]</h3>"],
+        "blank",
+        ["display-text", function() {
+            let listHTML = "";
+            let pool = [
+                { id: "p12", label: "10^12", chanceStr: "1/1e12", baseColor: "class='special-12'" },
+                { id: "p11", label: "10^11", chanceStr: "1/1e11", baseColor: "style='color: #ff33ec;'" },
+                { id: "p10", label: "10^10", chanceStr: "1/1e10", baseColor: "style='color: #b833ff;'" },
+                { id: "p9",  label: "10^9",  chanceStr: "1/1e9",  baseColor: "style='color: #6e33ff;'" },
+                { id: "p8",  label: "10^8",  chanceStr: "1/1e8",  baseColor: "style='color: #335eff;'" },
+                { id: "p7",  label: "10^7",  chanceStr: "1/1e7",  baseColor: "style='color: #33b8ff;'" },
+                { id: "p6",  label: "10^6",  chanceStr: "1/1e6",  baseColor: "style='color: #33ffcc;'" },
+                { id: "p5",  label: "10^5",  chanceStr: "1/1e5",  baseColor: "style='color: #33ff57;'" },
+                { id: "p4",  label: "10^4",  chanceStr: "1/1e4",  baseColor: "style='color: #b5ff33;'" },
+                { id: "p3",  label: "10^3",  chanceStr: "1/1e3",  baseColor: "style='color: #ffee33;'" },
+                { id: "p2",  label: "10^2",  chanceStr: "1/100",  baseColor: "style='color: #ff9633;'" },
+                { id: "p1",  label: "10^1",  chanceStr: "1/10",   baseColor: "style='color: #ff4933;'" },
+                { id: "p0",  label: "10^0",  chanceStr: "1/1",    baseColor: "style='color: #9e271b;'" }
+            ];
+
+            let currentIonModifier = 50;
+            if (player.cmg.luck1.gte(1)) currentIonModifier /= 2;
+            if (player.cmg.luck2.gte(1)) currentIonModifier /= 2;
+            if (player.cmg.luck3.gte(1)) currentIonModifier /= 1.5;
+            if (player.cmg.luck4.gte(1)) currentIonModifier /= 2;
+            if (player.cmg.luck5.gte(1)) currentIonModifier /= 2.5;
+
+            let currentSpecModifier = 2500;
+            if (player.cmg.luck1.gte(1)) currentSpecModifier /= 2;
+            if (player.cmg.luck2.gte(1)) currentSpecModifier /= 2;
+            if (player.cmg.luck3.gte(1)) currentSpecModifier /= 1.5;
+            if (player.cmg.luck4.gte(1)) currentSpecModifier /= 2;
+            if (player.cmg.luck5.gte(1)) currentSpecModifier /= 2.5;
+
+            pool.forEach(ore => {
+                let oreChance = ore.id === "p2" ? 100 : (ore.id === "p1" ? 10 : (ore.id === "p0" ? 1 : Number("1e" + ore.id.substring(1))));
+                let ionChanceValue = oreChance * currentIonModifier;
+                let specChanceValue = oreChance * currentSpecModifier;
+
+                listHTML += `<div style="margin-bottom: 8px; border-left: 2px solid #252d25; padding-left: 6px;">`;
+                listHTML += `<span ${ore.baseColor}>${ore.label} (${ore.chanceStr}):</span> <span style="font-weight: bold; color:#fff;">${formatWhole(player.cmg.minedOres[ore.id])}</span><br>`;
+                listHTML += `<span style="color: #00b8ff; font-size: 0.9em; padding-left: 10px;">! Ionized ${ore.label} (1/${format(ionChanceValue)}):</span> <span style="color: #00b8ff; font-weight: bold; font-size: 0.9em;">${formatWhole(player.cmg.minedOres[ore.id + "_ionized"])}</span><br>`;
+                listHTML += `<span style="color: #e100ff; font-size: 0.9em; padding-left: 10px;">!!! Spectral ${ore.label} (1/${format(specChanceValue)}):</span> <span style="color: #e100ff; font-weight: bold; font-size: 0.9em;">${formatWhole(player.cmg.minedOres[ore.id + "_spectral"])}</span>`;
+                listHTML += `</div>`;
+            });
+
+            return `
+            <style>
+                @keyframes rainbow {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+                .special-12 {
+                    background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #88ff00, #00ff00, #00ff88, #00ffff, #0088ff, #0000ff);
+                    background-size: 300% 300%;
+                    animation: rainbow 4s ease infinite;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    font-weight: bold;
+                    text-shadow: 0 0 8px rgba(255,255,255,0.2);
+                }
+            </style>
+            <div style="text-align: left; background: #151a15; padding: 15px; border-radius: 5px; border: 1px solid #315131; width: 450px; margin: 0 auto; line-height: 1.4; font-family: monospace; max-height: 500px; overflow-y: auto;">
+                <b>Best:</b> <span style="color: #ffcc00">${player.cmg.bestDrop}</span><br>
+                <hr style="border-color: #315131; margin: 10px 0;">
+                <b>Inventory:</b><br><br>
+                ${listHTML}
+            </div>
+            `;
+        }],
+        "blank"
+    ]
+});
