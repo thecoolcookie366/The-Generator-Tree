@@ -3173,7 +3173,7 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.luck5.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>ur did it, if you see this you got x2.5 variant luck and a special role in the discord server</span>" : 
-                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>1 of 10^12 Ore</span><br><span style='color: #e100ff; font-weight: bold;'>1 of Spectral 10^8</span>";
+                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>1 of 10^12</span><br><span style='color: #e100ff; font-weight: bold;'>1 of Spectral 10^8</span>";
             },
             canClick() { return player.cmg.luck5.lt(1) && player.cmg.minedOres.p12.gte(1) && player.cmg.minedOres.p8_spectral.gte(1) },
             onClick() {
