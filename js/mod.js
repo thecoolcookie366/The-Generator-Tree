@@ -11,8 +11,8 @@ let modInfo = {
 }
 
 let VERSION = {
-	num: "1.02",
-	name: "The Puzzling Update: Part 1",
+	num: "1.025",
+	name: "The Mining Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,6 +22,9 @@ let changelog = `<h1>Changelog:</h1><br>
 	B = medium update <br>
 	C = small update <br>
 	<br>
+	<h3>v1.025</h3><br>
+		- Added CMG. Have fun!<br>
+		<br>
 	<h2>v1.02</h2><br>
 		- Added Primary and Secondary, 2/4 of the puzzles.<br>
 		- Added 2 new generators, once again.<br>
