@@ -2786,7 +2786,7 @@ addLayer("cmg", {
                     { id: "p3",  name: "10^3",  chance: 1000,          value: new Decimal("1e3") },
                     { id: "p2",  name: "10^2",  chance: 100,           value: new Decimal("1e2") },
                     { id: "p1",  name: "10^1",  chance: 10,            value: new Decimal("1e1") },
-                    { id: "p0",  name: "10^0",  chance: 1,             value: new Decimal("1e0") }
+                    { id: "p0",  name: "10^0",  chance: 1,             value: new Decimal("1e0") },
                 ];
 
                 let counts = {};
@@ -2911,16 +2911,17 @@ addLayer("cmg", {
                 log += `--------------------------------------------------\n`;
                 pool.forEach(ore => {
                     if (counts[ore.id + "_spectral"] > 0) {
-                        log += `<span style="color: #e100ff; font-weight: bold;">Spectral ${ore.name}: ${formatWhole(counts[ore.id + "_spectral"])} found!!!</span>\n`;
+                        log += `<span style="color: #e100ff;">Spectral ${ore.name}: ${formatWhole(counts[ore.id + "_spectral"])} found!!!</span>\n`;
                     }
                     if (counts[ore.id + "_ionized"] > 0) {
-                        log += `<span style="color: #00b8ff; font-weight: bold;">Ionized ${ore.name}: ${formatWhole(counts[ore.id + "_ionized"])} found!</span>\n`;
+                        log += `<span style="color: #00b8ff;">Ionized ${ore.name}: ${formatWhole(counts[ore.id + "_ionized"])} found!</span>\n`;
                     }
                     if (counts[ore.id] > 0) {
                         if (ore.id === "p12") {
-                            log += `<h1>10^12: ${formatWhole(counts[ore.id])} found!</h1>\n`;
-                        } else {
-                            log += `${ore.name}: ${formatWhole(counts[ore.id])} found\n`;
+                            log += `<span style="color: #ff0000;">10^12: ${formatWhole(counts[ore.id])} found!</span>\n`;
+                        }
+                        else {
+                            log += `<span>${ore.name}: ${formatWhole(counts[ore.id])} found</span>\n`;
                         }
                     }
                 });
@@ -3068,11 +3069,11 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.speed5.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>+5,000 ores/s. man is your device that good or...</span>" : 
-                "<br>+5,000 ores/s. big warning: a full 2 day mine can take a minute to load<br><br>Cost:<br><span style='color:#ff33ec; font-weight: bold;'>10,000 of 10^11</span>";
+                "<br>+5,000 ores/s. big warning: a full 2 day mine can take a minute to load<br><br>Cost:<br><span style='color:#b833ff; font-weight: bold;'>5 of 10^10</span>";
             },
-            canClick() { return player.cmg.speed5.lt(1) && player.cmg.minedOres.p11.gte(10000) },
+            canClick() { return player.cmg.speed5.lt(1) && player.cmg.minedOres.p10.gte(5) },
             onClick() {
-                player.cmg.minedOres.p11 = player.cmg.minedOres.p11.sub(10000);
+                player.cmg.minedOres.p10 = player.cmg.minedOres.p10.sub(5);
                 player.cmg.speed5 = new Decimal(1);
             },
             style() {
@@ -3110,7 +3111,7 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.luck2.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>enjoy this luck boost!</span>" : 
-                "<br>x2 variant luck again. what<br><br>Cost:<br><span style='color:#ff9633; font-weight: bold;'>10 of Ionized 10^6</span>";
+                "<br>x2 variant luck again. what<br><br>Cost:<br><span style='color:#00b8ff; font-weight: bold;'>10 of Ionized 10^6</span>";
             },
             canClick() { return player.cmg.luck2.lt(1) && player.cmg.minedOres.p6_ionized.gte(10) },
             onClick() {
@@ -3131,11 +3132,11 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.luck3.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>it's all variant luck! x1.5 of it.</span>" : 
-                "<br>x1.5 variant luck. you're insane.<br><br>Cost:<br><span style='color:#b833ff; font-weight: bold;'>2,500 of 10^10</span>";
+                "<br>x1.5 variant luck. you're insane.<br><br>Cost:<br><span style='color:#9e271b; font-weight: bold;'>750,000,000 of 10^0</span>";
             },
-            canClick() { return player.cmg.luck3.lt(1) && player.cmg.minedOres.p10.gte(2500) },
+            canClick() { return player.cmg.luck3.lt(1) && player.cmg.minedOres.p0.gte(750e6) },
             onClick() {
-                player.cmg.minedOres.p10 = player.cmg.minedOres.p10.sub(2500);
+                player.cmg.minedOres.p0 = player.cmg.minedOres.p0.sub(750e6);
                 player.cmg.luck3 = new Decimal(1);
             },
             style() {
@@ -3152,11 +3153,11 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.luck4.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>that's too much luck man.. but fine, x2.</span>" : 
-                "<br>variants are x2 more common, again!<br><br>Cost:<br><span style='color:#ff33ec; font-weight: bold;'>100 of Ionized 10^11</span>";
+                "<br>variants are x2 more common, again!<br><br>Cost:<br><span style='color:#00b8ff; font-weight: bold;'>1 of Ionized 10^9</span>";
             },
-            canClick() { return player.cmg.luck4.lt(1) && player.cmg.minedOres.p11_ionized.gte(100) },
+            canClick() { return player.cmg.luck4.lt(1) && player.cmg.minedOres.p9_ionized.gte(1) },
             onClick() {
-                player.cmg.minedOres.p11_ionized = player.cmg.minedOres.p11_ionized.sub(100);
+                player.cmg.minedOres.p9_ionized = player.cmg.minedOres.p9_ionized.sub(1);
                 player.cmg.luck4 = new Decimal(1);
             },
             style() {
@@ -3173,12 +3174,11 @@ addLayer("cmg", {
             display() {
                 let bought = player.cmg.luck5.gte(1);
                 return bought ? "<br><b style='color:#89e188;'>you bought it!</b><br><br><span style='color:#89e188;'>ur did it, if you see this you got x2.5 variant luck and a special role in the discord server</span>" : 
-                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>5 of 10^12</span><br><span style='color: #e100ff; font-weight: bold;'>1,000 of Spectral 10^8</span>";
+                "<br>x2.5 variant luck. it's so over<br><br>Cost:<br><span class='special-12'>1 of 10^12</span>";
             },
-            canClick() { return player.cmg.luck5.lt(1) && player.cmg.minedOres.p12.gte(5) && player.cmg.minedOres.p8_spectral.gte(1000) },
+            canClick() { return player.cmg.luck5.lt(1) && player.cmg.minedOres.p12.gte(1) },
             onClick() {
-                player.cmg.minedOres.p12 = player.cmg.minedOres.p12.sub(5);
-                player.cmg.minedOres.p8_spectral = player.cmg.minedOres.p8_spectral.sub(1000);
+                player.cmg.minedOres.p12 = player.cmg.minedOres.p12.sub(1);
                 player.cmg.luck5 = new Decimal(1);
             },
             style() {
@@ -3234,22 +3234,22 @@ addLayer("cmg", {
         }],
         ["row", [
             ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 31 : null }],
-            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 32 : null }]
-        ]],
-        ["row", [
-            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 41 : null }],
-            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 42 : null }]
-        ]],
-        ["row", [
-            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 51 : null }],
             ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 52 : null }]
         ]],
         ["row", [
-            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 61 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 32 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 61 : null }]
+        ]],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 41 : null }],
             ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 62 : null }]
         ]],
         ["row", [
-            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 71 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 42 : null }],
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 71 : null }]
+        ]],
+        ["row", [
+            ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 51 : null }],
             ["clickable", function() { return player.cmg.currentTab === "upgrades" ? 72 : null }]
         ]]
     ]],
@@ -3260,6 +3260,7 @@ addLayer("cmg", {
         ["display-text", function() {
             let listHTML = "";
             let pool = [
+                { id: "pinf",  label: "10^∞",  chanceStr: "1/∞",    baseColor: "style='color: #000000;'" },
                 { id: "p12", label: "10^12", chanceStr: "1/1e12", baseColor: "class='special-12'" },
                 { id: "p11", label: "10^11", chanceStr: "1/1e11", baseColor: "style='color: #ff33ec;'" },
                 { id: "p10", label: "10^10", chanceStr: "1/1e10", baseColor: "style='color: #b833ff;'" },
@@ -3272,7 +3273,7 @@ addLayer("cmg", {
                 { id: "p3",  label: "10^3",  chanceStr: "1/1e3",  baseColor: "style='color: #ffee33;'" },
                 { id: "p2",  label: "10^2",  chanceStr: "1/100",  baseColor: "style='color: #ff9633;'" },
                 { id: "p1",  label: "10^1",  chanceStr: "1/10",   baseColor: "style='color: #ff4933;'" },
-                { id: "p0",  label: "10^0",  chanceStr: "1/1",    baseColor: "style='color: #9e271b;'" }
+                { id: "p0",  label: "10^0",  chanceStr: "1/1",    baseColor: "style='color: #9e271b;'" },
             ];
 
             let currentIonModifier = 50;
