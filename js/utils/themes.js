@@ -43,13 +43,67 @@ function getAvailableThemes() {
 	if (tmp.exc && tmp.exc.layerShown) {
 		list.push("exquisite")
 	}
+	if (false) {
+		list.push("flawless")
+	}
+	if (false) {
+		list.push("supreme")
+	}
+	if (false) {
+		list.push("absurd")
+	}
+	if (false) {
+		list.push("ultra")
+	}
+	if (false) {
+		list.push("hyper")
+	}
+	if (false) {
+		list.push("super")
+	}
+	if (false) {
+		list.push("insane")
+	}
+	if (false) {
+		list.push("crazy")
+	}
+	if (false) {
+		list.push("omega")
+	}
+	if (false) {
+		list.push("astonishing")
+	}
+	if (false) {
+		list.push("phenomenal")
+	}
+	if (false) {
+		list.push("ludicrous")
+	}
+	if (false) {
+		list.push("illegal")
+	}
+	if (false) {
+		list.push("based")
+	}
+	if (false) {
+		list.push("overclocked")
+	}
+	if (false) {
+		list.push("sigma")
+	}
+	if (false) {
+		list.push("goated")
+	}
+	if (false) {
+		list.push("peak")
+	}
 	if (options.theme && !list.includes(options.theme)) {
 		list.push(options.theme)
 	}
 	return list
 }
 
-var themes = ["default", "binary", "softcap", "softcap2", "softcap3", "hardcap", "purelight", "puredark", "terrible", "awful", "mediocre", "alright", "decent", "good", "perfect","exquisite"]
+var themes = ["default", "binary", "softcap", "softcap2", "softcap3", "hardcap", "purelight", "puredark", "terrible", "awful", "mediocre", "alright", "decent", "good", "perfect","exquisite", "flawless", "supreme", "absurd", "ultra", "hyper", "super", "insane", "crazy", "omega", "astonishing", "phenomenal", "ludicrous", "illegal", "based", "overclocked", "sigma", "goated", "peak"]
 
 var colors = {
 	default: {
@@ -211,6 +265,186 @@ var colors = {
 		locked: "#bf8f8f",
 		background: "#030e05",
 		background_tooltip: "rgba(3, 14, 5, 0.85)",
+	},
+	flawless: {
+		1: "#0055aa",
+		2: "#004488",
+		3: "#003366",
+		color: "#dfdfdf",
+		points: "#0055aa",
+		locked: "#bf8f8f",
+		background: "#000b14",
+		background_tooltip: "rgba(0, 11, 20, 0.75)",
+	},
+	supreme: {
+		1: "#0000ff",
+		2: "#0000cc",
+		3: "#000099",
+		color: "#dfdfdf",
+		points: "#0000ff",
+		locked: "#bf8f8f",
+		background: "#000014",
+		background_tooltip: "rgba(0, 0, 20, 0.75)",
+	},
+	absurd: {
+		1: "#5500ff",
+		2: "#4400cc",
+		3: "#330099",
+		color: "#dfdfdf",
+		points: "#5500ff",
+		locked: "#bf8f8f",
+		background: "#0b0014",
+		background_tooltip: "rgba(11, 0, 20, 0.75)",
+	},
+	ultra: {
+		1: "#aa00ff",
+		2: "#8800cc",
+		3: "#660099",
+		color: "#dfdfdf",
+		points: "#aa00ff",
+		locked: "#bf8f8f",
+		background: "#0d0014",
+		background_tooltip: "rgba(13, 0, 20, 0.75)",
+	},
+	hyper: {
+		1: "#ff00ff",
+		2: "#cc00cc",
+		3: "#990099",
+		color: "#dfdfdf",
+		points: "#ff00ff",
+		locked: "#bf8f8f",
+		background: "#140014",
+		background_tooltip: "rgba(20, 0, 20, 0.75)",
+	},
+	super: {
+		1: "#ff69c3",
+		2: "#cc549c",
+		3: "#993f75",
+		color: "#dfdfdf",
+		points: "#ff69c3",
+		locked: "#bf8f8f",
+		background: "#14080f",
+		background_tooltip: "rgba(20, 8, 15, 0.75)",
+	},
+	insane: {
+		1: "#988fff",
+		2: "#7a72cc",
+		3: "#5c5699",
+		color: "#dfdfdf",
+		points: "#988fff",
+		locked: "#bf8f8f",
+		background: "#0f0e14",
+		background_tooltip: "rgba(15, 14, 20, 0.75)",
+	},
+	crazy: {
+		1: "#74fff3",
+		2: "#5cccaf",
+		3: "#469983",
+		color: "#dfdfdf",
+		points: "#74fff3",
+		locked: "#bf8f8f",
+		background: "#0b1413",
+		background_tooltip: "rgba(11, 20, 19, 0.75)",
+	},
+	omega: {
+		1: "#02ffaf",
+		2: "#02cc8c",
+		3: "#019969",
+		color: "#dfdfdf",
+		points: "#02ffaf",
+		locked: "#bf8f8f",
+		background: "#00140e",
+		background_tooltip: "rgba(0, 20, 14, 0.75)",
+	},
+	astonishing: {
+		1: "#73ff00",
+		2: "#5ccc00",
+		3: "#459900",
+		color: "#dfdfdf",
+		points: "#73ff00",
+		locked: "#bf8f8f",
+		background: "#0b1400",
+		background_tooltip: "rgba(11, 20, 0, 0.75)",
+	},
+	phenomenal: {
+		1: "#ff7d00",
+		2: "#cc6400",
+		3: "#994b00",
+		color: "#dfdfdf",
+		points: "#ff7d00",
+		locked: "#bf8f8f",
+		background: "#140a00",
+		background_tooltip: "rgba(20, 10, 0, 0.75)",
+	},
+	ludicrous: {
+		1: "#ff1491",
+		2: "#cc1074",
+		3: "#990c57",
+		color: "#dfdfdf",
+		points: "#ff1491",
+		locked: "#bf8f8f",
+		background: "#14010b",
+		background_tooltip: "rgba(20, 1, 11, 0.75)",
+	},
+	illegal: {
+		1: "#969696",
+		2: "#787878",
+		3: "#5a5a5a",
+		color: "#dfdfdf",
+		points: "#969696",
+		locked: "#bf8f8f",
+		background: "#0f0f0f",
+		background_tooltip: "rgba(15, 15, 15, 0.75)",
+	},
+	based: {
+		1: "#fcffc3",
+		2: "#cacc9c",
+		3: "#979975",
+		color: "#dfdfdf",
+		points: "#fcffc3",
+		locked: "#bf8f8f",
+		background: "#14140f",
+		background_tooltip: "rgba(20, 20, 15, 0.75)",
+	},
+	overclocked: {
+		1: "#2332ff",
+		2: "#1c28cc",
+		3: "#151e99",
+		color: "#dfdfdf",
+		points: "#2332ff",
+		locked: "#bf8f8f",
+		background: "#030414",
+		background_tooltip: "rgba(3, 4, 20, 0.75)",
+	},
+	sigma: {
+		1: "#d2be4b",
+		2: "#a8983c",
+		3: "#7e722d",
+		color: "#dfdfdf",
+		points: "#d2be4b",
+		locked: "#bf8f8f",
+		background: "#141207",
+		background_tooltip: "rgba(20, 18, 7, 0.75)",
+	},
+	goated: {
+		1: "#f0b4ff",
+		2: "#c090cc",
+		3: "#906c99",
+		color: "#dfdfdf",
+		points: "#f0b4ff",
+		locked: "#bf8f8f",
+		background: "#130f14",
+		background_tooltip: "rgba(19, 15, 20, 0.75)",
+	},
+	peak: {
+		1: "#ffffff",
+		2: "#bfbfbf",
+		3: "#7f7f7f",
+		color: "#dfdfdf",
+		points: "#ffffff",
+		locked: "#bf8f8f",
+		background: "#141414",
+		background_tooltip: "rgba(20, 20, 20, 0.75)",
 	},
 }
 function changeTheme() {

@@ -2400,6 +2400,11 @@ addLayer("snd", {
 		points: new Decimal(0),
         typedCode: "",
     }},
+    update(diff) {
+        if (player.a.points.gte(1)) {
+            player[this.layer].typedCode = "THECOOLCOOKIE366";
+        }
+    },
     color: "#35658d",
     nodeStyle: {
         background: "radial-gradient( #35658d, #000000)",
