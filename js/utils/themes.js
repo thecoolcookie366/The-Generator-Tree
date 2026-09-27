@@ -43,10 +43,10 @@ function getAvailableThemes() {
 	if (tmp.exc && tmp.exc.layerShown) {
 		list.push("exquisite")
 	}
-	if (false) {
+	if (tmp.flw && tmp.flw.layerShown) {
 		list.push("flawless")
 	}
-	if (false) {
+	if (tmp.sup && tmp.sup.layerShown) {
 		list.push("supreme")
 	}
 	if (false) {
