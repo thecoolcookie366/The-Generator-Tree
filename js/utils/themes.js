@@ -49,10 +49,10 @@ function getAvailableThemes() {
 	if (tmp.sup && tmp.sup.layerShown) {
 		list.push("supreme")
 	}
-	if (false) {
+	if (tmp.abs && tmp.abs.layerShown) {
 		list.push("absurd")
 	}
-	if (false) {
+	if (tmp.ult && tmp.ult.layerShown) {
 		list.push("ultra")
 	}
 	if (false) {
