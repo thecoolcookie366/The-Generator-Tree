@@ -51,7 +51,7 @@ addLayer("p", {
                'The text colors on a milestone mean what layer the milestone affects.<br>'+
                'No color means it is a general boost.'
     },
-    onPrestige(gain) {
+    /*onPrestige(gain) {
         if ((!hasMilestone('a',0) && !hasMilestone('snd',0))) {
             document.body.style.background = "linear-gradient( #ff0000, #000000, #0000ff)";
             document.body.style.transition = "none";
@@ -61,6 +61,7 @@ addLayer("p", {
             }, 250);
         }
     },
+    */
     milestones: {
         0: {
         requirementDescription: "<h3><span>Prestige I</span></h3>",
@@ -668,12 +669,14 @@ addLayer("a", {
             layerDataReset("snd");
             layerDataReset("per");
         }
+        /*
         document.body.style.background = "linear-gradient( #ff6200, #000000, #d400ff)";
         document.body.style.transition = "none";
         setTimeout(() => {
             document.body.style.transition = "background 1s ease";
             document.body.style.background = ""; 
         }, 500);
+        */
     },
     autoPrestige() {return true},
     gainMult() { 
@@ -5972,4 +5975,2731 @@ addLayer("cmg", {
         }],
         "blank"
     ]
+})
+
+addLayer("mas", {
+    symbol: "☉",
+    position: 3,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        cookies: new Decimal(0),
+        chocolateCookies: new Decimal(0),
+        darkChocolateCookies: new Decimal(0),
+        money: new Decimal(0),
+        conveyorCash: new Decimal(0),
+        dropperTimer: new Decimal(0),
+        starDust: new Decimal(0),
+        stars: new Decimal(0),
+        stardustThrown: new Decimal(0),
+        quantumShards: new Decimal(0),
+        quantumDiceCharges: 0,
+        quantumDiceTimer: 0,
+        quantumDiceLastRoll: 0,
+        quantumDiceEffect: new Decimal(1),
+        timeFlux: new Decimal(0),
+        timeSpeed: new Decimal(1),
+    }},
+    color: "#ffd700",
+    nodeStyle: {
+        background: "linear-gradient(#ffe259, #ffa751)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(212, 175, 55, 0.8)",
+        color: "rgb(0, 0, 0)",
+    },
+    resource: "power", 
+    row: "side",
+    tooltip() { 
+        return "Extra" 
+    },
+    update(diff) {
+        let currentSpeed = new Decimal(player.mas.timeSpeed || 1)
+        if (currentSpeed.gt(1)) {
+            let fluxInSeconds = new Decimal(player.mas.timeFlux || 0).mul(60)
+            let consumptionRate = currentSpeed.sub(1).div(currentSpeed)
+            let newFluxSeconds = fluxInSeconds.sub(consumptionRate.mul(diff))
+            
+            if (newFluxSeconds.lte(0)) {
+                player.mas.timeFlux = new Decimal(0)
+                player.mas.timeSpeed = new Decimal(1) 
+                currentSpeed = new Decimal(1)
+            }
+            else {
+                player.mas.timeFlux = newFluxSeconds.div(60) 
+            }
+        }
+        else if (currentSpeed.eq(1) && player.mas) {
+            let currentFlux = new Decimal(player.mas.timeFlux || 0)
+            let lvl92 = getBuyableAmount("mas", 92)
+            let rawBonusGen = lvl92.mul(0.00138889)
+            if (rawBonusGen.gt(1)) {
+                rawBonusGen = new Decimal(1).add(rawBonusGen.sub(1).sqrt())
+            }
+            let finalFluxGainRate = new Decimal(0.00277778).add(rawBonusGen)
+            let fluxGain = finalFluxGainRate.mul(diff)
+            let capUpgradeLevel = getBuyableAmount("mas", 91)
+            let dynamicCap = new Decimal(360).mul(new Decimal(2).pow(capUpgradeLevel))
+            player.mas.timeFlux = currentFlux.add(fluxGain).min(dynamicCap)
+        }
+        if (player.mas && player.mas.timeSpeed) {
+            player.devSpeed = new Decimal(player.mas.timeSpeed).toNumber()
+        }
+        if (player.mas.dropperTimer.gt(0)) {
+            player.mas.dropperTimer = player.mas.dropperTimer.sub(diff).max(0)
+        }
+        let baseDropperGen = new Decimal(0)
+        if (getBuyableAmount("mas", 51).gte(1)) {
+            baseDropperGen = baseDropperGen.add(0.01)
+        }
+        if (getBuyableAmount("mas", 52).gt(0)) {
+            baseDropperGen = baseDropperGen.add(buyableEffect("mas", 52))
+        }
+        if (getBuyableAmount("mas", 53).gt(0)) {
+            baseDropperGen = baseDropperGen.add(buyableEffect("mas", 53))
+        }
+        if (getBuyableAmount("mas", 54).gt(0)) {
+            baseDropperGen = baseDropperGen.add(buyableEffect("mas", 54))
+        }
+        if (getBuyableAmount("mas", 55).gt(0)) {
+            baseDropperGen = baseDropperGen.add(buyableEffect("mas", 55))
+        }
+        if (getBuyableAmount("mas", 61).gt(0) || getBuyableAmount("mas", 64).gt(0)) {
+            let redAmt = getBuyableAmount("mas", 61).add(getBuyableAmount("mas", 64))
+            let redEffect = new Decimal(1).add(redAmt.mul(0.15))
+            baseDropperGen = baseDropperGen.mul(redEffect)
+        }
+        if (getBuyableAmount("mas", 62).gt(0) || getBuyableAmount("mas", 64).gt(0)) {
+            let greenAmt = getBuyableAmount("mas", 62).add(getBuyableAmount("mas", 64))
+            let greenEffect = new Decimal(1).add(greenAmt.mul(0.15))
+            baseDropperGen = baseDropperGen.mul(greenEffect)
+        }
+        if (getBuyableAmount("mas", 63).gt(0) || getBuyableAmount("mas", 64).gt(0)) {
+            let blueAmt = getBuyableAmount("mas", 63).add(getBuyableAmount("mas", 64))
+            let blueEffect = new Decimal(1).add(blueAmt.mul(0.15))
+            baseDropperGen = baseDropperGen.mul(blueEffect)
+        }
+        if (getBuyableAmount("mas", 64).gt(0)) {
+            baseDropperGen = baseDropperGen.mul(buyableEffect("mas", 64))
+        }
+        if (getBuyableAmount("mas", 71).gt(0)) {
+            baseDropperGen = baseDropperGen.mul(buyableEffect("mas", 71))
+        }
+        if (getBuyableAmount("mas", 69).gte(1) && player.mas.conveyorCash.gt(0)) {
+            player.mas.money = player.mas.money.add(player.mas.conveyorCash)
+            player.mas.conveyorCash = new Decimal(0)
+        }
+        if (getBuyableAmount("mas", 75).gte(1)) {
+            if (player.mas.money.gte("1e90")) {
+                let resetStardustGain = player.mas.money.div("1e90").floor()
+                if (getBuyableAmount("mas", 72).gt(0)) {
+                    resetStardustGain = resetStardustGain.mul(buyableEffect("mas", 72)).floor()
+                }
+                let passiveStardustRate = resetStardustGain.mul(0.001)
+                player.mas.starDust = player.mas.starDust.add(passiveStardustRate.mul(diff))
+            }
+        }
+        if (player.mas.quantumDiceTimer > 0) {
+            player.mas.quantumDiceTimer = Math.max(0, player.mas.quantumDiceTimer - diff)
+            if (player.mas.quantumDiceTimer <= 0) {
+                player.mas.quantumDiceEffect = new Decimal(1)
+            }
+        }
+        let activeDiceEffect = new Decimal(player.mas.quantumDiceEffect || 1)
+        if (player.mas.quantumDiceTimer > 0 && !activeDiceEffect.eq(1)) {
+            baseDropperGen = baseDropperGen.mul(activeDiceEffect)
+        }
+        player.mas.conveyorCash = player.mas.conveyorCash.add(baseDropperGen.mul(diff))
+        if (hasUpgrade("mas", 11)) {
+            let gain = (hasUpgrade("mas", 62) || hasUpgrade("mas", 103)) ? new Decimal(1) : new Decimal(0.01)
+            if (hasUpgrade("mas", 21)) gain = gain.mul(2)
+            if (hasUpgrade("mas", 23)) gain = gain.mul(3)
+            if (hasUpgrade("mas", 31)) gain = gain.mul(5)
+            if (hasUpgrade("mas", 33)) gain = gain.mul(3.33333333)
+            if (hasUpgrade("mas", 51)) gain = gain.mul(15)
+            if (hasUpgrade("mas", 61)) gain = gain.pow(2)
+            if (hasUpgrade("mas", 63)) gain = gain.pow(3)
+            if (hasUpgrade("mas", 71)) gain = gain.mul(upgradeEffect("mas", 71))
+            if (hasUpgrade("mas", 73)) gain = gain.mul(upgradeEffect("mas", 73))
+            if (hasUpgrade("mas", 101)) gain = gain.pow(0.25)
+            if (hasUpgrade("mas", 101) && getBuyableAmount("mas", 41).gt(0)) {
+                gain = gain.pow(buyableEffect("mas", 41))
+            }
+            if (hasUpgrade("mas", 101) && getBuyableAmount("mas", 42).gt(0)) {
+                gain = gain.pow(buyableEffect("mas", 42))
+            }
+            if (hasUpgrade("mas", 101) && getBuyableAmount("mas", 43).gt(0)) {
+                gain = gain.pow(buyableEffect("mas", 43))
+            }
+            if (hasUpgrade("mas", 113)) gain = gain.mul("1e171320")
+            if (hasUpgrade("mas", 111)) gain = gain.pow(upgradeEffect("mas", 111))
+            if (hasUpgrade("mas", 121)) gain = gain.pow(upgradeEffect("mas", 121))
+            player.mas.cookies = player.mas.cookies.add(gain.mul(diff))
+        }
+        if (hasUpgrade("mas", 91)) {
+            for (let id = 11; id <= 81; id++) {
+                if (tmp.mas.upgrades[id] && tmp.mas.upgrades[id].unlocked && !hasUpgrade("mas", id)) {
+                    let cost = tmp.mas.upgrades[id].cost
+                    let currency = tmp.mas.upgrades[id].currencyInternalName || "cookies"
+                    
+                    if (currency === "cookies" && player.mas.cookies.gte(cost)) {
+                        player.mas.cookies = player.mas.cookies.sub(cost)
+                        player.mas.upgrades.push(id)
+                        if (tmp.mas.upgrades[id].onPurchase) tmp.mas.upgrades[id].onPurchase()
+                    } else if (currency === "chocolateCookies" && player.mas.chocolateCookies.gte(cost)) {
+                        player.mas.chocolateCookies = player.mas.chocolateCookies.sub(cost)
+                        player.mas.upgrades.push(id)
+                        if (tmp.mas.upgrades[id].onPurchase) tmp.mas.upgrades[id].onPurchase()
+                    }
+                }
+                if (hasUpgrade("mas", 121)) {
+                    if (player.mas.chocolateCookies.gte("1e37")) {
+                        let resetGain = player.mas.chocolateCookies.div("1e37").log(2).floor().add(1)
+                        if (hasUpgrade("mas", 112)) resetGain = resetGain.mul(upgradeEffect("mas", 112))
+                        
+                        let passiveDarkGain = resetGain.mul(0.001)
+                        player.mas.darkChocolateCookies = player.mas.darkChocolateCookies.add(passiveDarkGain.mul(diff))
+                    }
+                }
+            }
+            if (player.mas.cookies.gte(1000)) {
+                let resetGain = player.mas.cookies.div(1000).floor()
+                if (hasUpgrade("mas", 72)) resetGain = resetGain.mul(upgradeEffect("mas", 72))
+                let passiveGain = resetGain.mul(0.001)
+                player.mas.chocolateCookies = player.mas.chocolateCookies.add(passiveGain.mul(diff))
+            }
+        }
+    },
+    buyMaxTycoon() {
+        if (getBuyableAmount(this.layer, 73).lt(1)) return;
+        let ids = [52, 53, 54, 55]; 
+        for (let id of ids) {
+            let buyable = layers[this.layer].buyables[id];
+            if (!buyable || !buyable.unlocked()) continue;
+            while (buyable.canAfford() && getBuyableAmount(this.layer, id).lt(40)) {
+                buyable.buy();
+            }
+        }
+    },
+    buyMaxUpgraders() {
+        if (getBuyableAmount(this.layer, 74).lt(1)) return; 
+        let ids = [61, 62, 63, 64]; 
+        for (let id of ids) {
+            let buyable = layers[this.layer].buyables[id];
+            if (!buyable || !buyable.unlocked()) continue;
+            while (buyable.canAfford() && getBuyableAmount(this.layer, id).lt(255)) {
+                buyable.buy();
+            }
+        }
+    },
+    tabFormat: [
+        "subtabs", 
+        "blank",
+        ["row", [
+            ["column", [
+                ["microtabs", "stuff"]
+            ]]
+        ]]
+    ],
+    microtabs: {
+        stuff: {
+            "Main": {
+                buttonStyle: {
+                    "background-color": "#181a1b",
+                    "color": "#e8e6e3",
+                    "border": "2px solid #535a5c",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", function() { 
+                        return "You have <h2 style='color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.4)'>" + formatWhole(player.mas.points) + "</h2> " + tmp.mas.resource + "."
+                    }],
+                    "blank",
+                    ["display-text", function() { 
+                        let completedMilestones = Object.keys(tmp.mas.milestones).filter(id => hasMilestone("mas", id)).length
+                        let romanNumerals = ["0", "I", "II", "III", "IV", "V", "VI", "VII"]
+                        let romanLevel = romanNumerals[completedMilestones] || "0"
+                        let colorfulRoman = "<span style='background: linear-gradient(90deg, #ffe259, #ff5722); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 0px 5px rgba(255,167,81,0.6)); font-weight: bold'>" + romanLevel + "</span>"
+                        return "<h2>You are at Mastery Level " + colorfulRoman + "</h2>"
+                    }],
+                    "blank",
+                    ["buyables", [1,2,3]],
+                ]
+            },
+            "Currencies": {
+                buttonStyle: {
+                    "background-color": "#0d2613",
+                    "color": "#a9dfbf",
+                    "border": "2px solid #27ae60",
+                    "font-weight": "bold"
+                },
+                unlocked() { 
+                    return hasMilestone("mas", 0) 
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2><span>Full list of currencies :)</span></h2>"],
+                    "blank",
+                    ["display-text", "<h3><span style='color: #a0a0a0;'>--- Main ---</span></h3>"],
+                    "blank",
+                    ["display-text", function() { 
+                        return "Money: <span style='color: #ffffff; font-weight: bold;'>" + format(player.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.plv && tmp.plv.layerShown)) return ""
+                        return "Player Level: <span style='color: #c388e1; font-weight: bold;'>" + formatWhole(player.plv.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        return "Power: <span style='color: #ffd700; font-weight: bold;'>" + formatWhole(player.mas.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        let completedMilestones = Object.keys(tmp.mas.milestones).filter(id => hasMilestone("mas", id)).length
+                        let romanNumerals = ["0", "I", "II", "III", "IV", "V", "VI", "VII"]
+                        let romanLevel = romanNumerals[completedMilestones] || "0"
+                        
+                        return "Mastery Level: <span style='color: #ff5722; font-weight: bold;'>" + romanLevel + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!(tmp.cmg && tmp.cmg.layerShown)) return ""
+                        return "CMG Ores: <span style='color: #89e188; font-weight: bold;'>" + formatWhole(player.cmg.points) + "</span><br><small style='color: #666666'>might be inaccurate</small>"
+                    }],
+                    "blank",
+                    ["display-text", function() {
+                        if (!hasMilestone("mas", 1)) return ""
+                        return "Cookies: <span style='color: #ffb366; font-weight: bold;'>" + format(player.mas.cookies) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!hasUpgrade("mas", 42)) return ""
+                        return "Chocolate Cookies: <span style='color: #d27d2d; font-weight: bold;'>" + formatWhole(player.mas.chocolateCookies || 0) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!hasUpgrade("mas", 81)) return ""
+                        return "Dark Chocolate Cookies: <span style='color: #4a2711; font-weight: bold;'>" + formatWhole(player.mas.darkChocolateCookies || 0) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 2)) return ""
+                        return "Cash: <span style='color: #85bb65; font-weight: bold;'>$" + format(player.mas.money || 0) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 2)) return ""
+                        return "Cash to claim: <span style='color: #00ff00; font-weight: bold;'>$" + format(player.mas.conveyorCash || 0) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 3)) return ""
+                        return "Stardust: <span style='color: #9bf6ff; font-weight: bold; text-shadow: 0px 0px 4px #00b4d8;'>" + formatWhole(player.mas.starDust || 0) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 3)) return ""
+                        return "Stars: <span style='color: #ffd166; font-weight: bold; text-shadow: 0px 0px 4px #f77f00;'>" + formatWhole(player.mas.stars || 0) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 4)) return ""
+                        return "Quantum Shards: <span style='color: #ffb7ff; font-weight: bold; text-shadow: 0px 0px 4px #d800dc;'>" + formatWhole(player.mas.quantumShards || 0) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 4)) return ""
+                        return "Rolls: <span style='color: #ff4da6; font-weight: bold; text-shadow: 0px 0px 4px #ff00ff;'>" + formatWhole(player.mas.quantumDiceCharges || 0) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", "<h3><span style='color: #a0a0a0;'>--- Resets ---</span></h3>"],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!(tmp.p && tmp.p.layerShown)) return ""
+                        return "Prestige <span style='color: #545454; font-weight: bold;'>" + formatWhole(player.p.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.a && tmp.a.layerShown)) return ""
+                        return "Ascension <span style='color: #9a9797; font-weight: bold;'>" + formatWhole(player.a.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.univ && tmp.univ.layerShown)) return ""
+                        return "Universe <span style='color: #d6d5d5; font-weight: bold;'>" + formatWhole(player.univ.points) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", "<h3><span style='color: #a0a0a0;'>--- Generators ---</span></h3>"],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!(tmp.terri && tmp.terri.layerShown)) return ""
+                        return "Terrible Generators: <span style='color: #ff0000; font-weight: bold;'>" + formatWhole(player.terri.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.awf && tmp.awf.layerShown)) return ""
+                        return "Awful Generators: <span style='color: #d42a00; font-weight: bold;'>" + formatWhole(player.awf.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.med && tmp.med.layerShown)) return ""
+                        return "Mediocre Generators: <span style='color: #a95600; font-weight: bold;'>" + formatWhole(player.med.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.alr && tmp.alr.layerShown)) return ""
+                        return "Alright Generators: <span style='color: #7e8100; font-weight: bold;'>" + formatWhole(player.alr.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.dec && tmp.dec.layerShown)) return ""
+                        return "Decent Generators: <span style='color: #53ac00; font-weight: bold;'>" + formatWhole(player.dec.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.good && tmp.good.layerShown)) return ""
+                        return "Good Generators: <span style='color: #28d700; font-weight: bold;'>" + formatWhole(player.good.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.per && tmp.per.layerShown)) return ""
+                        return "Perfect Generators: <span style='color: #00ff00; font-weight: bold;'>" + formatWhole(player.per.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.exc && tmp.exc.layerShown)) return ""
+                        return "Exquisite Generators: <span style='color: #00aa55; font-weight: bold;'>" + formatWhole(player.exc.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.flw && tmp.flw.layerShown)) return ""
+                        return "Flawless Generators: <span style='color: #0055aa; font-weight: bold;'>" + formatWhole(player.flw.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.sup && tmp.sup.layerShown)) return ""
+                        return "Supreme Generators: <span style='color: #0000ff; font-weight: bold;'>" + formatWhole(player.sup.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.abs && tmp.abs.layerShown)) return ""
+                        return "Absurd Generators: <span style='color: #5500ff; font-weight: bold;'>" + formatWhole(player.abs.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.ult && tmp.ult.layerShown)) return ""
+                        return "Ultra Generators: <span style='color: #aa00ff; font-weight: bold;'>" + formatWhole(player.ult.points) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", "<h3><span style='color: #a0a0a0;'>--- Side ---</span></h3>"],
+                    "blank",
+                    ["display-text", function() { 
+                        if (!(tmp.dia && tmp.dia.layerShown)) return ""
+                        return "Diamonds: <span style='color: #00ffff; font-weight: bold;'>" + formatWhole(player.dia.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.xp && tmp.xp.layerShown)) return ""
+                        return "XP: <span style='color: #0000bb; font-weight: bold;'>" + formatWhole(player.xp.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.lv && tmp.lv.layerShown)) return ""
+                        return "Level: <span style='color: #bb0000; font-weight: bold;'>" + formatWhole(player.lv.points) + "</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.pri && tmp.pri.layerShown)) return ""
+                        return "Primary: <span style='color: #455666; font-weight: bold;'>" + formatWhole(player.pri.points) + "/5</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.snd && tmp.snd.layerShown)) return ""
+                        return "Secondary: <span style='color: #35658d; font-weight: bold;'>" + formatWhole(player.snd.points) + "/1</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.ter && tmp.ter.layerShown)) return ""
+                        return "Tertiary: <span style='color: #ec5f30; font-weight: bold;'>" + formatWhole(player.ter.points) + "/∞</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.qua && tmp.qua.layerShown)) return ""
+                        return "Quaternary: <span style='color: #f5ac22; font-weight: bold;'>" + formatWhole(player.qua.points) + "/∞</span>"
+                    }],
+                    ["display-text", function() { 
+                        if (!(tmp.rad && tmp.rad.layerShown)) return ""
+                        return "Radioactivity: <span style='color: #39ff14; font-weight: bold;'>" + formatWhole(player.rad.points) + "%" + "</span>"
+                    }],,
+                    "blank"
+                ]
+            },
+            "Upgrade Tree (1/3)": {
+                buttonStyle: {
+                    "background-color": "#4a1c00",
+                    "color": "#ffffff",
+                    "border": "2px solid #e65100",
+                    "font-weight": "bold"
+                },
+                unlocked() { 
+                    return hasMilestone("mas", 1) 
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>The <i>Cookie</i> Tree</h2>"],
+                    "blank",
+                    ["display-text", function() { 
+                        return "You have <h3 style='color: #ffb366; display: inline;'>" + format(player.mas.cookies) + "</h3> cookies."
+                    }],
+                    ["display-text", function() {
+                        if (!hasUpgrade("mas", 11)) return "<span style='color: #a0a0a0;'>0 cookies/s</span>"
+                        let gain = (hasUpgrade("mas", 62) || hasUpgrade("mas", 103)) ? new Decimal(1) : new Decimal(0.01)
+                        if (hasUpgrade("mas", 21)) gain = gain.mul(2)
+                        if (hasUpgrade("mas", 23)) gain = gain.mul(3)
+                        if (hasUpgrade("mas", 31)) gain = gain.mul(5)
+                        if (hasUpgrade("mas", 33)) gain = gain.mul(3.33333333)
+                        if (hasUpgrade("mas", 51)) gain = gain.mul(15)
+                        if (hasUpgrade("mas", 61)) gain = gain.pow(2)
+                        if (hasUpgrade("mas", 63)) gain = gain.pow(3)
+                        if (hasUpgrade("mas", 71)) gain = gain.mul(upgradeEffect("mas", 71))
+                        if (hasUpgrade("mas", 73)) gain = gain.mul(upgradeEffect("mas", 73))
+                        if (hasUpgrade("mas", 101)) gain = gain.pow(0.25)
+                        if (hasUpgrade("mas", 101) && getBuyableAmount("mas", 41).gt(0)) {
+                            gain = gain.pow(buyableEffect("mas", 41))
+                        }
+                        if (hasUpgrade("mas", 101) && getBuyableAmount("mas", 42).gt(0)) {
+                            gain = gain.pow(buyableEffect("mas", 42))
+                        }
+                        if (hasUpgrade("mas", 101) && getBuyableAmount("mas", 43).gt(0)) {
+                            gain = gain.pow(buyableEffect("mas", 43))
+                        }
+                        if (hasUpgrade("mas", 113)) gain = gain.mul("1e171320")
+                        if (hasUpgrade("mas", 111)) gain = gain.pow(upgradeEffect("mas", 111))
+                        if (hasUpgrade("mas", 121)) gain = gain.pow(upgradeEffect("mas", 121))
+                        return "<span style='color: #666666; font-size: 0.9em;'>" + format(gain) + " cookies/s</span>"
+                    }],
+                    "blank",
+                    ["upgrades", [1, 2, 3, 4]]
+                ]
+            },
+            "Upgrade Tree (2/3)": {
+                unlocked() { 
+                    return hasMilestone("mas", 1) && hasUpgrade("mas", 42)
+                },
+                buttonStyle: {
+                    "background-color": "#4a0000",
+                    "color": "#ffcccc",
+                    "border": "2px solid #cc0000",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>The <i>Chocolate Cookie</i> Tree</h2>"],
+                    "blank",
+                    ["display-text", function() { 
+                        return "You have <h3 style='color: #ffb366; display: inline;'>" + format(player.mas.cookies) + "</h3> cookies."
+                    }],
+                    ["display-text", function() { 
+                        return "You have <h3 style='color: #d27d2d; display: inline;'>" + format(player.mas.chocolateCookies || 0) + "</h3> chocolate cookies."
+                    }],
+                    "blank",
+                    ["clickables", [1]],
+                    ["upgrades", [5, 6, 7, 8]]
+                ]
+            },
+            "Upgrade Tree (3/3)": {
+                unlocked() { 
+                    return hasMilestone("mas", 1) && hasUpgrade("mas", 81)
+                },
+                buttonStyle: {
+                    "background-color": "#1a0033",
+                    "color": "#f0dbff",
+                    "border": "2px solid #8a2be2",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>The <i>Dark Chocolate Cookie</i> Tree</h2>"],
+                    "blank",
+                    ["display-text", function() { 
+                        return "You have <h3 style='color: #ffb366; display: inline;'>" + format(player.mas.cookies) + "</h3> cookies."
+                    }],
+                    ["display-text", function() { 
+                        return "You have <h3 style='color: #d27d2d; display: inline;'>" + format(player.mas.chocolateCookies || 0) + "</h3> chocolate cookies."
+                    }],
+                    ["display-text", function() { 
+                        return "You have <h3 style='color: #4a2711; display: inline;'>" + format(player.mas.darkChocolateCookies || 0) + "</h3> dark chocolate cookies."
+                    }],
+                    "blank",
+                    ["clickables", [2]],
+                    "blank",
+                    ["upgrades", [9, 10, 11, 12]],
+                    "blank",
+                    ["buyables", [4]],
+                    "blank",
+                ]
+            },
+            "Tycoon": {
+                unlocked() { return true }, 
+                buttonStyle: {
+                    "background-color": "#060011",
+                    "color": "#ffd700",
+                    "border": "2px solid #ffd700",
+                    "font-weight": "bold",
+                    "text-shadow": "0px 0px 4px #b39200"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>The <span style='color: #ffd700; text-shadow: 0px 0px 6px #b39200;'>Tycoon</span></h2>"],
+                    "blank",
+                    ["display-text", function() {
+                        return "Cash: <span style='color: #85bb65; font-weight: bold; font-size: 1.4em;'>$" + format(player.mas.money) + "</span>"
+                    }],
+                    "blank",
+                    ["display-text", function() {
+                        return "<div style='background-color: #111; border: 2px solid #333; padding: 15px; border-radius: 6px; width: 300px; margin: 0 auto;'>" +
+                               "Cash ready to claim: <br><span style='color: #00ff00; font-weight: bold; font-size: 1.2em;'>$" + format(player.mas.conveyorCash) + "</span>" +
+                               "</div>"
+                    }],
+                    "blank",
+                    ["clickables", [3]],
+                    "blank",
+                    ["display-text", "<h3>Droppers & Upgraders</h3>"],
+                    "blank",
+                    ["display-text", function() {
+                        if (getBuyableAmount("mas", 73).lt(1)) return ""
+                        return "<button onclick='layers.mas.buyMaxTycoon()' style='background-color: #ffd700; color: #000; border: 2px solid #b39200; font-weight: bold; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-family: inherit;'>Buy Max Droppers is on!</button>"
+                    }],
+                    ["display-text", function() {
+                        if (getBuyableAmount("mas", 74).lt(1)) return ""
+                        return "<button onclick='layers.mas.buyMaxUpgraders()' style='background-color: #ff3333; color: #fff; border: 2px solid #b30000; font-weight: bold; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-family: inherit; box-shadow: 0px 0px 6px rgba(255,51,51,0.2);'>Buy Max Upgraders is on!</button>"
+                    }],
+                    ["buyables", [5,6]],
+                ]
+            },
+            "Space": {
+                unlocked() { return hasMilestone("mas", 3) },
+                buttonStyle: {
+                    "background-color": "#03071e",
+                    "color": "#9bf6ff",
+                    "border": "2px solid #00b4d8",
+                    "font-weight": "bold",
+                    "text-shadow": "0px 0px 5px #9bf6ff"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>The <span style='color: #9bf6ff; text-shadow: 0px 0px 6px #00b4d8;'>Space</span> Center</h2>"],
+                    "blank",
+                    ["display-text", function() {
+                        return "You have <h3 style='color: #9bf6ff; display: inline;'>" + formatWhole(player.mas.starDust || 0) + "</h3> stardust."
+                    }],
+                    ["display-text", function() {
+                        return "You have <h3 style='color: #ffd166; text-shadow: 0px 0px 4px #f77f00; display: inline;'>" + formatWhole(player.mas.stars || 0) + "</h3> stars."
+                    }],
+                    "blank",
+                    ["display-text", "Tired of a boring tycoon? Reset it and get stardust!"],
+                    "blank",
+                    ["clickables",[4]],
+                    "blank",
+                    ["buyables",[7]],
+                    "blank",
+                ]
+            },
+            "Quantum": {
+                unlocked() { return hasMilestone("mas", 4) },
+                buttonStyle: {
+                    "background-color": "#1c0024",
+                    "color": "#ffb7ff",
+                    "border": "2px solid #d800dc",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>Quantum <span style='color: #ff00ff; text-shadow: 0px 0px 6px #ff00ff;'>Glitching</span></h2>"],
+                    "blank",
+                    ["display-text", function() {
+                        return "You have <h3 style='color: #ff00ff; text-shadow: 0px 0px 4px #ff00ff; display: inline;'>" + formatWhole(player.mas.quantumShards || 0) + "</h3> Quantum Shards."
+                    }],
+                    "blank",
+                    ["display-text", "Even space isn't big enough. Using special shards, the space can be enlarged!"],
+                    "blank",
+                    ["clickables", [5]],
+                    "blank",
+                ]
+            },
+            "Time Travel": {
+                unlocked() { return hasMilestone("mas", 5) },
+                buttonStyle: {
+                    "background-color": "#241400",
+                    "color": "#ffd166",
+                    "border": "2px solid #f77f00",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2><span style='color: #f77f00; text-shadow: 0px 0px 6px #f77f00;'>Time</span> Travel</h2>"],
+                    ["display-text", function() {
+                        let flux = player.mas.timeFlux || new Decimal(0)
+                        let totalSeconds = Math.floor(flux.toNumber() * 60)
+                        
+                        let hours = Math.floor(totalSeconds / 3600)
+                        let mins = Math.floor((totalSeconds % 3600) / 60)
+                        let secs = Math.floor(totalSeconds % 60)
+                        
+                        return "You have stored <h3 style='color: #f77f00; text-shadow: 0px 0px 6px #f77f00; display: inline;'>" + 
+                                hours + "h " + mins + "m " + secs + "s</h3> of Time Flux."
+                    }],
+                    ["display-text", function() {
+                        let amt = getBuyableAmount("mas", 91)
+                        let dynamicCapMinutes = new Decimal(360).mul(new Decimal(2).pow(amt))
+                        let flux = player.mas.timeFlux || new Decimal(0)
+                        if (flux.gte(dynamicCapMinutes)) return "<span style='color: #ff3333; font-weight: bold;'>You have reached the cap!</span>" 
+                        let fluxNeeded = dynamicCapMinutes.sub(flux)
+                        if (fluxNeeded.gt("1e10")) {
+                            return "<span style='color: #90e0ef;'>Will reach the cap in: </span><b style='color: #ffd166;'>A very long time</b>"
+                        }
+                        let realSecondsLeft = fluxNeeded.toNumber() * 6 * 60
+                        let capDate = new Date(Date.now() + realSecondsLeft * 1000)
+                        if (isNaN(capDate.getTime())) {
+                            return "<span style='color: #90e0ef;'>Will reach the cap in: </span><b style='color: #ffd166;'>A very long time</b>"
+                        }
+                        let options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
+                        let formattedDate = capDate.toLocaleDateString('en-US', options)
+                        return "<span style='color: #90e0ef;'>Will reach the cap in: </span><b style='color: #ffd166;'>" + formattedDate + "</b>"
+                    }],
+                    "blank",
+                    ["display-text", function() {
+                        let speed = new Decimal(player.mas.timeSpeed || 1)
+                        let spending = speed.gt(1) ? speed.sub(1) : new Decimal(0)
+                        let capLevel = getBuyableAmount("mas", 91)
+                        let currentCapHours = new Decimal(6).mul(new Decimal(2).pow(capLevel))
+                        let lvl92 = getBuyableAmount("mas", 92)
+                        let rawBonusGen = lvl92.mul(5)
+                        let actualBonus = rawBonusGen
+                        if (rawBonusGen.gt(60)) {
+                            actualBonus = new Decimal(60).add(new Decimal(rawBonusGen).sub(60).sqrt())
+                        }
+                        let finalGenSpeed = new Decimal(10).add(actualBonus)
+                        
+                        return "<div style='background-color: #000814; border: 1px solid #0077b6; border-radius: 6px; padding: 10px; width: 450px; margin: 0 auto; text-align: left; font-family: monospace; font-size: 13px; line-height: 1.6;'>" +
+                               "• <span style='color: #90e0ef;'>Storage Cap      :</span> <b style='color: #ff3333;'>" + formatWhole(currentCapHours) + "h 0m 0s</b><br>" +
+                               "• <span style='color: #90e0ef;'>Generation Speed :</span> <b style='color: #00f5d4;'> " + format(finalGenSpeed) + "m/hour</b><br>" +
+                               "• <span style='color: #90e0ef;'>Using            :</span> <b style='color: #f77f00;'>" + formatWhole(spending) + "s/second</b>" +
+                               "</div>"
+                    }],
+                    "blank",
+                    ["display-text", "Just like The Cookie Tree. Wait no. <i>Better</i> than The Cookie Tree."],
+                    "blank",
+                    ["display-text", "<h3>Speed Controls</h3>"],
+                    "blank",
+                    ["clickables", [6,7,8]],
+                    "blank",
+                    ["buyables", [9]],
+                    "blank",
+                ]
+            },
+            "Hall of Fame": {
+                unlocked() { 
+                    return hasMilestone("mas", 6) 
+                },
+                buttonStyle: {
+                    "background-color": "#0a0a0a",
+                    "color": "#e5e5e5",
+                    "border": "2px solid #b0c4de",
+                    "font-weight": "bold",
+                    "text-shadow": "0px 0px 5px #ffffff"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2>The <span style='color: #ffffff; text-shadow: 0px 0px 8px #b0c4de;'>Hall of Fame</span></h2>"],
+                    "blank",
+                    ["display-text", "There is literally nothing left for you to do. If you see this, give cookie a DM and he will put you on here!<br>Leave your own message, if you want.<br><br><br><br><h1>People who were here:</h1><br><h3>- Nobody yet!<br>- ...</h3>"],
+                    "blank",
+                ]
+            },
+            "Milestones": {
+                buttonStyle() {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #ff0000, #000000, #0000ff)",
+                        "color": "#ffffff",
+                        "border": "2px solid #ffffff",
+                        "font-weight": "bold",
+                        "text-shadow": "0px 0px 4px #000000"
+                    }
+                },
+                content: [
+                    "blank",
+                    "milestones"
+                ]
+            }
+        }
+    },
+    componentStyles: {
+        "main-display"() { return { display: "none" } },
+        "resource-display"() { return { display: "none" } }
+    },
+    milestones: {
+        0: {
+            requirementDescription: "5 power",
+            effectDescription: "Mastery Level increases to I. Unlock the Currencies tab.",
+            done() { return player[this.layer].points.gte(5) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #a77044, #d49a6a, #8a5229, #d49a6a, #a77044)",
+                        "color": "#000000",
+                        "font-weight": "bold"
+                    }
+                }
+            }
+        },
+        1: {
+            requirementDescription: "14 power",
+            effectDescription: "Mastery Level increases to II. Unlock the Upgrade Tree tab.",
+            done() { return player[this.layer].points.gte(14) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #bcc6cc, #e2e8f0, #9aa2a6, #e2e8f0, #bcc6cc)",
+                        "color": "#000000",
+                        "font-weight": "bold"
+                    }
+                }
+            }
+        },
+        2: {
+            requirementDescription: "19 power",
+            effectDescription: "Mastery Level increases to III. Unlock the Tycoon tab.",
+            done() { return player[this.layer].points.gte(19) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #d4af37, #f3e5ab, #aa8416, #f3e5ab, #d4af37)",
+                        "color": "#000000",
+                        "font-weight": "bold"
+                    }
+                }
+            }
+        },
+        3: {
+            requirementDescription: "28 power",
+            effectDescription: "Mastery Level increases to IV. Unlock the Space tab.",
+            done() { return player[this.layer].points.gte(28) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #001fff, #00bfff, #00ffff, #00bfff, #001fff)",
+                        "color": "#000000",
+                        "font-weight": "bold"
+                    }
+                }
+            }
+        },
+        4: {
+            requirementDescription: "33 power",
+            effectDescription: "Mastery Level increases to V. Unlock the Quantum tab.",
+            done() { return player[this.layer].points.gte(33) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #00a53c, #50c878, #a3f7bf, #50c878, #00a53c)",
+                        "color": "#000000",
+                        "font-weight": "bold"
+                    }
+                }
+            }
+        },
+        5: {
+            requirementDescription: "42 power",
+            effectDescription: "Mastery Level increases to VI. Unlock the Time Travel tab.",
+            done() { return player[this.layer].points.gte(42) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #b3003b, #e0115f, #ff7c9c, #e0115f, #b3003b)",
+                        "color": "#000000",
+                        "font-weight": "bold"
+                    }
+                }
+            }
+        },
+        6: {
+            requirementDescription: "47 power",
+            effectDescription: "Mastery Level increases to VII. Unlock the Hall of Fame tab.",
+            done() { return player[this.layer].points.gte(47) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #ff1493, #ff4500, #ffd700, #32cd32, #00bfff, #4b0082, #ee82ee)",
+                        "color": "#ffffff",
+                        "font-weight": "bold",
+                        "text-shadow": "0px 0px 4px #000000"
+                    }
+                }
+            }
+        }
+    },
+    buyables: {
+        11: {
+            title: "Ascension Power", 
+            purchaseLimit: 7, 
+            cost(x) { 
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).add(amt) 
+            },
+            display() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(this.purchaseLimit)
+                return "Using ascension, it somehow gives you... power?\n" +
+                        "(doesn't spend ascension)\n\n" +
+                        (maxReached ? "max!!\n" : "you need to be in Ascension " + formatWhole(this.cost()) + "+\n") +
+                        "level: " + formatWhole(amt) + " / " + this.purchaseLimit
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.a.points.gte(this.cost()) && amt.lt(this.purchaseLimit)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+                player.mas.points = player.mas.points.add(1)
+            },
+            unlocked() { 
+                return true 
+            },
+        },
+        12: {
+            title: "Universe Power", 
+            purchaseLimit: 10, 
+            cost(x) { 
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).add(amt) 
+            },
+            display() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(this.purchaseLimit)
+                return "The energy contained in universes.. make power?\n" +
+                        "(doesn't spend universes)\n\n" +
+                        (maxReached ? "max!!\n" : "you need to be in Universe " + formatWhole(this.cost()) + "+\n") +
+                        "level: " + formatWhole(amt) + " / " + this.purchaseLimit
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.univ.points.gte(this.cost()) && amt.lt(this.purchaseLimit)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+                player.mas.points = player.mas.points.add(1)
+            },
+            unlocked() { 
+                return true 
+            },
+        },
+        21: {
+            title: "Mining Power", 
+            purchaseLimit: 12, 
+            cost(x) { 
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).mul(Decimal.pow(25, amt))
+            },
+            display() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(this.purchaseLimit)
+                return "Maybe AFKing wasn't so useless after all! Those powers give.. power! What a coincidence.\n" +
+                        "(doesn't spend CMG Ores)\n\n" +
+                        (maxReached ? "max!!\n" : "you need to have " + formatWhole(this.cost()) + " CMG Ores\n") +
+                        "level: " + formatWhole(amt) + " / " + this.purchaseLimit
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.cmg.points.gte(this.cost()) && amt.lt(this.purchaseLimit)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+                player.mas.points = player.mas.points.add(1)
+            },
+            unlocked() { 
+                return true 
+            },
+        },
+        22: {
+            title: "Radioactive Power", 
+            purchaseLimit: 8, 
+            cost(x) { 
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(100).add(amt.mul(85))
+            },
+            display() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(this.purchaseLimit)
+                return "This power doesn't feel so good... It's radioactive...\n" +
+                        "(doesn't spend Radioactivity)\n\n" +
+                        (maxReached ? "max!!\n" : "you need to have " + formatWhole(this.cost()) + "% Radioactivity\n") +
+                        "level: " + formatWhole(amt) + " / " + this.purchaseLimit
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.rad.points.gte(this.cost()) && amt.lt(this.purchaseLimit)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+                player.mas.points = player.mas.points.add(1)
+            },
+            unlocked() { 
+                return true 
+            },
+        },
+        31: {
+            title: "Meta Power",
+            purchaseLimit: 6, 
+            cost(x) { 
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(5).add(amt.mul(5))
+            },
+            display() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(this.purchaseLimit)
+                return "Power gives power. How.\n" +
+                        "(doesn't spend power)\n\n" +
+                        (maxReached ? "max!!\n" : "you need to have " + formatWhole(this.cost()) + " power\n") +
+                        "level: " + formatWhole(amt) + " / " + this.purchaseLimit
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.points.gte(this.cost()) && amt.lt(this.purchaseLimit)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+                player.mas.points = player.mas.points.add(1)
+            },
+            unlocked() { 
+                return true 
+            },
+        },
+        32: {
+            title: "Meta++ Power", 
+            purchaseLimit: 4, 
+            cost(x) { 
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(3).add(amt)
+            },
+            display() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(this.purchaseLimit)
+                let completedMilestones = Object.keys(tmp.mas.milestones).filter(id => hasMilestone("mas", id)).length
+                
+                return "This is even more meta. The mastery levels not only unlock tabs, but give power!\n\n" +
+                        (maxReached ? "max!!\n" : "you need " + formatWhole(this.cost()) + " Mastery Levels (You have " + completedMilestones + " Mastery Levels)\n") +
+                        "level: " + formatWhole(amt) + " / " + this.purchaseLimit
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                let completedMilestones = Object.keys(tmp.mas.milestones).filter(id => hasMilestone("mas", id)).length
+                return new Decimal(completedMilestones).gte(this.cost()) && amt.lt(this.purchaseLimit)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+                player.mas.points = player.mas.points.add(1)
+            },
+            unlocked() { 
+                return true
+            },
+        },
+        41: {
+            title: "Speeding Up",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                if (amt.eq(0)) return new Decimal(10)
+                return new Decimal(10).pow(new Decimal(2).pow(amt))
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.eq(0)) return new Decimal(1)
+                if (amt.eq(1)) return new Decimal(1.5)
+                if (amt.eq(2)) return new Decimal(2.0)
+                return new Decimal(2.0).add(amt.sub(2).mul(0.75))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(50)
+                return "Powering! First level gives ^1.5 cookies, 2nd gives +0.5 to that, and every level after that is +0.75.\n\n" +
+                       "Boost: ^" + format(this.effect()) + " cookies\n\n" +
+                       (maxReached ? "max?!!?!\n" : "Cost: " + formatWhole(this.cost()) + " cookies\n") +
+                       "Level: " + formatWhole(amt) + " / 50"
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.cookies.gte(this.cost()) && amt.lt(50)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.cookies = player.mas.cookies.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return hasUpgrade("mas", 101)
+            }
+        },
+        42: {
+            title: "Really Speeding Up",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                if (amt.eq(0)) return new Decimal(1e49)
+                return new Decimal(1e49).pow(new Decimal(9).pow(amt))
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.eq(0)) return new Decimal(1)
+                if (amt.eq(1)) return new Decimal(4)
+                if (amt.eq(2)) return new Decimal(6)
+                return new Decimal(6).add(amt.sub(2).mul(3))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(50)
+                return "Big Powering! First level gives ^4 cookies, 2nd gives +2 to that, and every level after that is +3.\n\n" +
+                       "Boost: ^" + format(this.effect()) + " cookies\n\n" +
+                       (maxReached ? "max?!!?!\n" : "Cost: " + formatWhole(this.cost()) + " cookies\n") +
+                       "Level: " + formatWhole(amt) + " / 50"
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.cookies.gte(this.cost()) && amt.lt(50)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.cookies = player.mas.cookies.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return hasUpgrade("mas", 101)
+            }
+        },
+        43: {
+            title: "Final Push",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                if (amt.eq(0)) return new Decimal(1e249)
+                return new Decimal(1e249).pow(new Decimal(27).pow(amt))
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.eq(0)) return new Decimal(1)
+                return new Decimal(10).pow(amt)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(50)
+                return "Going crazy. Each level x10's the power.\n\n" +
+                       "Boost: ^" + format(this.effect()) + " cookies\n\n" +
+                       (maxReached ? "max?!!?!\n" : "Cost: " + formatWhole(this.cost()) + " cookies\n") +
+                       "Level: " + formatWhole(amt) + " / 50"
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.cookies.gte(this.cost()) && amt.lt(50)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.cookies = player.mas.cookies.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return hasUpgrade("mas", 101)
+            }
+        },
+        51: {
+            title: "autoclicker",
+            cost(x) {
+                return new Decimal(0.1)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(1)
+                return "automates the manual dropper!! no more clicking\n\n" +
+                       (maxReached ? "bought!" : "cost: $0.10")
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(1)
+            },
+            buy() {
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, new Decimal(1))
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, this.id).lt(1)
+            }
+        },
+        52: {
+            title() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.gte(40)) return "[maxed] Bronze Dropper"
+                return (amt.gte(20) ? "[softcapped] " : "") + "Bronze Dropper"
+            },
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                let baseCost = new Decimal(2).mul(new Decimal(1.4).pow(amt))
+                if (amt.gte(20)) {
+                    let over = amt.sub(20)
+                    baseCost = baseCost.mul(new Decimal(3).pow(over))
+                }
+                return baseCost
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let isSoftcapped = amt.gte(20) && amt.lt(40)
+                let isHardcapped = amt.gte(40)
+                
+                let statusText = ""
+                if (isHardcapped) statusText = "<div style='color: #ff3333; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; border: 1px solid #ff0000; margin: 6px 0;'> hardcap!!</div>"
+                else if (isSoftcapped) statusText = "<div style='color: #ff6b6b; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 4px; font-weight: bold; border: 1px solid #ff4d4d; margin: 6px 0;'> softcap!! (x3.00/lvl)</div>"
+
+                return "Some studs are better than other studs.\n\n" +
+                       "generation: +$1.00/s each\n" +
+                       "total: +$" + format(this.effect()) + "/s\n\n" +
+                       statusText + "\n" +
+                       (isHardcapped ? "max level" : "cost for next dropper: $" + formatWhole(this.cost())) + "\n" +
+                       "amount: " + formatWhole(amt) + " / 40"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return amt.mul(1)
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(40) 
+            },
+            buy() {
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() { return getBuyableAmount("mas", 51).gte(1) },
+            style() { return { "background-color": "#cd7f32", "color": "#000000", "border": "2px solid #e6a15c", "border-radius": "8px", "font-weight": "bold" } }
+        },
+        53: {
+            title() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.gte(40)) return "[maxed] Silver Dropper"
+                return (amt.gte(20) ? "[softcapped] " : "") + "Silver Dropper"
+            },
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                let baseCost = new Decimal(150).mul(new Decimal(1.45).pow(amt))
+                if (amt.gte(20)) {
+                    let over = amt.sub(20)
+                    baseCost = baseCost.mul(new Decimal(3.5).pow(over))
+                }
+                return baseCost
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let isSoftcapped = amt.gte(20) && amt.lt(40)
+                let isHardcapped = amt.gte(40)
+                
+                let statusText = ""
+                if (isHardcapped) statusText = "<div style='color: #ff3333; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; border: 1px solid #ff0000; margin: 6px 0;'> hardcap!!</div>"
+                else if (isSoftcapped) statusText = "<div style='color: #ff6b6b; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 4px; font-weight: bold; border: 1px solid #ff4d4d; margin: 6px 0;'> softcap!! (x3.50/lvl)</div>"
+
+                return "Drops some 99.9% real silver. What's the 0.1% though?\n\n" +
+                       "generation: +$10.00/s each\n" +
+                       "total: +$" + format(this.effect()) + "/s\n\n" +
+                       statusText + "\n" +
+                       (isHardcapped ? "max level" : "cost for next dropper: $" + formatWhole(this.cost())) + "\n" +
+                       "amount: " + formatWhole(amt) + " / 40"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return amt.mul(10)
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(40) 
+            },
+            buy() {
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() { return getBuyableAmount("mas", 52).gt(0) },
+            style() { return { "background-color": "#e0e0e0", "color": "#000000", "border": "2px solid #ffffff", "border-radius": "8px", "font-weight": "bold" } }
+        },
+        54: {
+            title() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.gte(40)) return "[maxed] Gold Dropper"
+                return (amt.gte(20) ? "[softcapped] " : "") + "Gold Dropper"
+            },
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                let baseCost = new Decimal(1500).mul(new Decimal(1.5).pow(amt))
+                if (amt.gte(20)) {
+                    let over = amt.sub(20)
+                    baseCost = baseCost.mul(new Decimal(4).pow(over))
+                }
+                return baseCost
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let isSoftcapped = amt.gte(20) && amt.lt(40)
+                let isHardcapped = amt.gte(40)
+                
+                let statusText = ""
+                if (isHardcapped) statusText = "<div style='color: #ff3333; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; border: 1px solid #ff0000; margin: 6px 0;'> hardcap!!</div>"
+                else if (isSoftcapped) statusText = "<div style='color: #ff6b6b; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 4px; font-weight: bold; border: 1px solid #ff4d4d; margin: 6px 0;'> softcap!! (x4.00/lvl)</div>"
+
+                return "Real gold, exactly 1kg. Wonder why it's only 75$, shouldn't this be 100,000$?\n\n" +
+                       "generation: +$75.00/s each\n" +
+                       "total: +$" + format(this.effect()) + "/s\n\n" +
+                       statusText + "\n" +
+                       (isHardcapped ? "max level" : "cost for next dropper: $" + formatWhole(this.cost())) + "\n" +
+                       "amount: " + formatWhole(amt) + " / 40"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return amt.mul(75)
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(40) 
+            },
+            buy() {
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() { return getBuyableAmount("mas", 53).gt(0) },
+            style() { return { "background-color": "#ffd700", "color": "#000000", "border": "2px solid #b39200", "border-radius": "8px", "font-weight": "bold" } }
+        },
+        55: {
+            title() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                if (amt.gte(40)) return "[maxed] Diamond Dropper"
+                return (amt.gte(20) ? "[softcapped] " : "") + "Diamond Dropper"
+            },
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                let baseCost = new Decimal(500000).mul(new Decimal(1.65).pow(amt))
+                if (amt.gte(20)) {
+                    let over = amt.sub(20)
+                    baseCost = baseCost.mul(new Decimal(5).pow(over))
+                }
+                return baseCost
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let isSoftcapped = amt.gte(20) && amt.lt(40)
+                let isHardcapped = amt.gte(40)
+                
+                let statusText = ""
+                if (isHardcapped) statusText = "<div style='color: #ff3333; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; border: 1px solid #ff0000; margin: 6px 0;'> hardcap!!</div>"
+                else if (isSoftcapped) statusText = "<div style='color: #ff6b6b; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 4px; font-weight: bold; border: 1px solid #ff4d4d; margin: 6px 0;'> softcap!! (x5.00/lvl)</div>"
+
+                return "Drops gems. Wait, gems? How do gems even fit inside a dropper?\n\n" +
+                       "generation: +$1,250.00/s each\n" +
+                       "total: +$" + format(this.effect()) + "/s\n\n" +
+                       statusText + "\n" +
+                       (isHardcapped ? "max level" : "cost for next dropper: $" + formatWhole(this.cost())) + "\n" +
+                       "amount: " + formatWhole(amt) + " / 40"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return amt.mul(1250)
+            },
+            canAfford() { 
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(40) 
+            },
+            buy() {
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return getBuyableAmount("mas", 61).gte(200) && 
+                       getBuyableAmount("mas", 62).gte(200) && 
+                       getBuyableAmount("mas", 63).gte(200)
+            },
+            style() { 
+                return { 
+                    "background-color": "#b9f2ff", 
+                    "color": "#000000", 
+                    "border": "2px solid #e0faff", 
+                    "border-radius": "8px", 
+                    "font-weight": "bold",
+                    "box-shadow": "0px 0px 8px rgba(185, 242, 255, 0.6)"
+                } 
+            }
+        },
+        61: {
+            title: "Red Upgrader",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(5000).mul(new Decimal(1.05).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(255)
+                return "Your materials become warmer when going through this upgrader.\n\n" +
+                       "multiplies cash value by: x" + format(this.effect()) + "\n\n" +
+                       (maxReached ? "maxed!\n" : "cost for next upgrader: $" + formatWhole(this.cost()) + "\n") +
+                       "amount: " + formatWhole(amt) + " / 255"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).add(amt.mul(0.15))
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(255)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return getBuyableAmount("mas", 54).gt(0)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let redValue = Math.min(255, Math.floor((amt.toNumber() / 255) * 255))
+                
+                return {
+                    "background-color": "rgb(" + redValue + ", 0, 0)",
+                    "color": "#ffffff",
+                    "border": "2px solid rgb(" + Math.min(255, redValue) + ", 0, 0)",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "text-shadow": "0px 1px 3px #000000"
+                }
+            }
+        },
+        62: {
+            title: "Green Upgrader",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(10000).mul(new Decimal(1.05).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(255)
+                return "Your materials become perfect when going through this upgrader.\n\n" +
+                       "multiplies cash value by: x" + format(this.effect()) + "\n\n" +
+                       (maxReached ? "maxed!\n" : "cost for next upgrader: $" + formatWhole(this.cost()) + "\n") +
+                       "amount: " + formatWhole(amt) + " / 255"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).add(amt.mul(0.15))
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(255)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return getBuyableAmount("mas", 54).gt(0)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let greenValue = Math.min(255, Math.floor((amt.toNumber() / 255) * 255))
+                
+                return {
+                    "background-color": "rgb(0, " + greenValue + ", 0)",
+                    "color": "#ffffff",
+                    "border": "2px solid rgb(0, " + Math.min(255, greenValue) + ", 0)",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "text-shadow": "0px 1px 3px #000000"
+                }
+            }
+        },
+        63: {
+            title: "Blue Upgrader",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(20000).mul(new Decimal(1.05).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(255)
+                return "Your materials become colder when going through this upgrader.\n\n" +
+                       "multiplies cash value by: x" + format(this.effect()) + "\n\n" +
+                       (maxReached ? "maxed!\n" : "cost for next upgrader: $" + formatWhole(this.cost()) + "\n") +
+                       "amount: " + formatWhole(amt) + " / 255"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).add(amt.mul(0.15))
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(255)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return getBuyableAmount("mas", 54).gt(0)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let blueValue = Math.min(255, Math.floor((amt.toNumber() / 255) * 255))
+                
+                return {
+                    "background-color": "rgb(0, 0, " + blueValue + ")",
+                    "color": "#ffffff",
+                    "border": "2px solid rgb(0, 0, " + Math.min(255, blueValue) + ")",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "text-shadow": "0px 1px 3px #000000"
+                }
+            }
+        },
+        64: {
+            title: "RGB Upgrader",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal("1e10").mul(new Decimal(1.25).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(255)
+                return "All 3 previous upgraders at once. This is the best upgrader you will get.\n\n" +
+                       "multiplies cash value by: x" + format(this.effect()) + "\n" +
+                       "adds fake levels to all RGB upgraders: +" + formatWhole(amt) + " levels\n\n" +
+                       (maxReached ? "maxed!\n" : "cost for next upgrader: $" + formatWhole(this.cost()) + "\n") +
+                       "amount: " + formatWhole(amt) + " / 255"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return new Decimal(2).pow(amt)
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(255)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return getBuyableAmount("mas", 61).gte(255) && 
+                       getBuyableAmount("mas", 62).gte(255) && 
+                       getBuyableAmount("mas", 63).gte(255)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let rgbVal = Math.min(255, Math.floor((amt.toNumber() / 255) * 255))
+                
+                return {
+                    "background-color": "rgb(" + rgbVal + ", " + rgbVal + ", " + rgbVal + ")",
+                    "color": rgbVal > 150 ? "#000000" : "#ffffff",
+                    "border": "2px solid rgb(" + Math.min(255, rgbVal) + ", " + Math.min(255, rgbVal) + ", " + Math.min(255, rgbVal) + ")",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "box-shadow": "0px 0px 10px rgba(" + rgbVal + "," + rgbVal + "," + rgbVal + ", 0.5)"
+                }
+            }
+        },
+        69: {
+            title: "auto claim",
+            cost(x) {
+                return new Decimal(1000)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(1)
+                return "saves one or two clicks, maybe.\n\n" +
+                       "effect: automates money claiming!\n\n" +
+                       (maxReached ? "maxed!!" : "cost: $1,000")
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.money.gte(this.cost()) && amt.lt(1)
+            },
+            buy() {
+                player.mas.money = player.mas.money.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, new Decimal(1))
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, this.id).lt(1) && getBuyableAmount("mas", 54).gt(0)
+            },
+            style() {
+                return {
+                    "background-color": "#37474f",
+                    "color": "#ffffff",
+                    "border": "2px solid #ffffff",
+                    "border-radius": "8px",
+                    "font-weight": "bold"
+                }
+            }
+        },
+        71: {
+            title: "Stardust to Money",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(1).mul(new Decimal(2).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(10)
+                return "All that stardust turns into money! A fair cost to pay for this boost.\n\n" +
+                       "effect: x25 money per level.\n" +
+                       "boost: x" + format(this.effect()) + "\n\n" +
+                       (maxReached ? "maxed!\n" : "cost: " + formatWhole(this.cost()) + " Stardust\n") +
+                       "level: " + formatWhole(amt) + " / 10"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return new Decimal(25).pow(amt)
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.starDust.gte(this.cost()) && amt.lt(10)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.starDust = player.mas.starDust.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return player.mas.stardustThrown.gte(1)
+            },
+            style() {
+                return {
+                    "background-color": "#021c08",
+                    "color": "#a8ffb2",
+                    "border": "2px solid #00e676",
+                    "border-radius": "8px",
+                    "font-weight": "bold"
+                }
+            }
+        },
+        72: {
+            title: "Stardust to Stardust",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(10).mul(new Decimal(5).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(10)
+                return "Stardust has made stardust, the newest product by stardust!\n\n" +
+                       "effect: x1.5 stardust per level.\n" +
+                       "boost: x" + format(this.effect()) + "\n\n" +
+                       (maxReached ? "maxed!\n" : "cost: " + formatWhole(this.cost()) + " Stardust\n") +
+                       "level: " + formatWhole(amt) + " / 10"
+            },
+            effect() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return new Decimal(1.5).pow(amt)
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.starDust.gte(this.cost()) && amt.lt(10)
+            },
+            buy() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                player.mas.starDust = player.mas.starDust.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, amt.add(1))
+            },
+            unlocked() {
+                return player.mas.stardustThrown.gte(2)
+            },
+            style() {
+                return {
+                    "background-color": "#13001f",
+                    "color": "#ffb7ff",
+                    "border": "2px solid #d800dc",
+                    "border-radius": "8px",
+                    "font-weight": "bold"
+                }
+            }
+        },
+        73: {
+            title: "The Official™ Buy Max Button",
+            cost(x) {
+                return new Decimal(250)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(1)
+                return "Unlock a simple yet useful buy max button for droppers.\n\n" +
+                       "effect: buy max in the tycoon!\n\n" +
+                       (maxReached ? "unlocked" : "cost: 250 Stardust")
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.starDust.gte(this.cost()) && amt.lt(1)
+            },
+            buy() {
+                player.mas.starDust = player.mas.starDust.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, new Decimal(1))
+            },
+            unlocked() {
+                return player.mas.stardustThrown.gte(5)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return {
+                    "background-color": amt.gte(1) ? "#0d1b2a" : "#1a1a1a",
+                    "color": "#ffffff",
+                    "border": "2px solid #e0e0e0",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "box-shadow": amt.gte(1) ? "0px 0px 8px rgba(255,255,255,0.3)" : "none"
+                }
+            }
+        },
+        74: {
+            title: "The Unofficial™ Buy Max Button",
+            cost(x) {
+                return new Decimal(1000)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(1)
+                return "A simple and very useful button.\n\n" +
+                       "effect: buy max, but for upgraders!\n\n" +
+                       (maxReached ? "unlocked" : "Cost: 1,000 Stardust")
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.starDust.gte(this.cost()) && amt.lt(1)
+            },
+            buy() {
+                player.mas.starDust = player.mas.starDust.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, new Decimal(1))
+            },
+            unlocked() {
+                return player.mas.stardustThrown.gte(10)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return {
+                    "background-color": amt.gte(1) ? "#1a0505" : "#1a1a1a",
+                    "color": "#ffffff",
+                    "border": "2px solid #ff3333",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "box-shadow": amt.gte(1) ? "0px 0px 8px rgba(255,51,51,0.3)" : "none"
+                }
+            }
+        },
+        75: {
+            title: "The Power Of Stars",
+            cost(x) {
+                return new Decimal(1)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let maxReached = amt.gte(1)
+                return "With just a single star, what could you do?\n\n" +
+                       "effect: 0.1% of stardust/s.\n\n" +
+                       (maxReached ? "unlocked" : "Requires: 1 Star")
+            },
+            canAfford() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return player.mas.stars.gte(1) && amt.lt(1)
+            },
+            buy() {
+                setBuyableAmount(this.layer, this.id, new Decimal(1))
+            },
+            unlocked() {
+                return player.mas.stardustThrown.gte(50)
+            },
+            style() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                return {
+                    "background-color": amt.gte(1) ? "#332200" : "#14110a",
+                    "color": "#ffd166",
+                    "border": "2px solid #f77f00",
+                    "border-radius": "8px",
+                    "font-weight": "bold",
+                    "box-shadow": amt.gte(1) ? "0px 0px 8px rgba(247,127,0,0.4)" : "none"
+                }
+            }
+        },
+        91: {
+            title: "Time Flux Cap",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                let baseCapForLevel = new Decimal(360).mul(new Decimal(2).pow(amt))
+                return baseCapForLevel.mul(0.9)
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let currentCap = new Decimal(6).mul(new Decimal(2).pow(amt))
+                return "best upgrade in the game\n\n" +
+                       "effect: x2 time flux capacity per level!\n" +
+                       "current limit: " + formatWhole(currentCap) + " hours\n\n" +
+                       "cost: " + format(this.cost()) + " minutes of Time Flux\n" +
+                       "level: " + formatWhole(amt)
+            },
+            canAfford() {
+                return player.mas.timeFlux.gte(this.cost())
+            },
+            buy() {
+                player.mas.timeFlux = player.mas.timeFlux.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() { return true },
+            style() {
+                return {
+                    "background-color": "#001d3d",
+                    "color": "#90e0ef",
+                    "border": "2px solid #00b4d8",
+                    "border-radius": "8px",
+                    "font-weight": "bold"
+                }
+            }
+        },
+        92: {
+            title: "Time Flux Generation Speed",
+            cost(x) {
+                let amt = x !== undefined ? x : getBuyableAmount(this.layer, this.id)
+                return new Decimal(10).mul(new Decimal(2).pow(amt))
+            },
+            display() {
+                let amt = getBuyableAmount(this.layer, this.id)
+                let rawBonusGen = amt.mul(5)
+                let isSoftcapped = rawBonusGen.gt(60)
+                let actualBonus = rawBonusGen
+                if (rawBonusGen.gt(60)) {
+                    actualBonus = new Decimal(60).add(new Decimal(rawBonusGen).sub(60).sqrt())
+                }
+                return "i love this boost :D\n\n" +
+                       "effect: adds +5min/hour to generation speed.\n" +
+                       "total boost: +" + format(actualBonus) + "min/hour " + (isSoftcapped ? "<span style='color: #ff3333; font-weight: bold;'>(softcapped)</span>" : "") + "\n\n" +
+                       "cost: " + format(this.cost()) + " minutes of Time Flux\n" +
+                       "level: " + formatWhole(amt)
+            },
+            canAfford() {
+                return player.mas.timeFlux.gte(this.cost())
+            },
+            buy() {
+                player.mas.timeFlux = player.mas.timeFlux.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() { return true },
+            style() {
+                return {
+                    "background-color": "#001d3d",
+                    "color": "#90e0ef",
+                    "border": "2px solid #00f5d4",
+                    "border-radius": "8px",
+                    "font-weight": "bold"
+                }
+            }
+        },
+    },
+    upgrades: {
+        11: {
+            title: "The <i>Actual</i> Cookie Tree",
+            description: "Start getting 0.01 cookies/s.",
+            cost: new Decimal(0),
+            currencyDisplayName: "cookies",
+            currencyInternalName: "cookies",
+            currencyLayer: "mas",
+            branches: [21, 23], 
+            unlocked() { return true }
+        },
+        21: {
+            title: "aaa boring :P",
+            description: "x2 cookies!!",
+            cost: new Decimal(5),
+            currencyDisplayName: "cookies",
+            currencyInternalName: "cookies",
+            currencyLayer: "mas",
+            branches: [31],
+            unlocked() { return hasUpgrade('mas', 11) },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        23: {
+            title: "this is nothing like the real cookie tree!!",
+            description: "x3 cookies!",
+            cost: new Decimal(10),
+            currencyDisplayName: "cookies",
+            currencyInternalName: "cookies",
+            currencyLayer: "mas",
+            branches: [33],
+            unlocked() { return hasUpgrade('mas', 11) },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        31: {
+            title: "chocolate cookies soon?",
+            description: "x5 cookies :)",
+            cost: new Decimal(25),
+            currencyDisplayName: "cookies",
+            currencyInternalName: "cookies",
+            currencyLayer: "mas",
+            branches: [42],
+            unlocked() { return hasUpgrade('mas', 21) },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        33: {
+            title: "finally, a full cookie per second!",
+            description: "x3.333333... cookies!!! wow.",
+            cost: new Decimal(200),
+            currencyDisplayName: "cookies",
+            currencyInternalName: "cookies",
+            currencyLayer: "mas",
+            branches: [42],
+            unlocked() { return hasUpgrade('mas', 23) },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        42: {
+            title: "chocolate cookies, the expansion.",
+            description: "unlock chocolate cookies.",
+            cost: new Decimal(7500),
+            currencyDisplayName: "cookies",
+            currencyInternalName: "cookies",
+            currencyLayer: "mas",
+            unlocked() { return hasUpgrade('mas', 31) && hasUpgrade('mas', 33) || hasUpgrade('mas',51)},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        51: {
+            title: "greatest cookies ever.",
+            description: "x15 cookies.",
+            cost: new Decimal(1),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [61],
+            unlocked() { return true},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        61: {
+            title: "that was fast",
+            description: "^2 cookies. however this is actually a debuff at the start.",
+            cost: new Decimal(5),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [62],
+            unlocked() { return hasUpgrade('mas', 51)},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        62: {
+            title: "balancing change",
+            description: "the base cookies are now 1.",
+            cost: new Decimal(50),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [63],
+            unlocked() { return hasUpgrade('mas', 61)},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        63: {
+            title: "woah.",
+            description: "^3 cookies.",
+            cost: new Decimal(250000),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [71],
+            unlocked() { return hasUpgrade('mas', 62)},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        71: {
+            title: "great boosts",
+            description: "chocolate cookies boost cookies. capped at 1e33 chocolate cookies.",
+            cost: new Decimal(1e18),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [72],
+            unlocked() { return hasUpgrade('mas', 63) },
+            effect() {
+                let cappedCookies = player.mas.chocolateCookies.min(1e33)
+                return cappedCookies.sqrt().add(1)
+            },
+            effectDisplay() { 
+                return "x" + format(this.effect()) 
+            },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        72: {
+            title: "reverse boosts",
+            description: "cookies boost chocolate cookies.",
+            cost: new Decimal("1e34"),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [73],
+            unlocked() { return hasUpgrade('mas', 71) },
+            effect() {
+                if (player.mas.cookies.lt(10)) return new Decimal(1)
+                return player.mas.cookies.log10().sqrt().add(1)
+            },
+            effectDisplay() { 
+                return "x" + format(this.effect()) 
+            },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        73: {
+            title: "the meta",
+            description: "cookies boost cookies.",
+            cost: new Decimal("1e36"),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            branches: [81],
+            unlocked() { return hasUpgrade('mas', 72) },
+            effect() {
+                if (player.mas.cookies.lt(1)) return new Decimal(1)
+                return player.mas.cookies.log10().add(1)
+            },
+            effectDisplay() { 
+                return "x" + format(this.effect()) 
+            },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        81: {
+            title: "abc",
+            description: "unlock dark chocolate cookies!!!!",
+            cost: new Decimal("3.8e38"),
+            currencyDisplayName: "chocolate cookies",
+            currencyInternalName: "chocolateCookies",
+            currencyLayer: "mas",
+            unlocked() { return hasUpgrade('mas', 73) || hasUpgrade('mas',91)},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        91: {
+            title: "let's afk",
+            description: "auto cookie/chocolate cookie upgrades and 0.1% chocolate cookies on reset per second.",
+            cost: new Decimal("1"),
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            branches: [101,102,103],
+            unlocked() { return true},
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        101: {
+            title: "Timewall Path",
+            description: "The tree becomes much slower, but unlock something new. The other path becomes x50,000 more expensive.",
+            cost() {
+                if (hasUpgrade("mas", 103)) return new Decimal(500000)
+                return new Decimal(10)
+            },
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            unlocked() { return hasUpgrade('mas', 91) },
+            style() {
+                return {
+                    "margin": "35px 50px",
+                }
+            }
+        },
+        102: {
+            title: "Inflation Path",
+            description: "Unlock one final upgrade.",
+            cost: new Decimal(2.22e222),
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            branches: [121],
+            unlocked() { 
+                return hasUpgrade("mas", 101) && hasUpgrade("mas", 103)
+            },
+            style() {
+                return {
+                    "margin": "35px 50px",
+                    "background-color": "#a349a4",
+                    "color": "#ffffff",
+                    "border-radius": "20px",
+                    "border": "2px solid #f0dbff"
+                }
+            }
+        },
+        103: {
+            title: "Boring Path",
+            description: "The same old upgrades. The other path becomes x50,000 more expensive.",
+            cost() {
+                if (hasUpgrade("mas", 101)) return new Decimal(500000)
+                return new Decimal(10)
+            },
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            branches: [113],
+            unlocked() { return hasUpgrade('mas', 91) },
+            style() {
+                return {
+                    "margin": "35px 50px",
+                }
+            }
+        },
+        111: {
+            title: "Ultimate Boost",
+            description: "Dark chocolate cookies boost cookies.",
+            cost: new Decimal(1e15),
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            branches: [101],
+            unlocked() { return hasUpgrade('mas', 112) },
+            effect() {
+                if (player.mas.darkChocolateCookies.lt(1)) return new Decimal(1)
+                return player.mas.darkChocolateCookies.sqrt().sqrt().max(1)
+            },
+            effectDisplay() { 
+                return "^" + format(this.effect()) 
+            },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        112: {
+            title: "It's all together.",
+            description: "Cookies boost dark chocolate cookies.",
+            cost: new Decimal(100e6),
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            branches: [111],
+            unlocked() { return hasUpgrade('mas', 113) },
+            effect() {
+                if (player.mas.cookies.lt(10)) return new Decimal(1)
+                return player.mas.cookies.log10().max(1)
+            },
+            effectDisplay() { 
+                return "x" + format(this.effect()) 
+            },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        113: {
+            title: "What",
+            description: "x1e171,320 cookies.",
+            cost: new Decimal(0),
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            branches: [112],
+            unlocked() { return hasUpgrade('mas', 103) },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                }
+            }
+        },
+        121: {
+            title: "The End, gg!",
+            description: "Cookies boost themselfs. You get 0.1% of dark chocolate cookies/s. This is end of the upgrade tree, good job!",
+            cost: new Decimal("1e224"),
+            currencyDisplayName: "dark chocolate cookies",
+            currencyInternalName: "darkChocolateCookies",
+            currencyLayer: "mas",
+            unlocked() { return hasUpgrade('mas', 102) },
+            effect() {
+                if (player.mas.cookies.lt(1)) return new Decimal(1)
+                return player.mas.cookies
+            },
+            effectDisplay() { 
+                return "^" + format(this.effect()) 
+            },
+            style() {
+                return {
+                    "margin": "20px 40px",
+                    "background-color": "#a349a4",
+                    "color": "#ffffff",
+                    "border-radius": "20px",
+                    "border": "2px solid #f0dbff"
+                }
+            }
+        },
+    },
+    clickables: {
+        11: {
+            title: "Chocolate-ify",
+            display() {
+                let gain = player.mas.cookies.div(1000).floor()
+                if (hasUpgrade("mas", 72)) gain = gain.mul(upgradeEffect("mas", 72))
+                return "Dip your cookies in chocolate. However, only 1/1,000 make it through. Unfortunate!\n\n" +
+                       "On reset you will gain +" + formatWhole(gain) + " Chocolate Cookies.\n" +
+                       "Requires at least 1,000 cookies."
+            },
+            canClick() {
+                return player.mas.cookies.gte(1000)
+            },
+            onClick() {
+                let gain = player.mas.cookies.div(1000).floor()
+                if (hasUpgrade("mas", 72)) gain = gain.mul(upgradeEffect("mas", 72))
+                player.mas.chocolateCookies = player.mas.chocolateCookies.add(gain)
+                player.mas.cookies = new Decimal(0)           
+                let upgradesToKeep = [42]
+                player.mas.upgrades = player.mas.upgrades.filter(upg => {
+                    let id = Number(upg)
+                    return id >= 50 || upgradesToKeep.includes(id)
+                })
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#7a431d",
+                        "color": "#ffffff",
+                        "border": "2px solid #d27d2d",
+                        "border-radius": "8px",
+                        "height": "80px",
+                        "width": "220px",
+                        "font-weight": "bold",
+                        "cursor": "pointer"
+                    }
+                }
+                else {
+                    return {
+                        "background-color": "#361d0d",
+                        "color": "#735c4f",
+                        "border": "2px solid #543725", 
+                        "border-radius": "8px",
+                        "height": "80px",
+                        "width": "220px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        21: {
+            title: "Dark-ify",
+            display() {
+                let gain = new Decimal(0)
+                if (player.mas.chocolateCookies.gte("1e37")) {
+                    gain = player.mas.chocolateCookies.div("1e37").log(2).floor().add(1)
+                    if (hasUpgrade("mas", 112)) gain = gain.mul(upgradeEffect("mas", 112))
+                }
+                return "Those chocolate cookies are really light. Let's fix that!\n\n" +
+                       "On reset you will gain +" + formatWhole(gain) + " Dark Chocolate Cookies.\n" +
+                       "Requires at least 1e37 chocolate cookies."
+            },
+            canClick() {
+                return player.mas.chocolateCookies.gte("1e37")
+            },
+            onClick() {
+                let gain = player.mas.chocolateCookies.div("1e37").log(2).floor().add(1)
+                if (hasUpgrade("mas", 112)) gain = gain.mul(upgradeEffect("mas", 112))
+                player.mas.darkChocolateCookies = player.mas.darkChocolateCookies.add(gain)
+                player.mas.cookies = new Decimal(0)
+                player.mas.chocolateCookies = new Decimal(0)
+                let upgradesToKeep = [42, 81]
+                player.mas.upgrades = player.mas.upgrades.filter(upg => {
+                    let id = Number(upg)
+                    return id >= 80 || upgradesToKeep.includes(id)
+                })
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#4a2711",
+                        "color": "#ffffff",
+                        "border": "2px solid #391600",
+                        "border-radius": "8px",
+                        "height": "80px",
+                        "width": "220px",
+                        "font-weight": "bold",
+                        "cursor": "pointer"
+                    }
+                }
+                else {
+                    return {
+                        "background-color": "#211208", 
+                        "color": "#5c493e", 
+                        "border": "2px solid #100107",
+                        "border-radius": "8px",
+                        "height": "80px",
+                        "width": "220px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        31: {
+            title: "Collect Cash",
+            display() {
+                return "Click to collect all cash!"
+            },
+            canClick() {
+                return player.mas.conveyorCash.gt(0)
+            },
+            onClick() {
+                player.mas.money = player.mas.money.add(player.mas.conveyorCash)
+                player.mas.conveyorCash = new Decimal(0)
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#00e676",
+                        "color": "#000000",
+                        "border": "3px solid #00c853",
+                        "border-radius": "12px",
+                        "height": "65px",
+                        "width": "220px",
+                        "font-weight": "bold",
+                        "cursor": "pointer",
+                        "box-shadow": "0px 4px 10px rgba(0, 230, 118, 0.4)"
+                    }
+                }
+                else {
+                    return {
+                        "background-color": "#222222",
+                        "color": "#555555",
+                        "border": "3px solid #333333",
+                        "border-radius": "12px",
+                        "height": "65px",
+                        "width": "220px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        32: {
+            title: "Manual Dropper",
+            display() {
+                let timer = new Decimal(player.mas.dropperTimer || 0)
+                if (timer.gt(0)) {
+                    return "Cooldown: " + format(timer) + "s"
+                }
+                return "The absolute basics. Click to drop a stud!\n\n+$0.01 per click."
+            },
+            canClick() {
+                let timer = new Decimal(player.mas.dropperTimer || 0)
+                return timer.lte(0)
+            },
+            onClick() {
+                player.mas.conveyorCash = player.mas.conveyorCash.add(0.01)
+                player.mas.dropperTimer = new Decimal(1)
+            },
+            style() {
+                let timer = new Decimal(player.mas.dropperTimer || 0)
+                if (timer.lte(0)) {
+                    return {
+                        "background-color": "#424242",
+                        "color": "#ffffff",
+                        "border": "2px solid #ffd700",
+                        "border-radius": "8px",
+                        "height": "65px",
+                        "width": "180px",
+                        "font-weight": "bold",
+                        "cursor": "pointer"
+                    }
+                } else {
+                    return {
+                        "background-color": "#212121",
+                        "color": "#888888",
+                        "border": "2px solid #555555",
+                        "border-radius": "8px",
+                        "height": "65px",
+                        "width": "180px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        41: {
+            title: "Tycoon Prestige",
+            display() {
+                let gain = player.mas.money.div("1e90").floor()
+                if (getBuyableAmount("mas", 72).gt(0)) gain = gain.mul(buyableEffect("mas", 72)).floor()
+                
+                return "Prestige your Tycoon to get stardust!\n\n" +
+                       "You will gain: +" + formatWhole(gain) + " Stardust\n" +
+                       "Requires at least $" + format(player.mas.money) + "/$1.00e90."
+            },
+            canClick() {
+                return player.mas.money.gte("1e90")
+            },
+            onClick() {
+                let gain = player.mas.money.div("1e90").floor()
+                if (getBuyableAmount("mas", 72).gt(0)) gain = gain.mul(buyableEffect("mas", 72)).floor()
+                
+                player.mas.starDust = player.mas.starDust.add(gain)
+                
+                player.mas.money = new Decimal(0)
+                player.mas.conveyorCash = new Decimal(0)
+                player.mas.dropperTimer = new Decimal(0)
+    
+                setBuyableAmount("mas", 52, new Decimal(0))
+                setBuyableAmount("mas", 53, new Decimal(0))
+                setBuyableAmount("mas", 54, new Decimal(0))
+                setBuyableAmount("mas", 55, new Decimal(0))
+                setBuyableAmount("mas", 61, new Decimal(0))
+                setBuyableAmount("mas", 62, new Decimal(0))
+                setBuyableAmount("mas", 63, new Decimal(0))
+                setBuyableAmount("mas", 64, new Decimal(0))
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#03071e",
+                        "color": "#9bf6ff",
+                        "border": "3px solid #00b4d8",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "pointer",
+                        "box-shadow": "0px 0px 12px rgba(0, 180, 216, 0.5)"
+                    }
+                } else {
+                    return {
+                        "background-color": "#111116",
+                        "color": "#444455",
+                        "border": "3px solid #222233",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        42: {
+            title: "Create a Star",
+            display() {
+                return "Compress the stardust. And it's getting closer. And it's getting closer. And it's getti- IT'S A STAR!\n\n" +
+                       "Requires: 1.00e15 Stardust\n" +
+                       "Reward: +1 Star"
+            },
+            canClick() {
+                return player.mas.starDust.gte("1e15")
+            },
+            onClick() {
+                player.mas.starDust = player.mas.starDust.sub("1e15")
+                player.mas.stars = player.mas.stars.add(1)
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#ffd166",
+                        "color": "#03071e",
+                        "border": "3px solid #f77f00",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "pointer",
+                        "box-shadow": "0px 0px 15px rgba(255, 209, 102, 0.7)"
+                    }
+                } else {
+                    return {
+                        "background-color": "#161411",
+                        "color": "#554a3a",
+                        "border": "3px solid #332a1c",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        43: {
+            title: "Throw Stardust",
+            cost() {
+                let amt = player.mas.stardustThrown || new Decimal(0)
+                if (amt.eq(0)) return new Decimal(1)
+                return new Decimal(2).pow(amt)
+            },
+            display() {
+                let amt = player.mas.stardustThrown || new Decimal(0)
+                return "Throw some stardust. What could possibly happen?\n\n" +
+                       "Total times you've wasted stardust: " + formatWhole(amt) + "\n\n" +
+                       "Cost: " + formatWhole(this.cost()) + " Stardust"
+            },
+            canClick() {
+                return player.mas.starDust.gte(this.cost())
+            },
+            onClick() {
+                player.mas.starDust = player.mas.starDust.sub(this.cost())
+                player.mas.stardustThrown = player.mas.stardustThrown.add(1)
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#260404",
+                        "color": "#ffb3b3",
+                        "border": "3px solid #ff1a1a",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "pointer",
+                        "box-shadow": "0px 0px 10px rgba(255, 26, 26, 0.4)"
+                    }
+                }
+                else {
+                    return {
+                        "background-color": "#1a0505",
+                        "color": "#664444",
+                        "border": "3px solid #4d1313",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        51: {
+            title: "Quantum Prestige",
+            display() {
+                let gain = player.mas.starDust.div("1e16").floor()
+                return "Reset everything before this for Quantum Shards. Are you sure this is safe?\n\n" +
+                       "You will gain: +" + formatWhole(gain) + " Quantum Shards\n" +
+                       "Requires at least " + format(player.mas.starDust) + "/1.00e16 Stardust."
+            },
+            canClick() {
+                return player.mas.starDust.gte("1e16")
+            },
+            onClick() {
+                let gain = player.mas.starDust.div("1e16").floor()
+                player.mas.quantumShards = player.mas.quantumShards.add(gain)
+                
+                player.mas.starDust = new Decimal(0)
+                player.mas.stars = new Decimal(0)
+                player.mas.stardustThrown = new Decimal(0)
+                
+                setBuyableAmount("mas", 71, new Decimal(0))
+                setBuyableAmount("mas", 72, new Decimal(0))
+                setBuyableAmount("mas", 73, new Decimal(0))
+                setBuyableAmount("mas", 74, new Decimal(0))
+                setBuyableAmount("mas", 75, new Decimal(0))
+
+                player.mas.money = new Decimal(0)
+                player.mas.conveyorCash = new Decimal(0)
+                player.mas.dropperTimer = new Decimal(0)
+    
+                setBuyableAmount("mas", 52, new Decimal(0))
+                setBuyableAmount("mas", 53, new Decimal(0))
+                setBuyableAmount("mas", 54, new Decimal(0))
+                setBuyableAmount("mas", 55, new Decimal(0))
+                setBuyableAmount("mas", 61, new Decimal(0))
+                setBuyableAmount("mas", 62, new Decimal(0))
+                setBuyableAmount("mas", 63, new Decimal(0))
+                setBuyableAmount("mas", 64, new Decimal(0))
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        "background-color": "#1c0024",
+                        "color": "#ffb7ff",
+                        "border": "3px solid #ff00ff",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "pointer",
+                        "box-shadow": "0px 0px 12px rgba(255, 0, 255, 0.5)"
+                    }
+                } else {
+                    return {
+                        "background-color": "#120b14",
+                        "color": "#523b54",
+                        "border": "3px solid #2e1c30",
+                        "border-radius": "12px",
+                        "height": "95px",
+                        "width": "240px",
+                        "font-weight": "bold",
+                        "cursor": "not-allowed"
+                    }
+                }
+            }
+        },
+        52: {
+            title() {
+                if (player.mas.quantumDiceCharges <= 0) return "Buy Rolls"
+                return "Roll the d20"
+            },
+            display() {
+                let timer = player.mas.quantumDiceTimer || 0
+                let effect = player.mas.quantumDiceEffect || new Decimal(1)
+                let roll = player.mas.quantumDiceLastRoll || 0
+                
+                let info = "Roll a d20 to get a buff/debuff for 5 minutes.\n\n" +
+                           "Rolls Left: " + player.mas.quantumDiceCharges + "\n\n"
+                
+                if (timer > 0) {
+                    info += "Effect: (You rolled " + roll + "): x" + format(effect) + " Cash\n" +
+                            "Time Left: " + Math.floor(timer / 60) + "m " + Math.floor(timer % 60) + "s\n\n"
+                }
+                
+                if (player.mas.quantumDiceCharges <= 0) info += "Cost: 1 Quantum Shard (+10 Rolls)"
+                else info += "Cost: 1 Roll (0.1 Shards equivalent)"
+                
+                return info
+            },
+            canClick() {
+                if (player.mas.quantumDiceCharges > 0) return true
+                return player.mas.quantumShards.gte(1)
+            },
+            onClick() {
+                if (player.mas.quantumDiceCharges <= 0) {
+                    player.mas.quantumShards = player.mas.quantumShards.sub(1)
+                    player.mas.quantumDiceCharges += 10
+                    return
+                }
+
+                player.mas.quantumDiceCharges -= 1
+                let roll = Math.floor(Math.random() * 20) + 1
+                player.mas.quantumDiceLastRoll = roll
+                player.mas.quantumDiceTimer = 300 
+                
+                if (roll === 1) player.mas.quantumDiceEffect = new Decimal(0.01)
+                else if (roll <= 5) player.mas.quantumDiceEffect = new Decimal(0.5)
+                else if (roll <= 10) player.mas.quantumDiceEffect = new Decimal(1)
+                else if (roll <= 15) player.mas.quantumDiceEffect = new Decimal(2)
+                else if (roll <= 19) player.mas.quantumDiceEffect = new Decimal(10)
+                else if (roll === 20) player.mas.quantumDiceEffect = new Decimal(100)
+            },
+            style() {
+                let hasCharges = player.mas.quantumDiceCharges > 0
+                return {
+                    "background-color": hasCharges ? "#3a0007" : "#1c0024",
+                    "color": "#ffb7ff",
+                    "border": "3px solid #ff4da6",
+                    "border-radius": "12px",
+                    "height": "115px",
+                    "width": "250px",
+                    "font-weight": "bold",
+                    "cursor": "pointer"
+                }
+            }
+        },
+        61: {
+            title: "Speed x1",
+            canClick() { return !new Decimal(player.mas.timeSpeed || 1).eq(1) },
+            onClick() { player.mas.timeSpeed = new Decimal(1) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(1) ? "#0077b6" : "#001220", "color": "#90e0ef", "border": "2px solid #00f5d4", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        62: {
+            title: "Speed x2",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(2) },
+            onClick() { player.mas.timeSpeed = new Decimal(2) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(2) ? "#d00000" : "#4a0000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        63: {
+            title: "Speed x4",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(4) },
+            onClick() { player.mas.timeSpeed = new Decimal(4) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(4) ? "#d00000" : "#3d0000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        64: {
+            title: "Speed x8",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(8) },
+            onClick() { player.mas.timeSpeed = new Decimal(8) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(8) ? "#d00000" : "#300000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        71: {
+            title: "Speed x16",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(16) },
+            onClick() { player.mas.timeSpeed = new Decimal(16) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(16) ? "#d00000" : "#260000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        72: {
+            title: "Speed x32",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(32) },
+            onClick() { player.mas.timeSpeed = new Decimal(32) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(32) ? "#d00000" : "#1f0000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        73: {
+            title: "Speed x64",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(64) },
+            onClick() { player.mas.timeSpeed = new Decimal(64) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(64) ? "#d00000" : "#1a0000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        74: {
+            title: "Speed x128",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(128) },
+            onClick() { player.mas.timeSpeed = new Decimal(128) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(128) ? "#d00000" : "#150000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        81: {
+            title: "Speed x256",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(256) },
+            onClick() { player.mas.timeSpeed = new Decimal(256) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(256) ? "#d00000" : "#110000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        82: {
+            title: "Speed x512",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(512) },
+            onClick() { player.mas.timeSpeed = new Decimal(512) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(512) ? "#d00000" : "#0d0000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        83: {
+            title: "Speed x1,024",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(1024) },
+            onClick() { player.mas.timeSpeed = new Decimal(1024) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(1024) ? "#d00000" : "#080000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        84: {
+            title: "Speed x2,048",
+            canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(2048) },
+            onClick() { player.mas.timeSpeed = new Decimal(2048) },
+            style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(2048) ? "#d00000" : "#030000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+    },
 })
