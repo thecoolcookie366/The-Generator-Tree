@@ -6514,7 +6514,7 @@ addLayer("mas", {
                 ]
             },
             "Tycoon": {
-                unlocked() { return true }, 
+                unlocked() { return hasMilestone("mas", 2)}, 
                 buttonStyle: {
                     "background-color": "#060011",
                     "color": "#ffd700",
