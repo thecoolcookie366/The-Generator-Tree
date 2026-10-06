@@ -6704,7 +6704,23 @@ addLayer("mas", {
                 },
                 content: [
                     "blank",
-                    "milestones"
+                    "milestones",
+                    ["clickables", [9]],
+                ]
+            },
+            "???": {
+                buttonStyle() {
+                    return {
+                        "background": "#000000",
+                        "color": "#555555",
+                        "border": "2px solid #222222",
+                        "font-weight": "bold",
+                        "text-shadow": "0px 0px 4px #543210"
+                    }
+                },
+                content: [
+                    ["display-text", "More side content soon?"],
+                    ["clickables", [9]],
                 ]
             }
         }
@@ -8583,7 +8599,7 @@ addLayer("mas", {
                            "Rolls Left: " + player.mas.quantumDiceCharges + "\n\n"
                 
                 if (timer > 0) {
-                    info += "Effect: (You rolled " + roll + "): x" + format(effect) + " Cash\n" +
+                    info += "Effect: (You rolled " + roll + ") x" + format(effect) + " Cash\n" +
                             "Time Left: " + Math.floor(timer / 60) + "m " + Math.floor(timer % 60) + "s\n\n"
                 }
                 
@@ -8700,6 +8716,31 @@ addLayer("mas", {
             canClick() { return new Decimal(player.mas.timeFlux || 0).gt(0) && !new Decimal(player.mas.timeSpeed || 1).eq(2048) },
             onClick() { player.mas.timeSpeed = new Decimal(2048) },
             style() { return { "background-color": new Decimal(player.mas.timeSpeed || 1).eq(2048) ? "#d00000" : "#030000", "color": "#ffb3b3", "border": "2px solid #ffb703", "border-radius": "8px", "height": "75px", "width": "140px", "font-weight": "bold", "margin": "4px" } }
+        },
+        91: {
+            title: "Unlock Time Travel",
+            display() { return "Are you tired of waiting for the updates just to use Time Flux? Press this button and get Time Travel instantly!" },
+            canClick() { 
+                return !player.mas.milestones.includes('5'); 
+            },
+            onClick() {
+                if (!player.mas.milestones.includes('5')) {
+                    player.mas.milestones.push('5');
+                    needCanvasUpdate = true;
+                }
+            },
+            style: {
+                "background-color": "#71b873",
+                "color": "#113813",
+                "border": "1px solid #5a965c",
+                "border-radius": "4px",
+                "font-weight": "bold",
+                "cursor": "pointer",
+                "margin": "5px"
+            },
+            unlocked() { 
+                return !player.mas.milestones.includes('5'); 
+            }
         },
     },
 })
