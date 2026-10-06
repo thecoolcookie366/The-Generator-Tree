@@ -6705,7 +6705,6 @@ addLayer("mas", {
                 content: [
                     "blank",
                     "milestones",
-                    ["clickables", [9]],
                 ]
             },
             "???": {
