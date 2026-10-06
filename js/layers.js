@@ -6295,6 +6295,10 @@ addLayer("mas", {
                         if (!hasMilestone("mas", 3)) return ""
                         return "Stars: <span style='color: #ffd166; font-weight: bold; text-shadow: 0px 0px 4px #f77f00;'>" + formatWhole(player.mas.stars || 0) + "</span>"
                     }],
+                    ["display-text", function() { 
+                        if (!hasMilestone("mas", 3)) return ""
+                        return "Times you've wasted stardust: <span style='color: #ff5555; font-weight: bold; text-shadow: 0px 0px 4px #ff0000;'> " + formatWhole(player.mas.stardustThrown || 0) + " times</span>"
+                    }],
                     "blank",
                     ["display-text", function() { 
                         if (!hasMilestone("mas", 4)) return ""
@@ -6704,7 +6708,83 @@ addLayer("mas", {
                 },
                 content: [
                     "blank",
+                    ["display-text", function() { 
+                        return "You have <h2 style='color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.4)'>" + formatWhole(player.mas.points) + "</h2> " + tmp.mas.resource + "."
+                    }],
                     "milestones",
+                ]
+            },
+            "Dev Tools": {
+                unlocked() {
+                    return hasMilestone("mas", 5)
+                },
+                buttonStyle: {
+                    "background-color": "#1a0000",
+                    "color": "#ff3333",
+                    "border": "2px solid #b30000",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2 style='font-family: monospace; color: #ff3333; text-shadow: 0px 0px 6px #ff3333;'>Dev Tools</h2>"],
+                    "blank",
+                    ["display-text", "<span>This is a bad idea...</span>"],
+                    "blank",
+                    ["clickables", ["10"]],
+                    "blank",
+                    ["display-text", function() {
+                        let flux = player.mas.timeFlux || new Decimal(0)
+                        let totalSeconds = Math.floor(flux.toNumber() * 60)
+                        
+                        let hours = Math.floor(totalSeconds / 3600)
+                        let mins = Math.floor((totalSeconds % 3600) / 60)
+                        let secs = Math.floor(totalSeconds % 60)
+                        
+                        return "You have stored <h3 style='color: #f77f00; text-shadow: 0px 0px 6px #f77f00; display: inline;'>" + 
+                                hours + "h " + mins + "m " + secs + "s</h3> of Time Flux."
+                    }],
+                    ["display-text", function() { 
+                        return "You have <h2 style='color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.4)'>" + formatWhole(player.mas.points) + "</h2> " + tmp.mas.resource + "."
+                    }],
+                    ["display-text", function() {
+                        return "You have <h3 style='color: #9bf6ff; display: inline;'>" + formatWhole(player.mas.starDust || 0) + "</h3> stardust."
+                    }],
+                    "blank",
+                ]
+            },
+            "Everything": {
+                unlocked() {
+                    return hasMilestone("mas", 8)
+                },
+                buttonStyle: {
+                    "background-color": "#001a00",
+                    "color": "#33cc33",
+                    "border": "2px solid #008000",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h1 style='font-family: monospace; color: #33ff33; text-shadow: 0px 0px 6px #33ff33;'>everthing :durr:</h1>"],
+                    "blank",
+                    "buyables",
+                    "upgrades",
+                    "clickables",
+                    "milestones",
+                ]
+            },
+            "The Tab": {
+                unlocked() {
+                    return hasMilestone("mas", 9)
+                },
+                buttonStyle: {
+                    "background-color": "#000033",
+                    "color": "#3399ff",
+                    "border": "2px solid #0000cd",
+                    "font-weight": "bold"
+                },
+                content: [
+                    "blank",
+                    ["display-text", "<h2 style='font-family: monospace; color: #3399ff; text-shadow: 0px 0px 8px #0000cd;'>There is nothing. Or maybe, everything. You've cheated, so get out of my game.</h2>"],
                 ]
             },
             "???": {
@@ -6718,7 +6798,6 @@ addLayer("mas", {
                     }
                 },
                 content: [
-                    ["display-text", "More side content soon?"],
                     ["clickables", [9]],
                 ]
             }
@@ -6828,6 +6907,54 @@ addLayer("mas", {
                     let shift = (Date.now() / 10) % 360
                     return {
                         "background": "linear-gradient(" + shift + "deg, #ff1493, #ff4500, #ffd700, #32cd32, #00bfff, #4b0082, #ee82ee)",
+                        "color": "#ffffff",
+                        "font-weight": "bold",
+                        "text-shadow": "0px 0px 4px #000000"
+                    }
+                }
+            }
+        },
+        7: {
+            requirementDescription: "142 power",
+            effectDescription: "Mastery Level doesn't increase to VIII. Unlock the Dev Tools tab.",
+            done() { return player[this.layer].points.gte(142) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #ff0000, #000000, #ff0000)",
+                        "color": "#ffffff",
+                        "font-weight": "bold",
+                        "text-shadow": "0px 0px 4px #000000"
+                    }
+                }
+            }
+        },
+        8: {
+            requirementDescription: "9,737 power",
+            effectDescription: "Mastery Level doesn't increase to IX. Unlock the Everything tab.",
+            done() { return player[this.layer].points.gte(9737) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #00ff00, #000000, #00ff00)",
+                        "color": "#ffffff",
+                        "font-weight": "bold",
+                        "text-shadow": "0px 0px 4px #000000"
+                    }
+                }
+            }
+        },
+        9: {
+            requirementDescription: "969,332 power",
+            effectDescription: "Mastery Level doesn't increase to X. Unlock the ...tab?",
+            done() { return player[this.layer].points.gte(969332) },
+            style() {
+                if (hasMilestone(this.layer, this.id)) {
+                    let shift = (Date.now() / 10) % 360
+                    return {
+                        "background": "linear-gradient(" + shift + "deg, #0000ff, #000000, #0000ff)",
                         "color": "#ffffff",
                         "font-weight": "bold",
                         "text-shadow": "0px 0px 4px #000000"
@@ -8535,7 +8662,6 @@ addLayer("mas", {
                 player.mas.quantumShards = player.mas.quantumShards.add(gain)
                 
                 player.mas.starDust = new Decimal(0)
-                player.mas.stars = new Decimal(0)
                 player.mas.stardustThrown = new Decimal(0)
                 
                 setBuyableAmount("mas", 71, new Decimal(0))
@@ -8740,6 +8866,32 @@ addLayer("mas", {
             unlocked() { 
                 return !player.mas.milestones.includes('5'); 
             }
+        },
+        101: {
+            title: "Max Time Flux",
+            canClick() { return true },
+            onClick() {
+                let capLevel = getBuyableAmount("mas", 91)
+                let dynamicCapMinutes = new Decimal(360).mul(new Decimal(2).pow(capLevel))
+                player.mas.timeFlux = dynamicCapMinutes
+            },
+            style() { return { "background-color": "#2a0000", "color": "#ff3333", "border": "2px solid #ff3333", "border-radius": "6px", "height": "65px", "width": "180px", "font-weight": "bold", "cursor": "pointer" } }
+        },
+        102: {
+            title: "Add 10 Power",
+            canClick() { return true },
+            onClick() {
+                player.mas.points = player.mas.points.add(10)
+            },
+            style() { return { "background-color": "#2a0000", "color": "#ff3333", "border": "2px solid #ff3333", "border-radius": "6px", "height": "65px", "width": "180px", "font-weight": "bold", "cursor": "pointer" } }
+        },
+        103: {
+            title: "Multiply Stardust by 10",
+            canClick() { return true },
+            onClick() {
+                player.mas.starDust = player.mas.starDust.mul(10)
+            },
+            style() { return { "background-color": "#2a0000", "color": "#ff3333", "border": "2px solid #ff3333", "border-radius": "6px", "height": "65px", "width": "180px", "font-weight": "bold", "cursor": "pointer" } }
         },
     },
 })
