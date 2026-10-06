@@ -6716,7 +6716,7 @@ addLayer("mas", {
             },
             "Dev Tools": {
                 unlocked() {
-                    return true
+                    return hasMilestone("mas", 7)
                 },
                 buttonStyle: {
                     "background-color": "#1a0000",
