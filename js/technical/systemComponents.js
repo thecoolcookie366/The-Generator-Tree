@@ -161,6 +161,12 @@ var systemComponents = {
                 <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: {{ options.offlineProd?"ON":"OFF" }}</button></td>
             </tr>
             <tr>
+                <td><button class="opt" onclick="exportSaveToFile()">Export to File</button></td>
+                <td><button class="opt" onclick="importSaveFromFile()">Import from File</button></td>
+				<td><button class="opt" onclick="player.cmg.points = new Decimal (4.82e15)">Mystery Button</button></td>
+                <td></td>
+            </tr>
+            <tr>
                 <td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
                 <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
                 <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: {{ options.hqTree?"ON":"OFF" }}</button></td>

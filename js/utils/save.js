@@ -273,10 +273,10 @@ function exportSave() {
 }
 function importSave(imported = undefined, forced = false) {
 	if (imported === undefined)
-		imported = prompt("Paste your save here");
+		imported = prompt("Import your save here");
 	try {
 		tempPlr = Object.assign(getStartPlayer(), JSON.parse(atob(imported)));
-		if (tempPlr.versionType != getModID() && !forced && !confirm("This save appears to be for a different mod! Are you sure you want to import?")) // Wrong save (use "Forced" to force it to accept.)
+		if (tempPlr.versionType != getModID() && !forced && !confirm("Hey bro, you're importing a save that is not from The Generator Tree. Either that, or you suck. Anyways, are you sure you want to import this?")) // Wrong save (use "Forced" to force it to accept.)
 			return;
 		player = tempPlr;
 		player.versionType = getModID();
@@ -285,9 +285,38 @@ function importSave(imported = undefined, forced = false) {
 		NaNcheck(save)
 		save();
 		window.location.reload();
-	} catch (e) {
+	}
+	catch (e) {
 		return;
 	}
+}
+function exportSaveToFile() {
+	let str = btoa(JSON.stringify(player));
+	let blob = new Blob([str], { type: "text/plain;charset=utf-8" });
+	let a = document.createElement("a");
+	a.href = URL.createObjectURL(blob);
+	a.download = (typeof modInfo !== 'undefined' ? modInfo.name : "tmt") + "_Universe_" + player.univ.points + ".txt";
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+}
+function importSaveFromFile() {
+	let input = document.createElement("input");
+	input.type = "file";
+	input.accept = ".txt";
+	input.onchange = e => {
+		let file = e.target.files;
+		if (!file) return;
+		let reader = new FileReader();
+		reader.onload = readerEvent => {
+			let content = readerEvent.target.result.trim();
+			if (content) {
+				importSave(content);
+			}
+		};
+		reader.readAsText(file);
+	};
+	input.click();
 }
 function versionCheck() {
 	let setVersion = true;
