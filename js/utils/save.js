@@ -328,8 +328,9 @@ function importSaveFromFile() {
 	input.type = "file";
 	input.accept = ".txt";
 	input.onchange = e => {
-		let file = e.target.files;
+		let file = e.target.files[0]; 
 		if (!file) return;
+		
 		let reader = new FileReader();
 		reader.onload = readerEvent => {
 			let content = readerEvent.target.result.trim();
@@ -337,7 +338,7 @@ function importSaveFromFile() {
 				importSave(content);
 			}
 		};
-		reader.readAsText(file);
+		reader.readAsText(file); 
 	};
 	input.click();
 }

@@ -9190,16 +9190,20 @@ addLayer("sss", {
                 }
             }
         },
-        21: { title: "1", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "1" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        22: { title: "2", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "2" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        23: { title: "3", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "3" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        31: { title: "4", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "4" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        32: { title: "5", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "5" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        33: { title: "6", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "6" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        41: { title: "7", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "7" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        42: { title: "8", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "8" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        43: { title: "9", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "9" }, style: { width: "50px", height: "50px", margin: "2px" } },
-        51: { title: "Room", canClick() { return true}, onClick() { 
+        21: { title: "1", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "1" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        22: { title: "2", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "2" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        23: { title: "3", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "3" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        31: { title: "4", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "4" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        32: { title: "5", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "5" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        33: { title: "6", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "6" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        41: { title: "7", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "7" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        42: { title: "8", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "8" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        43: { title: "9", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "9" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        51: { 
+            title: "Room", 
+            unlocked() { return player.sss.points.gte(1048575) },
+            canClick() { return true }, 
+            onClick() { 
                 player.sss.keypadInput = ""
                 if (player.sss.keypadSolved) {
                     player.sss.keypadSolved = false
@@ -9207,9 +9211,10 @@ addLayer("sss", {
             }, 
             style: { width: "50px", height: "50px", margin: "2px", "background-color": "#a00" }
         },
-        52: { title: "0", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "0" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        52: { title: "0", unlocked() { return player.sss.points.gte(1048575) }, canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "0" }, style: { width: "50px", height: "50px", margin: "2px" } },
         53: { 
             title: "42", 
+            unlocked() { return player.sss.points.gte(1048575) },
             canClick() { return !player.sss.keypadSolved }, 
             onClick() { 
                 if (player.sss.keypadInput === "6198") {
@@ -9239,9 +9244,9 @@ addLayer("sss", {
         12: {
             title: "gwarking+",
             description: "you now auto-praise. the autopraise cooldown is (1/praises)*5 minutes.",
-            cost: new Decimal(2),
+            cost: new Decimal(5),
             canAfford() {
-                return player.sss.points.gte(2)
+                return player.sss.points.gte(5)
             },
             pay() {
             }
