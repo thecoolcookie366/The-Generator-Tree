@@ -9072,12 +9072,6 @@ addLayer("sott", {
         22: { name: "🥗 [162]", done() { return false }, goalTooltip() { return "Hint: c2FsYWQ=, has to do with the settings." }, doneTooltip() { return "Import 'salad'." } },
         31: { name: "Really Out of Place [208]", done() { return player.sott.points.gte(2) }, goalTooltip() { return "Hint: Same as Out of Place, but a bit harder to find." }, doneTooltip() { return "Press the glitched button in the ??? tab in Extra. Linked with Out of Place [104], which means getting this also gives that secret." } },
         41: { name: "Endgaming [321]", done() { return player.univ.points.gte(2) }, goalTooltip() { return "Hint: Should be obvious." }, doneTooltip() { return "Reach the endgame. Probably the only secret that's not secret." } },
-        //51: { name: "Veil of Shadows", done() { return false }, goalTooltip() { return "Hint: Elevate your core avatar metrics." }, doneTooltip() { return "Reach Player Level 50." } },
-        //61: { name: "Secret Ending", done() { return false }, goalTooltip() { return "Hint: Break out of the primary row dimension." }, doneTooltip() { return "Ascend once." } },
-        //71: { name: "Identity Fraud", done() { return false }, goalTooltip() { return "Hint: Alter the structural aesthetics repeatedly." }, doneTooltip() { return "Unlock 3 themes." } },
-        //81: { name: "Deep Earth", done() { return false }, goalTooltip() { return "Hint: Amass a standard baseline googol." }, doneTooltip() { return "Reach Googol Money." } },
-        //91: { name: "Godspeed", done() { return false }, goalTooltip() { return "Hint: Exist continuously for a chronological unit." }, doneTooltip() { return "Play for an hour." } },
-        //101: { name: "Under the Veil", done() { return false }, goalTooltip() { return "Hint: Attain a multi-billion scale tier metric." }, doneTooltip() { return "Reach Level 1e11." } },
         111: { name: "Praised [993]", done() { return false }, goalTooltip() { return "Hint: Hard reset with the developer." }, doneTooltip() { return "Do the hard reset sequence and complete the gwa praising." } },
         121: { name: "Cookie-ing Around [1,000]", done() { return false }, goalTooltip() { return "Hint: Start in CMG." }, doneTooltip() { return "..." } },
 
