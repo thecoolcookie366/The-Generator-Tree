@@ -391,11 +391,28 @@ function gameLoop(diff) {
 }
 
 function hardReset(resetOptions) {
-	if (!confirm("Are you sure you want to do this? You will lose all your progress!")) return
+	let input = prompt("Hey man, do you really want to do this? Please type the version number (1.1) to reset.")
+	if (input === "thecoolcookie366") {
+		player.sss.points = new Decimal (1)
+		return
+	}
+	if (input === "1.2") {
+		if (player && player.sott && player.sott.achievements) {
+			if (!player.sott.achievements.includes(13)) {
+				player.sott.achievements.push(13)
+				save(true)
+			}
+		}
+		return
+	}
+	if (input !== "1.1") return
 	player = null
-	if(resetOptions) options = null
-	save(true);
-	window.location.reload();
+	if (resetOptions) {
+		options = null
+		localStorage.clear()
+	}
+	save(true)
+	window.location.reload()
 }
 
 var ticking = false

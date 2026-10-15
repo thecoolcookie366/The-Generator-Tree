@@ -310,7 +310,11 @@ function getPointGen() {
 }
 
 function addedPlayerData() { 
-	return {}
+	return {
+		antiChud: false,
+		dialogStage: 0,
+		dialogTimer: 0
+	}
 }
 
 var displayThings = [

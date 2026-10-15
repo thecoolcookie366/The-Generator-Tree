@@ -163,8 +163,7 @@ var systemComponents = {
             <tr>
                 <td><button class="opt" onclick="exportSaveToFile()">Export to File</button></td>
                 <td><button class="opt" onclick="importSaveFromFile()">Import from File</button></td>
-				<td><button class="opt" onclick="player.cmg.points = new Decimal (4.82e15)">Mystery Button</button></td>
-                <td></td>
+				<td><button class="opt" onclick="toggleOpt('hideMilestonePopups')">Show Milestone Popups: {{ formatOption(!options.hideMilestonePopups) }}</button></td>
             </tr>
             <tr>
                 <td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
@@ -177,7 +176,7 @@ var systemComponents = {
 				<td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift-Click to Toggle Tooltips: {{ options.forceTooltips?"ON":"OFF" }}</button></td>
 				</tr> 
 			<tr>
-                <td><button class="opt" onclick="toggleOpt('hideMilestonePopups')">Show Milestone Popups: {{ formatOption(!options.hideMilestonePopups) }}</button></td>
+				<td><button v-if="player.sott.points.lt(1)" class="opt" onclick="player.sott.points = new Decimal(1)">Click me for a free secret!</button></td>
             </tr>
         </table>`
     },

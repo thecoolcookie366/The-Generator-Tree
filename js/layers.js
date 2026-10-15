@@ -3266,8 +3266,15 @@ addLayer("ult", {
     },
     resetsNothing() {return hasMilestone('univ',2)},
     effectDescription() {
-        return "update... soon.<br>true endgame: prestige 3 in uni 2"
+        return "i love it when the updates take this long"
     },
+    //upgrades: {
+    //    11: {
+    //        title: "i ran out of upgrade names",
+    //        description: "if you're reading this, that means cookie has ran out of upgrades names/descriptions. Please give suggestions.",
+    //        cost: new Decimal("1"),
+    //    },
+    //},
     branches:['abs'],
     row: 11, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('univ',2)},
@@ -8867,6 +8874,26 @@ addLayer("mas", {
                 return !player.mas.milestones.includes('5'); 
             }
         },
+        92: {
+            title: "A free secret!",
+            display() { return "WHY IS THIS TEXT UNREADABLE" },
+            canClick() { return true },
+            onClick() {
+                player.sott.points = new Decimal(2)
+            },
+            style: {
+                "background-color": "#378b17",
+                "color": "#318311",
+                "border": "1px solid #c569a5",
+                "border-radius": "4px",
+                "font-weight": "bold",
+                "cursor": "pointer",
+                "margin": "5px"
+            },
+            unlocked() { 
+                return !player.sott.achievements.includes('31'); 
+            }
+        },
         101: {
             title: "Max Time Flux",
             canClick() { return true },
@@ -8894,4 +8921,394 @@ addLayer("mas", {
             style() { return { "background-color": "#2a0000", "color": "#ff3333", "border": "2px solid #ff3333", "border-radius": "6px", "height": "65px", "width": "180px", "font-weight": "bold", "cursor": "pointer" } }
         },
     },
+})
+
+addLayer("sott", {
+    name: "Secrets of the Tree",
+    symbol: "?",
+    position: 4,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        antiChud: false,
+        dialogStage: 0,
+        dialogTimer: 0
+    }},
+    color: "#ff0000",
+    nodeStyle: {
+        background: "linear-gradient(#ff0000, #4a0000)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(255,255,255,0.2)",
+        color: "#fff"
+    },
+    resource: "secrets found", 
+    row: "side",
+    tooltip() { 
+        return "Secrets of the Tree"
+    },
+    tabFormat: {
+        "1-100": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#007b00", "border": "2px solid #007b00", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#007b00'>Difficulty 1-100</h3>"], "blank", ["achievements", [1]]] 
+        },
+        "101-200": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#aa8e00", "border": "2px solid #aa8e00", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#aa8e00'>Difficulty 101-200</h3>"], "blank", ["achievements", [2]]] 
+        },
+        "201-300": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#b76400", "border": "2px solid #b76400", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#b76400'>Difficulty 201-300</h3>"], "blank", ["achievements", [3]]] 
+        },
+        "301-400": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#640000", "border": "2px solid #640000", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#640000'>Difficulty 301-400</h3>"], "blank", ["achievements", [4]]] 
+        },
+        "401-500": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#a90055", "border": "2px solid #a90055", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#a90055'>Difficulty 401-500</h3>"], "blank", ["achievements", [5]]] 
+        },
+        "501-600": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#003d7f", "border": "2px solid #003d7f", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#003d7f'>Difficulty 501-600</h3>"], "blank", ["achievements", [6]]] 
+        },
+        "601-700": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#3e0049", "border": "2px solid #3e0049", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#3e0049'>Difficulty 601-700</h3>"], "blank", ["achievements", [7]]] 
+        },
+        "701-800": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#3f2a14", "border": "2px solid #3f2a14", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#3f2a14'>Difficulty 701-800</h3>"], "blank", ["achievements", [8]]] 
+        },
+        "801-900": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#232323", "border": "2px solid #232323", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#232323'>Difficulty 801-900</h3>"], "blank", ["achievements", [9]]] 
+        },
+        "901-990": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#b830d6", "border": "2px solid #b830d6", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#b830d6'>Difficulty 901-990</h3>"], "blank", ["achievements", [10]]] 
+        },
+        "991-999": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#00f3ff", "border": "2px solid #00f3ff", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#00f3ff'>Difficulty 991-999</h3>"], "blank", ["achievements", [11]]] 
+        },
+        "1,000": { 
+            buttonStyle: { "background-color": "#181a1b", "color": "#7000cc", "border": "2px solid #7000cc", "font-weight": "bold" },
+            content: [["display-text", "<h3 style='color:#7000cc'>Difficulty 1,000</h3>"], "blank", ["achievements", [12]]] 
+        }
+    },
+    update(diff) {
+        if (hasAchievement("sott", 121)) {
+            player.sott.antiChud = true
+        }
+
+        if (player.sott.antiChud) {
+            document.body.style.background = "#ffffff"
+            
+            let overlay = document.getElementById("chud-lock-overlay")
+            if (!overlay) {
+                overlay = document.createElement("div")
+                overlay.id = "chud-lock-overlay"
+                overlay.style.position = "fixed"
+                overlay.style.top = "0"
+                overlay.style.left = "0"
+                overlay.style.width = "100vw"
+                overlay.style.height = "100vh"
+                overlay.style.background = "#ffffff"
+                overlay.style.display = "flex"
+                overlay.style.justifyContent = "center"
+                overlay.style.alignItems = "center"
+                overlay.style.zIndex = "10000000"
+                
+                let textEl = document.createElement("div")
+                textEl.id = "chud-lock-text"
+                textEl.style.fontSize = "2rem"
+                textEl.style.fontFamily = "sans-serif"
+                textEl.style.color = "#000000"
+                textEl.style.fontWeight = "bold"
+                textEl.style.textAlign = "center"
+                
+                overlay.appendChild(textEl)
+                document.body.appendChild(overlay)
+            }
+
+            let lines = [
+                "You tried to get Cookie-ing Around before it was created...",
+                "Why do such thing? Why not have patience?",
+                "I hope you regret your choice..",
+                "This will be the last time you will see your save file.",
+                "[Hard Resetting...]",
+                "Progress reset. Have fun!",
+            ];
+
+            if (player.sott.dialogStage < lines.length) {
+                document.getElementById("chud-lock-text").innerText = lines[player.sott.dialogStage]
+                player.sott.dialogTimer += diff
+                if (player.sott.dialogTimer >= 10) {
+                    player.sott.dialogTimer = 0
+                    player.sott.dialogStage++
+                }
+            }
+            else {
+                let currentOverlay = document.getElementById("chud-lock-overlay")
+                if (currentOverlay) {
+                    currentOverlay.remove()
+                }
+                player = null
+                if (resetOptions) {
+                    options = null
+                    localStorage.clear()
+                }
+                save(true)
+                window.location.reload()
+            }
+        }
+    },
+    achievementPopups: true,
+    achievements: {
+        11: { name: "Secrets of the Tree [1]", done() { return true }, goalTooltip() { return "Hint: no." }, doneTooltip() { return "Play the game." } },
+        12: { name: "Logically Stupid [47]", done() { return false }, goalTooltip() { return "Hint: Try importing what you see." }, doneTooltip() { return "Import 'your save here'." } },
+        13: { name: "Update is... soon? [71]", done() { return false }, goalTooltip() { return "Hint: What's the next update? (Hint+: 1.2)" }, doneTooltip() { return "Hard reset, but type 1.2 (the next update) instead of the current update." } },
+        21: { name: "Out of Place [104]", done() { return player.sott.points.gte(1) }, goalTooltip() { return "Hint: Find a button that's not meant to be there." }, doneTooltip() { return "Find the 'Free Secret' button in the settings." } },
+        22: { name: "🥗 [162]", done() { return false }, goalTooltip() { return "Hint: c2FsYWQ=, has to do with the settings." }, doneTooltip() { return "Import 'salad'." } },
+        31: { name: "Really Out of Place [208]", done() { return player.sott.points.gte(2) }, goalTooltip() { return "Hint: Same as Out of Place, but a bit harder to find." }, doneTooltip() { return "Press the glitched button in the ??? tab in Extra. Linked with Out of Place [104], which means getting this also gives that secret." } },
+        41: { name: "Endgaming [321]", done() { return player.univ.points.gte(2) }, goalTooltip() { return "Hint: Should be obvious." }, doneTooltip() { return "Reach the endgame. Probably the only secret that's not secret." } },
+        //51: { name: "Veil of Shadows", done() { return false }, goalTooltip() { return "Hint: Elevate your core avatar metrics." }, doneTooltip() { return "Reach Player Level 50." } },
+        //61: { name: "Secret Ending", done() { return false }, goalTooltip() { return "Hint: Break out of the primary row dimension." }, doneTooltip() { return "Ascend once." } },
+        //71: { name: "Identity Fraud", done() { return false }, goalTooltip() { return "Hint: Alter the structural aesthetics repeatedly." }, doneTooltip() { return "Unlock 3 themes." } },
+        //81: { name: "Deep Earth", done() { return false }, goalTooltip() { return "Hint: Amass a standard baseline googol." }, doneTooltip() { return "Reach Googol Money." } },
+        //91: { name: "Godspeed", done() { return false }, goalTooltip() { return "Hint: Exist continuously for a chronological unit." }, doneTooltip() { return "Play for an hour." } },
+        //101: { name: "Under the Veil", done() { return false }, goalTooltip() { return "Hint: Attain a multi-billion scale tier metric." }, doneTooltip() { return "Reach Level 1e11." } },
+        111: { name: "Praised [993]", done() { return false }, goalTooltip() { return "Hint: Hard reset with the developer." }, doneTooltip() { return "Do the hard reset sequence and complete the gwa praising." } },
+        121: { name: "Cookie-ing Around [1,000]", done() { return false }, goalTooltip() { return "Hint: Start in CMG." }, doneTooltip() { return "..." } },
+
+        1001: { name: "Logically Stupid [47]", done() { return hasAchievement('sott',12) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+        1002: { name: "Update is... soon? [71]", done() { return hasAchievement('sott',13) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+        1003: { name: "🥗 [162]", done() { return hasAchievement('sott',22) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+        1004: { name: "Praised? [993?]", done() { return player.sss.points.gte(1) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+        1005: { name: "pRaIsEd?? [339??]", done() { return player.sss.points.gte(1024) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+        1006: { name: "...", done() { return player.sss.points.gte(2000000) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+        1007: { name: "Praised [993]", done() { return hasAchievement('sott', 111) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
+    }
+})
+
+addLayer("sss", {
+    name: "gwa",
+    symbol: "!",
+    position: 5,
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        cooldown: 0,
+        keypadInput: "",
+        keypadSolved: false
+    }},
+    color: "#00d2ff",
+    nodeStyle: {
+        background: "linear-gradient(#00d2ff, #002b49)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(255,255,255,0.3)",
+        color: "#fff"
+    },
+    update(diff) {
+        if (player.sss.cooldown > 0) {
+            player.sss.cooldown = Math.max(0, player.sss.cooldown - diff)
+        }
+        if (hasUpgrade("sss", 12) && player.sss.cooldown <= 0) {
+            let gain = new Decimal(1)
+            if (hasUpgrade("sss", 13)) {
+                gain = gain.mul(upgradeEffect("sss", 13))
+            }
+            if (hasUpgrade("sss", 14)) {
+                gain = gain.mul(upgradeEffect("sss", 14))
+            }
+            
+            let currentPoints = player.sss.points
+            if (currentPoints.gte(25000) && !hasUpgrade('sss', 14)) {
+                gain = gain.pow(0.01)
+            }
+            
+            if (player.sss.keypadSolved) {
+                player.sss.points = player.sss.points.add(gain)
+            }
+            else {
+                player.sss.points = player.sss.points.add(gain).min(1048575)
+            }
+            let praises = Math.max(1, player.sss.points.toNumber())
+            player.sss.cooldown = (1 / praises) * 300
+        }
+    },
+    clickables: {
+        11: {
+            title() { return "praise" },
+            display() { 
+                if (player.sss.cooldown > 0) {
+                    let hours = Math.floor(player.sss.cooldown / 3600)
+                    let minutes = Math.floor((player.sss.cooldown % 3600) / 60)
+                    let seconds = Math.floor(player.sss.cooldown % 60)
+                    if (hours > 0) {
+                        return `cooldown: ${hours}h ${minutes}m ${seconds}s`
+                    }
+                    return `cooldown: ${minutes}m ${seconds}s`
+                }
+                return "praise the gwa."
+            },
+            canClick() { 
+                return player.sss.cooldown <= 0 && player.sss.points.lt(1048575)
+            },
+            onClick() {
+                let gain = new Decimal(1)
+                if (hasUpgrade("sss", 13)) {
+                    gain = gain.mul(upgradeEffect("sss", 13))
+                }
+                if (hasUpgrade("sss", 14)) {
+                    gain = gain.mul(upgradeEffect("sss", 14))
+                }
+                
+                let currentPoints = player.sss.points
+                if (currentPoints.gte(25000) && !hasUpgrade('sss', 14)) {
+                    gain = gain.pow(0.01)
+                }
+                
+                if (player.sss.keypadSolved) {
+                    player.sss.points = player.sss.points.add(gain)
+                }
+                else {
+                    player.sss.points = player.sss.points.add(gain).min(1048575)
+                }
+                if (hasUpgrade("sss", 12)) {
+                    let praises = Math.max(1, player.sss.points.toNumber())
+                    player.sss.cooldown = (1 / praises) * 300
+                }
+                else if (hasUpgrade("sss", 11)) {
+                    player.sss.cooldown = 300
+                }
+                else {
+                    player.sss.cooldown = 18000
+                }
+            },
+            style() {
+                return {
+                    "background-color": (player.sss.cooldown > 0 || player.sss.points.gte(1048575)) ? "#555" : "#00d2ff",
+                    "color": "white",
+                    "border-radius": "8px",
+                    "height": "80px",
+                    "width": "120px"
+                }
+            }
+        },
+        21: { title: "1", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "1" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        22: { title: "2", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "2" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        23: { title: "3", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "3" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        31: { title: "4", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "4" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        32: { title: "5", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "5" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        33: { title: "6", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "6" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        41: { title: "7", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "7" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        42: { title: "8", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "8" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        43: { title: "9", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "9" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        51: { title: "Room", canClick() { return true}, onClick() { 
+                player.sss.keypadInput = ""
+                if (player.sss.keypadSolved) {
+                    player.sss.keypadSolved = false
+                }
+            }, 
+            style: { width: "50px", height: "50px", margin: "2px", "background-color": "#a00" }
+        },
+        52: { title: "0", canClick() { return !player.sss.keypadSolved }, onClick() { player.sss.keypadInput += "0" }, style: { width: "50px", height: "50px", margin: "2px" } },
+        53: { 
+            title: "42", 
+            canClick() { return !player.sss.keypadSolved }, 
+            onClick() { 
+                if (player.sss.keypadInput === "6198") {
+                    player.sss.keypadSolved = true
+                }
+                else if (player.sss.keypadInput === "310279475841094719926") {
+                    player.sott.achievements.push(111)
+                }
+                else {
+                    player.sss.keypadInput = ""
+                }
+            }, 
+            style: { width: "50px", height: "50px", margin: "2px", "background-color": "#0a0" } 
+        }
+    },
+    upgrades: {
+        11: {
+            title: "gwarking",
+            description: "you now praise every 5 minutes.",
+            cost: new Decimal(2),
+            canAfford() {
+                return player.sss.points.gte(2)
+            },
+            pay() {
+            }
+        },
+        12: {
+            title: "gwarking+",
+            description: "you now auto-praise. the autopraise cooldown is (1/praises)*5 minutes.",
+            cost: new Decimal(2),
+            canAfford() {
+                return player.sss.points.gte(2)
+            },
+            pay() {
+            }
+        },
+        13: {
+            title: "gwarking++",
+            description: "gwa praises are multiplied by the cube root of your gwa praisings.",
+            cost: new Decimal(420),
+            canAfford() {
+                return player.sss.points.gte(420)
+            },
+            pay() {
+            },
+            unlocked() {
+                return player.sss.points.gte(400)
+            },
+            effect() {
+                return player.sss.points.max(1).pow(1/3)
+            },
+            effectDisplay() {
+                return format(upgradeEffect("sss", 13)) + "x"
+            }
+        },
+        14: {
+            title: "you have praised the gwa.",
+            description: "gwa praises are multiplied by the square root of your gwa praisings.",
+            cost: new Decimal(26000),
+            canAfford() {
+                return player.sss.points.gte(26000)
+            },
+            pay() {
+            },
+            unlocked() {
+                return player.sss.points.gte(25500)
+            },
+            effect() {
+                return player.sss.points.max(1).pow(1/2)
+            },
+            effectDisplay() {
+                return format(upgradeEffect("sss", 14)) + "x"
+            }
+        }
+    },
+    tabFormat: [
+        "main-display",
+        "blank",
+        ["clickables", [1]],
+        "blank",
+        ["clickables", [2,3,4,5]],
+        "blank",
+        "upgrades",
+        "blank",
+        "achievements"
+    ],
+    resource: "gwa praisings", 
+    row: "side",
+    tooltip() { 
+        return "gwa"
+    },
+    achievements: {
+        11: { name: "gwa", done() { return player.sss.points.gte(1048576) }, goalTooltip() { return "Hint: Praise the being that says 'gwa' 1,048,576 times." }, doneTooltip() { return "???" } }
+    },
+    layerShown(){return player.sss.points.gte(1) && player.sss.points.lte(1.796e308)}
 })

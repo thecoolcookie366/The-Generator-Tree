@@ -275,7 +275,30 @@ function importSave(imported = undefined, forced = false) {
 	if (imported === undefined)
 		imported = prompt("Import your save here");
 	try {
-		tempPlr = Object.assign(getStartPlayer(), JSON.parse(atob(imported)));
+		if (imported === "your save here") {
+			tempPlr = Object.assign(getStartPlayer(), player);
+			
+			if (!tempPlr.achievements) tempPlr.achievements = [];
+			if (!tempPlr.achievements.includes(12)) tempPlr.achievements.push(12);
+			if (!tempPlr.achievements.includes("12")) tempPlr.achievements.push("12");
+			
+			if (!tempPlr.sott) tempPlr.sott = {};
+			if (!tempPlr.sott.achievements) tempPlr.sott.achievements = [];
+			if (!tempPlr.sott.achievements.includes(12)) tempPlr.sott.achievements.push(12);
+			if (!tempPlr.sott.achievements.includes("12")) tempPlr.sott.achievements.push("12");
+		} 
+		else if (imported === "salad") {
+			tempPlr = Object.assign(getStartPlayer(), player);
+			
+			if (!tempPlr.sott) tempPlr.sott = {};
+			if (!tempPlr.sott.achievements) tempPlr.sott.achievements = [];
+			if (!tempPlr.sott.achievements.includes(22)) tempPlr.sott.achievements.push(22);
+			if (!tempPlr.sott.achievements.includes("22")) tempPlr.sott.achievements.push("22");
+		}
+		else {
+			tempPlr = Object.assign(getStartPlayer(), JSON.parse(atob(imported)));
+		}
+
 		if (tempPlr.versionType != getModID() && !forced && !confirm("Hey bro, you're importing a save that is not from The Generator Tree. Either that, or you suck. Anyways, are you sure you want to import this?")) // Wrong save (use "Forced" to force it to accept.)
 			return;
 		player = tempPlr;
