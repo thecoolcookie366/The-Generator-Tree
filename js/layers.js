@@ -1875,7 +1875,7 @@ addLayer("terri", {
         61: {
             title: "One Thousand Years Later...",
             description: "This upgrade does nothing yet, but it looks cool.",
-            cost: new Decimal("1e1e1e444"),
+            cost: new Decimal("1e1e3026"),
             currencyInternalName: "points",
             currencyLocation() { return player },
             currencyDisplayName: "money",
@@ -1896,12 +1896,12 @@ addLayer("terri", {
     },
     milestones: {
         0: {
-        requirementDescription: "100,000,000 Terrible ors",
+        requirementDescription: "100,000,000 Terrible Generators",
         effectDescription: "<i>The second ever exponent boost! ^1.25 money. <s>Exponents apply after all boosts.</s></i>",
         done() { return player.terri.points.gte(100e6) },
         unlocked(){return hasMilestone('snd',0)},
         style() {
-                if (hasMilestoneGenerat(this.layer, this.id)) {
+                if (hasMilestone(this.layer, this.id)) {
                     return {
                         'background-color': '#7d0000',
                         'color': '#ffffff',
