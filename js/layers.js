@@ -1875,7 +1875,7 @@ addLayer("terri", {
         61: {
             title: "One Thousand Years Later...",
             description: "This upgrade does nothing yet, but it looks cool.",
-            cost: new Decimal("1e1e3026"),
+            cost: new Decimal("1e1e3020"),
             currencyInternalName: "points",
             currencyLocation() { return player },
             currencyDisplayName: "money",
