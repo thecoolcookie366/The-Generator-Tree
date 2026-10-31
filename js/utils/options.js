@@ -15,6 +15,9 @@ function getStartOptions() {
 		oldStyle: false,
 		forceTooltips: true,
 		hideMilestonePopups: false,
+		uniBackgrounds: false,
+		trueDisableBackground: true,
+		chosenUniBackground: 1,
 	}
 }
 

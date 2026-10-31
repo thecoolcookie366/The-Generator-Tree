@@ -174,10 +174,31 @@ var systemComponents = {
                 <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ options.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
                 <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">Single-Tab Mode: {{ options.forceOneTab?"ALWAYS":"AUTO" }}</button></td>
 				<td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift-Click to Toggle Tooltips: {{ options.forceTooltips?"ON":"OFF" }}</button></td>
-				</tr> 
+			</tr> 
 			<tr>
-				<td><button v-if="player.sott.points.lt(1)" class="opt" onclick="player.sott.points = new Decimal(1)">Click me for a free secret!</button></td>
+				<td><button class="opt" onclick="if (player.sott.points.lt(1)) player.sott.points = new Decimal(1)">Click me for a free secret! {{ player.sott.points.gte(1) ? "(obtained)" : "" }}</button></td>
+				<td v-if="player.univ && player.univ.points.gte(1) && !options.trueDisableBackground"><button class="opt" onclick="toggleOpt('uniBackgrounds')">Auto Universe Backgrounds: {{ options.uniBackgrounds?"OFF":"ON" }}</button></td>
+				<td v-if="player.univ && player.univ.points.gte(1)"><button class="opt" onclick="toggleOpt('trueDisableBackground')">Universe Backgrounds: {{ options.trueDisableBackground?"OFF":"ON" }}</button></td>
             </tr>
+			<tr v-if="player.univ && player.univ.points.gte(1) && options.uniBackgrounds && !options.trueDisableBackground">
+				<td><button class="opt" onclick="options.chosenUniBackground = 0">Universe 0 Background {{ options.chosenUniBackground == 0 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(1)"><button class="opt" onclick="options.chosenUniBackground = 1">Universe 1 Background {{ options.chosenUniBackground == 1 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(2)"><button class="opt" onclick="options.chosenUniBackground = 2">Universe 2 Background {{ options.chosenUniBackground == 2 ? "(currently enabled)" : "" }}</button></td>
+			</tr>
+			<tr v-if="player.univ && player.univ.points.gte(3) && options.uniBackgrounds && !options.trueDisableBackground">
+				<td v-if="player.univ.points.gte(3)"><button class="opt" onclick="options.chosenUniBackground = 3">Universe 3 Background {{ options.chosenUniBackground == 3 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(4)"><button class="opt" onclick="options.chosenUniBackground = 4">Universe 4 Background {{ options.chosenUniBackground == 4 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(5)"><button class="opt" onclick="options.chosenUniBackground = 5">Universe 5 Background {{ options.chosenUniBackground == 5 ? "(currently enabled)" : "" }}</button></td>
+			</tr>
+			<tr v-if="player.univ && player.univ.points.gte(6) && options.uniBackgrounds && !options.trueDisableBackground">
+				<td v-if="player.univ.points.gte(6)"><button class="opt" onclick="options.chosenUniBackground = 6">Universe 6 Background {{ options.chosenUniBackground == 6 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(7)"><button class="opt" onclick="options.chosenUniBackground = 7">Universe 7 Background {{ options.chosenUniBackground == 7 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(8)"><button class="opt" onclick="options.chosenUniBackground = 8">Universe 8 Background {{ options.chosenUniBackground == 8 ? "(currently enabled)" : "" }}</button></td>
+			</tr>
+			<tr v-if="player.univ && player.univ.points.gte(9) && options.uniBackgrounds && !options.trueDisableBackground">
+				<td v-if="player.univ.points.gte(9)"><button class="opt" onclick="options.chosenUniBackground = 9">Universe 9 Background {{ options.chosenUniBackground == 9 ? "(currently enabled)" : "" }}</button></td>
+				<td v-if="player.univ.points.gte(10)"><button class="opt" onclick="options.chosenUniBackground = 10">The Finale Background {{ options.chosenUniBackground == 10 ? "(currently enabled)" : "" }}</button></td>
+			</tr>
         </table>`
     },
 

@@ -158,7 +158,7 @@ function getPointGen() {
 	if (hasUpgrade('sup', 11)) gain = gain.mul("1e500000000")
 	if (hasUpgrade('sup', 12)) gain = gain.tetrate("5")
 	if (hasUpgrade('sup', 14) && player.points.layer) gain = gain.tetrate(player.points.layer)
-	let applySoftcaps = !hasUpgrade('per', 14) || (hasUpgrade('per', 14) && player.points.gte("1e1e2e5") && !player.ter.points.gte(3.4e38));
+	let applySoftcaps = !hasUpgrade('per', 14) || (hasUpgrade('per', 14) && player.points.gte("1e1e2e5") && !player.ter.points.gte(3.4e38))
 	if (applySoftcaps) {
 		let cap = new Decimal("1e1e9")
 		if (gain.gte(cap)) {
@@ -306,6 +306,29 @@ function getPointGen() {
 		}
 	}
 	if (hasMilestone('univ', 2)) gain = new Decimal("0")
+	if (hasUpgrade('ult', 11)) gain = gain.add(0.01)
+	if (hasMilestone('mass', 0)) gain = gain.add(0.09)
+	if (hasMilestone('mass', 1)) gain = gain.add(0.9)
+	if (hasMilestone('mass', 2)) gain = gain.mul(player.mass.points.add(1).log10().add(1).max(1))
+	if (hasMilestone('mass', 3)) gain = gain.mul(Decimal.pow(2, getBuyableAmount('mass', 11)))
+	if (hasMilestone('mass', 4)) gain = gain.mul(Decimal.pow(3, getBuyableAmount('mass', 12)))
+	if (hasMilestone('mass', 5)) gain = gain.mul(Decimal.pow(5, getBuyableAmount('mass', 13)))
+	if (hasMilestone('mass', 6)) gain = gain.mul(Decimal.pow(7, getBuyableAmount('mass', 21)))
+	if (hasMilestone('mass', 7)) gain = gain.mul(Decimal.pow(11, getBuyableAmount('mass', 22)))
+	if (hasMilestone('mass', 8)) gain = gain.mul(Decimal.pow(13, getBuyableAmount('mass', 23)))
+	if (hasMilestone('mass', 10)) gain = gain.mul(Decimal.pow(1.1, player.mass.rank))
+	if (hasMilestone('mass', 11)) gain = gain.mul(Decimal.pow(100, player.mass.tier))
+	if (hasMilestone('mass', 12)) gain = gain.mul(Decimal.pow(229, getBuyableAmount('mass', 31)))
+	if (hasMilestone('mass', 14)) gain = gain.mul(Decimal.pow(1583, getBuyableAmount('mass', 32)))
+	if (hasMilestone('mass', 15)) gain = gain.mul(Decimal.pow(10177, getBuyableAmount('mass', 33)))
+	if (hasMilestone('mass', 17)) gain = gain.mul(Decimal.pow(62189, getBuyableAmount('mass', 41)))
+	if (hasMilestone('mass', 18)) gain = gain.mul("1e20")
+	if (hasMilestone('mass', 20)) gain = gain.mul(Decimal.pow(252233, getBuyableAmount('mass', 42)))
+	if (hasMilestone('mass', 21)) gain = gain.mul("1e50")
+	if (hasMilestone('mass', 22)) gain = gain.mul(Decimal.pow(1632899, getBuyableAmount('mass', 43)))
+	if (hasMilestone('mass', 23)) gain = gain.mul("1e111")
+	if (hasMilestone('mass', 25)) gain = gain.add(0.99)
+	if (hasMilestone('mass', 25)) gain = gain.pow(2)
 	return gain
 }
 
@@ -354,8 +377,180 @@ function isEndgame() {
 	return player.univ.points.gte(2)
 }
 
-var backgroundStyle = {
+var backgroundStyle = function() {
+    if (typeof options !== "undefined" && (options.trueDisableBackground === true || options.trueDisableBackground === "true")) {
+        return {
+            "background": "#07080f"
+        }
+    }
 
+    let uniPoints = 0
+    if (typeof player !== "undefined" && player.univ && player.univ.points) {
+        uniPoints = Math.min(Number(player.univ.points), 10)
+    }
+
+    if (uniPoints > 0 && typeof options !== "undefined" && options.uniBackgrounds) {
+        if (options.chosenUniBackground !== undefined) {
+            uniPoints = Number(options.chosenUniBackground)
+        } else {
+            uniPoints = 1
+        }
+    }
+
+    if (uniPoints === 0) {
+        return {
+            "background": "#07080f"
+        }
+    }
+
+    if (!document.getElementById("universe-shapes-keyframes")) {
+        let style = document.createElement("style")
+        style.id = "universe-shapes-keyframes"
+        style.innerHTML = `
+            @keyframes starryRainbowAnimation {
+                0% { background-position: 0% 4%, 0% 0%, 0% 0%, 0% 0%, 0% 0% }
+                50% { background-position: 100% 97%, 20px -50px, -30px 40px, 40px -10px, 0% 0% }
+                100% { background-position: 0% 4%, 0% 0%, 0% 0%, 0% 0%, 0% 0% }
+            }
+            @keyframes gridShiftAnimation {
+                0% { background-position: 0px 0px, 0px 0px, 0% 0% }
+                100% { background-position: 40px 40px, 40px 40px, 0% 0% }
+            }
+            @keyframes timewallSlowdown {
+                0% { background-position: 0% 0%, 0% 0% }
+                50% { background-position: 50px 100px, -50px -100px }
+                100% { background-position: 0% 0%, 0% 0% }
+            }
+            @keyframes fastAnimation {
+                0% { background-position: 0px 0px, 0px 0px, 0% 0% }
+                100% { background-position: 300px 600px, -30px 300px, 0% 0% }
+            }
+            @keyframes glitchAnimation {
+                0% { filter: hue-rotate(0deg) contrast(1); background-size: 20px 20px, 1200% 1200% }
+                50% { filter: hue-rotate(180deg) contrast(1.6); background-size: 45px 5px, 1200% 1200% }
+                100% { filter: hue-rotate(360deg) contrast(1); background-size: 20px 20px, 1200% 1200% }
+            }
+        `
+        document.head.appendChild(style)
+    }
+
+    if (uniPoints === 1) {
+        return {
+            "background": `
+                linear-gradient(90deg, #ffffff 2px, transparent 2px) no-repeat,
+                linear-gradient(90deg, #fef08a 3px, transparent 3px) no-repeat,
+                linear-gradient(124deg, #07080f, #16a34a)
+            `,
+            "background-size": "3px 3px, 4px 4px, 1200% 1200%",
+            "animation": "starryRainbowAnimation 30s ease infinite"
+        }
+    }
+
+    if (uniPoints === 2) {
+        return {
+            "background": `
+                linear-gradient(90deg, #374151 4px, transparent 4px),
+                linear-gradient(0deg, #374151 4px, transparent 4px),
+                linear-gradient(136deg, #0c0d14, #1f2937)
+            `,
+            "background-size": "40px 40px, 40px 40px, 1200% 1200%",
+            "animation": "gridShiftAnimation 25s linear infinite"
+        }
+    }
+
+    if (uniPoints === 3) {
+        return {
+            "background": `
+                linear-gradient(45deg, #eab308 6px, transparent 6px) no-repeat,
+                linear-gradient(-45deg, #ffffff 4px, transparent 4px) no-repeat,
+                linear-gradient(148deg, #051622, #ca8a04)
+            `,
+            "background-size": "30px 30px, 25px 25px, 1200% 1200%",
+            "animation": "starryRainbowAnimation 12s linear infinite"
+        }
+    }
+
+    if (uniPoints === 4) {
+        return {
+            "background": `
+                repeating-linear-gradient(90deg, transparent, transparent 48px, #3b82f6 48px, #3b82f6 50px),
+                linear-gradient(160deg, #0f172a, #1d4ed8)
+            `,
+            "background-size": "100% 100%, 1200% 1200%",
+            "animation": "timewallSlowdown 80s ease-in-out infinite"
+        }
+    }
+
+    if (uniPoints === 5) {
+        return {
+            "background": `
+                repeating-linear-gradient(45deg, rgba(239, 68, 68, 0.15) 0px, rgba(239, 68, 68, 0.15) 10px, transparent 10px, transparent 20px),
+                linear-gradient(90deg, #ffffff 4px, transparent 4px) no-repeat,
+                linear-gradient(172deg, #1e1b4b, #991b1b)
+            `,
+            "background-size": "100% 100%, 8px 8px, 1200% 1200%",
+            "animation": "fastAnimation 1.5s linear infinite"
+        }
+    }
+
+    if (uniPoints === 6) {
+        return {
+            "background": `
+                linear-gradient(90deg, #7f1d1d 8px, transparent 8px),
+                linear-gradient(184deg, #1c1917, #560bad)
+            `,
+            "background-size": "20px 20px, 1200% 1200%",
+            "animation": "glitchAnimation 0.8s steps(4) infinite"
+        }
+    }
+
+    if (uniPoints === 7) {
+        return {
+            "background": `
+                linear-gradient(90deg, #a855f7 2px, transparent 2px),
+                linear-gradient(0deg, #c084fc 2px, transparent 2px),
+                linear-gradient(196deg, #090d16, #581c87)
+            `,
+            "background-size": "50px 50px, 50px 50px, 1200% 1200%",
+            "animation": "gridShiftAnimation 15s linear infinite"
+        }
+    }
+
+    if (uniPoints === 8) {
+        return {
+            "background": `
+                linear-gradient(90deg, #1e293b 1px, transparent 1px) no-repeat,
+                linear-gradient(208deg, #020617, #000000)
+            `,
+            "background-size": "200px 200px, 1200% 1200%",
+            "animation": "starryRainbowAnimation 90s ease infinite"
+        }
+    }
+
+    if (uniPoints === 9) {
+        return {
+            "background": `
+                linear-gradient(45deg, #b45309 8px, transparent 8px) no-repeat,
+                linear-gradient(135deg, #f59e0b 5px, transparent 5px) no-repeat,
+                linear-gradient(220deg, #1c1917, #451a03)
+            `,
+            "background-size": "40px 40px, 60px 60px, 1200% 1200%",
+            "animation": "starryRainbowAnimation 25s ease infinite"
+        }
+    }
+
+    if (uniPoints === 10) {
+        return {
+            "background": `
+                repeating-linear-gradient(0deg, #450a0a 0px, #450a0a 2px, transparent 2px, transparent 10px),
+                linear-gradient(232deg, #000000, #310404)
+            `,
+            "background-size": "100% 100%, 1200% 1200%",
+            "animation": "glitchAnimation 0.1s linear infinite"
+        }
+    }
+
+    return { "background": "#07080f" }
 }
 
 function maxTickLength() {
