@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Generator Tree",
-	author: "thecoolcookie366 and bitshrub0",
+	author: "thecoolcookie366",
 	pointsName: "money",
 	modFiles: ["layers.js", "tree.js"],
 
