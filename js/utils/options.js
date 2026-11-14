@@ -18,6 +18,9 @@ function getStartOptions() {
 		uniBackgrounds: false,
 		trueDisableBackground: true,
 		chosenUniBackground: 1,
+		music: false,
+		musicVolume: 50,
+		musicExtra: false,
 	}
 }
 

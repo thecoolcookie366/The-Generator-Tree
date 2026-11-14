@@ -391,9 +391,14 @@ function gameLoop(diff) {
 }
 
 function hardReset(resetOptions) {
-	let input = prompt("Hey man, do you really want to do this? Please type the version number (1.1) to reset.")
+	let input = prompt("Hey man, do you really want to do this? Please type the version number (1.12) to reset.")
 	if (input === "thecoolcookie366") {
 		player.sss.points = new Decimal (1)
+		return
+	}
+	if (input === "bitshrub0") {
+		player.bst1.points = new Decimal(1)
+		player.bst1.unlocked = true
 		return
 	}
 	if (input === "1.2") {
@@ -405,7 +410,7 @@ function hardReset(resetOptions) {
 		}
 		return
 	}
-	if (input !== "1.1") return
+	if (input !== "1.12") return
 	player = null
 	if (resetOptions) {
 		options = null

@@ -176,6 +176,11 @@ var systemComponents = {
 				<td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift-Click to Toggle Tooltips: {{ options.forceTooltips?"ON":"OFF" }}</button></td>
 			</tr> 
 			<tr>
+                <td><button class="opt" onclick="toggleMusicWithConfirm()">Music: {{ options.music ? "ON" : "OFF" }}</button></td>
+				<td v-if="options.music"><button class="opt" onclick="cycleMusicVolume()">Volume: {{ options.musicVolume ?? 50 }}%</button></td>
+				<td v-if="options.music"><button class="opt" onclick="toggleOpt('musicExtra')">Secret Music Option: {{ options.musicExtra ? "ON" : "OFF" }}</button></td>
+			</tr> 
+			<tr>
 				<td><button class="opt" onclick="if (player.sott.points.lt(1)) player.sott.points = new Decimal(1)">Click me for a free secret! {{ player.sott.points.gte(1) ? "(obtained)" : "" }}</button></td>
 				<td v-if="player.univ && player.univ.points.gte(1) && !options.trueDisableBackground"><button class="opt" onclick="toggleOpt('uniBackgrounds')">Auto Universe Backgrounds: {{ options.uniBackgrounds?"OFF":"ON" }}</button></td>
 				<td v-if="player.univ && player.univ.points.gte(1)"><button class="opt" onclick="toggleOpt('trueDisableBackground')">Universe Backgrounds: {{ options.trueDisableBackground?"OFF":"ON" }}</button></td>

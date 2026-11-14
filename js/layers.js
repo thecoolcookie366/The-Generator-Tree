@@ -1629,6 +1629,7 @@ addLayer("terri", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        prestige: new Decimal(0),
     }},
     color: "#ff0000",
     //nodeStyle: {
@@ -1648,6 +1649,7 @@ addLayer("terri", {
     exponent: 1, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        mult = mult.mul(player.terri.prestige.add(1))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -1665,18 +1667,23 @@ addLayer("terri", {
         return "adding +" + format(tmp[this.layer].effect) + " to your money base"
     },
     passiveGeneration() {
-        let Gen = 0
-        if (hasUpgrade('terri',54)) Gen = 1
-        if (hasUpgrade('awf',22)) Gen = 10
-        if (hasUpgrade('awf',23)) Gen = 100
-        if (hasUpgrade('awf',24)) Gen = 1000
-        if (hasUpgrade('dia',14)) Gen = 1e6
+        let Gen = new Decimal(0)
+        if (hasUpgrade('terri',54)) Gen = new Decimal(1)
+        if (hasUpgrade('awf',22)) Gen = new Decimal(10)
+        if (hasUpgrade('awf',23)) Gen = new Decimal(100)
+        if (hasUpgrade('awf',24)) Gen = new Decimal(1000)
+        if (hasUpgrade('terri',64)) Gen = new Decimal(1e5)
+        if (hasUpgrade('dia',14)) Gen = new Decimal(1e6)
         if (hasUpgrade('alr',14)) Gen = player.terri.points.mag
-        if (player.terri.points.gte(1e6) && (!hasUpgrade('dia',14))) Gen = 0
-        if (player.terri.points.gte(1e9) && (!hasUpgrade('alr',14))) Gen = 0
-        if (player.terri.points.gte(9.0071993e15)) Gen = 0
+        if (player.terri.points.gte(1e6) && (!hasUpgrade('dia',14) && (!hasUpgrade("terri", 61)))) Gen = new Decimal(0)
+        if (player.terri.points.gte(1e9) && (!hasUpgrade('alr',14) && (!hasUpgrade("terri", 61)))) Gen = new Decimal(0)
+        if ((player.terri.points.gte(9.0071993e15)) && (!hasUpgrade("terri", 81))) Gen = new Decimal(0)
+        if (hasUpgrade("terri", 62)) Gen = Gen.mul(player.terri.points.max(2).log2())
+        if (hasUpgrade("ult", 13)) Gen = Gen.pow(3)
+        if (hasUpgrade("good", 11)) Gen = Gen.mul(1e75)
+        if (player.terri.points.gte(1e100)) Gen = new Decimal(0)
         return Gen
-    },
+    }, 
     upgrades: {
         11: {
             title: "This is terrible!",
@@ -1873,9 +1880,9 @@ addLayer("terri", {
             },
         },
         61: {
-            title: "One Thousand Years Later...",
-            description: "This upgrade does nothing yet, but it looks cool.",
-            cost: new Decimal("1e1e3020"),
+            title: "A Hundred Thousand Years Later",
+            description: "Uncap terrible generators once again...",
+            cost: new Decimal("1e3029"),
             currencyInternalName: "points",
             currencyLocation() { return player },
             currencyDisplayName: "money",
@@ -1892,6 +1899,213 @@ addLayer("terri", {
                     }
                 }
             }
+        },
+        62: {
+            title: "ONWARD TO YOUR DESTINY, MY FRIEND",
+            description: "Multiply base terrible generator gain by log2(terrible generators).",
+            cost: new Decimal(1100000),
+            unlocked() { 
+                return hasUpgrade("terri", 61)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#3e1f4f',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #783894',
+                        'border-color': '#783894'
+                    }
+                }
+            }
+        },
+        63: {
+            title: "Wow this is so useful",
+            description: "Money gain boosts itself.",
+            cost: new Decimal(5e6),
+            unlocked() { 
+                return hasUpgrade("terri", 62)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#3a144e',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #721798',
+                        'border-color': '#721798'
+                    }
+                }
+            }
+        },
+        64: {
+            title: "Why does every universe eventually get going again???",
+            description: "Start gaining a base rate of 100000 terrible generators per second.",
+            cost: new Decimal("1e3037"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked() { 
+                return hasUpgrade("terri", 63)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#270937',
+                        'color': '#ffffff',
+                        'box-shadow': '0px 0px 15px #4d026c',
+                        'border-color': '#4d026c'
+                    }
+                }
+            }
+        },
+        71: {
+            title: "I CAN HAS THE POWER",
+            description: "Terrible and awful generator milestones actually work now!!",
+            cost: new Decimal("1e9"),
+            unlocked() { 
+                return hasUpgrade("terri", 64)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#feb760',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 15px #b9560f',
+                        'border-color': '#b9560f'
+                    }
+                }
+            }
+        },
+        72: {
+            title: "Milestone Jumpscare",
+            description: "Uncap awful generators, and generate 1000 awful gens/s.",
+            cost: new Decimal("2e5677"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked() { 
+                return hasUpgrade("terri", 71)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#c4fe60',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 15px #9db90f',
+                        'border-color': '#9db90f'
+                    }
+                }
+            }
+        },
+        73: {
+            title: "I fear for my life",
+            description: "Multiply money by log2(money), then x1e308",
+            cost: new Decimal("2e9"),
+            unlocked() { 
+                return hasUpgrade("terri", 72)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#60fe8d',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 15px #0fb93f',
+                        'border-color': '#0fb93f'
+                    }
+                }
+            }
+        },
+        74: {
+            title: "New layer WHEN",
+            description: "Unlock another ultra generator upgrade :>",
+            cost: new Decimal("1e7500"),
+            currencyInternalName: "points",
+            currencyLocation() { return player },
+            currencyDisplayName: "money",
+            unlocked() { 
+                return hasUpgrade("terri", 73)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#60a4fe',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 15px #0fb9b0',
+                        'border-color': '#0fb9b0'
+                    }
+                }
+            }
+        },
+        81: {
+            title: "The last frontier",
+            description: "Remove the last cap...",
+            cost: new Decimal("9e15"),
+            unlocked() { 
+                return hasUpgrade("terri", 74)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#fff',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 15px #000',
+                        'border-color': '#000'
+                    }
+                }
+            }
+        },
+        82: {
+            title: "These upgrades are dumb...",
+            description: "Generate 1 more diamond per second, and uncap.",
+            cost: new Decimal("5e22"),
+            unlocked() { 
+                return hasUpgrade("terri", 81)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#aaa',
+                        'color': '#000000',
+                        'box-shadow': '0px 0px 20px #555',
+                        'border-color': '#555'
+                    }
+                }
+            }
+        },
+        83: {
+            title: "...BUT THIS ONE IS BETTER",
+            description: "Get 10,000,000 awful gens/second, and unlock an extra mediocre gen upgrade.",
+            cost: new Decimal("2e26"),
+            unlocked() { 
+                return hasUpgrade("terri", 82)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#555',
+                        'color': '#fff',
+                        'box-shadow': '0px 0px 25px #aaa',
+                        'border-color': '#aaa'
+                    }
+                }
+            }
+        },
+        84: {
+            title: "New Mechanic Time!",
+            description: "Unlock Terrible Prestige.",
+            cost: new Decimal("1e100"),
+            unlocked() { 
+                return hasUpgrade("good", 11)
+            },
+            style() {
+                if (hasUpgrade(this.layer, this.id)) {
+                    return {
+                        'background-color': '#000',
+                        'color': '#fff',
+                        'box-shadow': '0px 0px 30px #fff',
+                        'border-color': '#fff'
+                    }
+                }
+            },
         },
     },
     milestones: {
@@ -1928,8 +2142,61 @@ addLayer("terri", {
             },
         },
     },
+    clickables: {
+        11: {
+            display() {
+                return "<h2 style='margin-bottom: 6px; letter-spacing: 1px;'>Terrible Prestige</h2><br>" +
+                       "Reset your terrible generators & upgrades for an Improved Generator!<br>" +
+                       "<span style='font-size: 12px; opacity: 0.85;'>Requires: " + format(1e100) + " terrible generators</span>"
+            },
+            tooltip() { return "OH MY GOD" },
+            unlocked() { return hasUpgrade('terri', 84) },
+            canClick() { return player.terri.points.gte(1e100) && player.terri.prestige.eq(0)},
+            onClick() {
+                player.terri.points = new Decimal(0)
+                player.terri.upgrades = [84]
+                player.terri.prestige = player.terri.prestige.add(1)
+            },
+            style() {
+                if (this.canClick()) {
+                    return {
+                        'width': '340px',
+                        'min-height': '100px',
+                        'background': 'radial-gradient(circle, #590d22 0%, #1a0007 100%)',
+                        'color': '#ffffff',
+                        'border': '2px solid #ff4d6d',
+                        'border-radius': '12px',
+                        'box-shadow': '0px 0px 20px rgba(255, 77, 109, 0.65)',
+                        'text-shadow': '0px 0px 8px #ff4d6d',
+                        'cursor': 'pointer',
+                        'transition': 'all 0.2s ease'
+                    }
+                }
+                return {
+                    'width': '340px',
+                    'min-height': '100px',
+                    'background-color': '#181818',
+                    'color': '#777777',
+                    'border': '2px solid #333333',
+                    'border-radius': '12px',
+                    'box-shadow': 'none'
+                }
+            },
+        },
+    },
     branches:['p'],
     row: 0, // Row the layer is in on the tree (0 is the first row)
+    tabFormat: [
+        "main-display",
+        ["display-text", function() {
+            if (!hasUpgrade("terri", 84) && player.terri.prestige.eq(0)) return ""
+            return "You have <h3 style='color: #ff0000; font-weight: bold;'>" + formatWhole(player.terri.prestige) + "</h3> improved generators, multiplying terrible generators by " + format(player.terri.prestige.add(1)) + "x"
+        }],
+        "blank",
+        "milestones",
+        "clickables",
+        ["upgrades", [1,2,3,4,5,6,7,8]],
+    ],
     layerShown(){return hasMilestone('p',1) || hasMilestone('univ',2)},
 
 
@@ -1982,9 +2249,11 @@ addLayer("awf", {
         if (hasUpgrade('alr',12)) Gen = 1
         if (hasUpgrade('alr',13)) Gen = 10
         if (hasUpgrade('awf',33)) Gen = 100
+        if (hasUpgrade('terri',72)) Gen = 1000
         if (hasUpgrade('dia',21)) Gen = 1e4
-        if (player.awf.points.gte(1e4) && (!hasUpgrade('dia',21))) Gen = 0
-        if (player.awf.points.gte(1.0005e6) && (hasUpgrade('dia',21))) Gen = 0
+        if (hasUpgrade('terri',83)) Gen = 1e7
+        if (player.awf.points.gte(1e4) && (!hasUpgrade('dia',21)) && (!hasUpgrade("terri", 72))) Gen = 0
+        if (player.awf.points.gte(1.0005e6) && (hasUpgrade('dia',21)) && (!hasUpgrade("terri", 72))) Gen = 0
         return Gen
     },
     upgrades: {
@@ -2210,6 +2479,13 @@ addLayer("awf", {
             }
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "milestones",
+        "upgrades",
+        "clickables"
+    ],
     branches:['terri'],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',3) || hasMilestone('univ',2)},
@@ -2256,7 +2532,7 @@ addLayer("med", {
     passiveGeneration() {
         let Gen = 0
         if (hasMilestone('xp',3)) Gen = 1
-        if (player.med.points.gte(100)) Gen = 0
+        if ((player.med.points.gte(100)) && (!hasUpgrade("med", 31))) Gen = 0
         return Gen
     },
     effect() {
@@ -2314,7 +2590,18 @@ addLayer("med", {
             cost: new Decimal(116),
             unlocked(){return hasMilestone('p',32)},
         },
+        31: {
+            title: "Diabolical",
+            description: "Get 1 mediocre generator per second.",
+            cost: new Decimal(300),
+            unlocked(){return hasUpgrade('terri',83)},
+        },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['awf'],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',6) || hasMilestone('univ',2)},
@@ -2406,6 +2693,11 @@ addLayer("alr", {
             unlocked(){return hasMilestone('p',33)},
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['med'],
     row: 3, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',10) || hasMilestone('univ',2)},
@@ -2471,6 +2763,11 @@ addLayer("dec", {
             },
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['alr'],
     row: 4, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',19) || hasMilestone('univ',2)},
@@ -2510,9 +2807,9 @@ addLayer("good", {
         exp = new Decimal (1)
         return exp
     },
-    resetsNothing() {return hasMilestone('p',29)},
-    autoPrestige() {return hasMilestone('p',29)},
-    canBuyMax() {return hasMilestone('p',29)},
+    resetsNothing() {return hasMilestone('p',29) || hasUpgrade('good',11)},
+    autoPrestige() {return hasMilestone('p',29) || hasUpgrade('med',31)},
+    canBuyMax() {return hasMilestone('p',29) || hasUpgrade('good',11)},
     autoUpgrade() {return hasMilestone('a', 0)},
     effect() {
         return player[this.layer].points.add(1).mul(player.points.pow(0.2))
@@ -2520,6 +2817,19 @@ addLayer("good", {
     effectDescription() {
         return "and with the help of money, it is multiplying your money by x" + format(tmp[this.layer].effect)
     },
+    upgrades: {
+        11: {
+            unlocked() {return hasUpgrade("med", 31)},
+            title: "#Delegation",
+            description: "YOU SO HAVE TO WAIT BUT IT'S SO WORTH IT<br><br>At last an Actual Upgrade! x1e75 to terrible generator gain.",
+            cost: new Decimal(2),
+        },
+    },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['dec'],
     row: 5, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('p',29) || hasMilestone('univ',2)},
@@ -2742,6 +3052,11 @@ addLayer("per", {
             },
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['good'],
     row: 6, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return (hasMilestone('p',34) && !hasMilestone('univ',1)) || Number(player.univ?.challenges?.["21"] || 0) >= 5},
@@ -2813,6 +3128,11 @@ addLayer("exc", {
             unlocked() { return hasMilestone('a', 2) }
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['per'],
     row: 7, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('a',1) || hasMilestone('univ',2)},
@@ -2864,6 +3184,7 @@ addLayer("flw", {
         return exp
     },
     resetsNothing() {return hasMilestone('a',3)},
+    autoPrestige() {return hasMilestone('a',3)},
     effectDescription() {
         return "i think these might be a bit buggy (flawed generator :sob:)"
     },
@@ -2918,6 +3239,11 @@ addLayer("flw", {
             pay() {},
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['exc'],
     row: 8, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('a',3) || hasMilestone('univ',2)},
@@ -2966,6 +3292,7 @@ addLayer("sup", {
         return exp
     },
     resetsNothing() {return hasMilestone('a',5)},
+    autoPrestige() {return hasMilestone('a',5)},
     effectDescription() {
         return "it's almost... amazing."
     },
@@ -3008,6 +3335,11 @@ addLayer("sup", {
             currencyDisplayName: "money",
         },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['flw'],
     row: 9, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return (hasMilestone('a',5) && !hasMilestone('univ',1)) || Number(player.univ?.challenges?.["21"] || 0) >= 5},
@@ -3246,6 +3578,12 @@ addLayer("abs", {
             pay() {}
         },
     },
+    tabFormat: [
+        "main-display",
+        ["prestige-button", () => hasUpgrade("rad", 23)],
+        "blank",
+        "upgrades",
+    ],
     branches:['sup'],
     row: 10, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasChallenge('univ',12) && !inChallenge('univ',12) && !inChallenge('univ',22)},
@@ -3286,6 +3624,7 @@ addLayer("ult", {
         return exp
     },
     resetsNothing() {return hasMilestone('univ',2)},
+    autoPrestige() {return hasMilestone('univ',2)},
     effectDescription() {
         return "i love it when the updates take this long<br><br>Upgrade names from now on might be suggested by the community on Discord."
     },
@@ -3308,7 +3647,23 @@ addLayer("ult", {
             currencyLocation() { return player },
             currencyDisplayName: "money",
         },
+        13: {
+            unlocked() {return hasUpgrade("terri", 74)},
+            title: "it's a... upgrade",
+            description: "<i>Upgrade name by thisisaperson.<br><br>There are times to Inflate and times to Slow Down.</i> However, ^3 to terrible generator gain >:]",
+            cost: new Decimal(4),
+            canAfford() {
+                return player[this.layer].points.gte(this.cost)
+            },
+            pay() {
+            },
+        },
     },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "upgrades",
+    ],
     branches:['abs'],
     row: 11, // Row the layer is in on the tree (0 is the first row)
     layerShown(){return hasMilestone('univ',2)},
@@ -3359,8 +3714,9 @@ addLayer("dia", {
     },
     passiveGeneration() {
         let Gen = 0
-        if (hasMilestone('p',27)) Gen = 1
-        if (player.dia.points.gte(100)) Gen = 0
+        if ((hasMilestone('p',27)) || (hasUpgrade("terri", 82))) Gen = 1
+        if ((hasMilestone('p',27)) && (hasUpgrade("terri", 82))) Gen = 2
+        if ((player.dia.points.gte(100)) && (!hasUpgrade("terri", 82))) Gen = 0
         return Gen
     },
     upgrades: {
@@ -4807,7 +5163,7 @@ addLayer("mass", {
                     if (money.lt("1e2.5e19")) return "<span style='font-size: 14px; color: #ffffff;'>Next extender unlocks at <b style='color: #f0b4ff;'>1e25,000,000,000,000,000,000 money (Goated)</b></span>"
                     if (money.lt("1e1e20")) return "<span style='font-size: 14px; color: #ffffff;'>Next extender unlocks at <b style='color: #ffffff;'>1e100,000,000,000,000,000,000 money (Peak)</b></span>"
                     
-                    return "<span style='font-size: 14px; color: #62189f;'>All matrix extenders successfully initialized.</span>"
+                    return "<span style='font-size: 14px; color: #62189f;'>You've unlocked everything!</span>"
                 }],
                 "blank",
                 ["buyables", [5, 6, 7, 8, 9, 10, 11, 12]]
@@ -10764,6 +11120,7 @@ addLayer("sott", {
         31: { name: "Really Out of Place [208]", done() { return player.sott.points.gte(2) }, goalTooltip() { return "Hint: Same as Out of Place, but a bit harder to find." }, doneTooltip() { return "Press the glitched button in the ??? tab in Extra. Linked with Out of Place [104], which means getting this also gives that secret." } },
         41: { name: "Endgaming [321]", done() { return player.univ.points.gte(2) }, goalTooltip() { return "Hint: Should be obvious." }, doneTooltip() { return "Reach the endgame. Probably the only secret that's not secret." } },
         111: { name: "Praised [993]", done() { return false }, goalTooltip() { return "Hint: Hard reset with the developer." }, doneTooltip() { return "Do the hard reset sequence and complete the gwa praising." } },
+        112: { name: "Matrix [996]", done() { return false }, goalTooltip() { return "Hint: Hard reset with the <i>other</i> developer." }, doneTooltip() { return "Complete Bitshrub's Secret Trials." } },
         121: { name: "Cookie-ing Around [1,000]", done() { return false }, goalTooltip() { return "Hint: Start in CMG." }, doneTooltip() { return "..." } },
 
         1001: { name: "Logically Stupid [47]", done() { return hasAchievement('sott',12) }, goalTooltip() { return "this acts as a decoy" }, doneTooltip() { return "to give the popup" } },
@@ -11001,4 +11358,255 @@ addLayer("sss", {
         11: { name: "gwa", done() { return player.sss.points.gte(1048576) }, goalTooltip() { return "Hint: Praise the being that says 'gwa' 1,048,576 times." }, doneTooltip() { return "???" } }
     },
     layerShown(){return player.sss.points.gte(1) && player.sss.points.lte(1.796e308)}
+})
+
+addLayer("bst1", {
+    name: "Bitshrub's Secret Trials (pt. 1)",
+    symbol: "B",
+    position: 6,
+    row: "side",
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        secondPoints: new Decimal(0),
+        cooldown: new Decimal(0),
+    }},
+    tabFormat: {
+        "I: Game of Increments": { 
+            buttonStyle: { "background-color": "#000000", "color": "#ffaaaa", "border": "2px solid #800000", "font-weight": "bold" },
+            content: ["main-display", "blank", ["bar", "goal1"], "blank", ["clickables", [1]], ["upgrades", [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]],] 
+        },
+        "II: Game of Randomness": {
+            unlocked() {return hasUpgrade("bst1", 345)}, 
+            buttonStyle: { "background-color": "#000000", "color": "#ffaa80", "border": "2px solid #806000", "font-weight": "bold" },
+            content: [["display-text", function() {return "You have <h2 style='color: #ffaa00; display: inline;'>" + format(player.bst1.secondPoints) + "</h2> Second Numbers, and there's still a whole lot coming..." }], "blank", ["clickables", [2]], ["upgrades", [35]],], 
+        },
+    },
+    update(diff) {
+        if (player.bst1.cooldown > 0) {
+            player.bst1.cooldown = Math.max(0, player.bst1.cooldown - diff)
+        }
+        let gain = new Decimal(0)
+        if (hasUpgrade('bst1', 11)) gain = upgradeFactorial(player[this.layer].upgrades.length)
+        player.bst1.points = player.bst1.points.add(gain.times(diff))
+    },
+    layerShown() {return (player.bst1.points.gte(1) || player[this.layer].unlocked)},
+    resource: "First Numbers",
+    tooltip() {
+        return "MY TORMENT..."
+    },
+    nodeStyle: {
+        background: "linear-gradient(#000000, #00ff00aa)",
+        backgroundOrigin: "border-box",
+        borderColor: "rgba(255,255,255,0.3)",
+        color: "#0f0"
+    },
+    effectDescription() {return "NB: \"Random upgrades\" courtesy of Winner"},
+    bars: {
+        goal1: {
+            direction: RIGHT,
+            width: 700,
+            height: 30,
+            progress() { 
+                if (player[this.layer].points.lt(10)) return 0
+                let currentLog = player[this.layer].points.log10()
+                let goal1Log = 308.2547155599167
+                return currentLog.div(goal1Log)
+            },
+            display() { 
+                return format(player[this.layer].points) + " / 1.796e308"
+            },
+            baseStyle: { "background-color": "#111111" },
+            fillStyle: { "background": "linear-gradient(to right, #ffaa00, #ffff00, #0000ff, #ff00ff, #00ff00, #808080, #00aaff, #ffffff)" },
+            borderStyle: { "border": "2px solid #ffffff" },
+            textStyle: { "color": "#0044ff" },
+        },
+    },
+    clickables: {
+        11: {
+            title: "BEGIN THE TRIALS",
+            unlocked() {return (player[this.layer].points.lt(1) && !hasUpgrade("bst1", 11))},
+            canClick: true,
+            onClick() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        21 : {
+            title: "Random Time",
+            display() { 
+                if (player.bst1.cooldown > 0) {
+                    return `cooldown: ${format(player.bst1.cooldown)}s`
+                }
+                return "Ran#!"
+            },
+            canClick() { 
+                return player.bst1.cooldown <= 0
+            },
+            onClick() {
+                player.bst1.secondPoints = player.bst1.secondPoints.add(Math.random())
+                player.bst1.cooldown = 1
+            }
+        }
+    },
+    upgrades: {
+        11: {
+            title: "Oh, you're in for it now. Here comes the randomness...",
+            description: "start generating First Numbers/second.",
+            cost: new Decimal(1),
+            effect() { return upgradeFactorial(player[this.layer].upgrades.length) },
+            effectDisplay() {
+                return format(upgradeEffect([this.layer], [this.id])) + "/s"
+            },
+        },
+        21: {
+            unlocked() {return hasUpgrade("bst1", 11)},
+            title: "Random upgrade I: Wowie",
+            description: "x2 to First Number generation.",
+            cost: new Decimal(10),
+        },
+        22: {
+            unlocked() {return hasUpgrade("bst1", 21)},
+            title: "Random upgrade II:Mwndkalxlaclaixj",
+            description: "x3 to First Number generation.",
+            cost: new Decimal(22),
+        },
+        23: {
+            unlocked() {return hasUpgrade("bst1", 22)},
+            title: "Random upgrade III:How are you, Player, Like the upgrades?",
+            description: "x4 to First Number generation.",
+            cost: new Decimal(72),
+        },
+        24: {
+            unlocked() {return hasUpgrade("bst1", 23)},
+            title: "Random upgrade IV:Two in a day",
+            description: "x5 to First Number generation.",
+            cost: new Decimal(312),
+        },
+        25: {
+            unlocked() {return hasUpgrade("bst1", 24)},
+            title: "Random upgrade V:Who missed the upgrade",
+            description: "x6 to First Number generation.",
+            cost: new Decimal(1680),
+        },
+        31: {
+            unlocked() {return hasUpgrade("bst1", 25)},
+            title: "Random upgrade VI:6 to the power of 9",
+            description: "x7 to First Number generation.",
+            cost: new Decimal(18000),
+        },
+        32: {
+            unlocked() {return hasUpgrade("bst1", 31)},
+            title: "Random upgrade VII:Despair will Hate this upgrade",
+            description: "x8 to First Number generation.",
+            cost: new Decimal(131040),
+        },
+        33: {
+            unlocked() {return hasUpgrade("bst1", 32)},
+            title: "Random upgrade VIII:Infinity will like this upgrade",
+            description: "x9 to First Number generation.",
+            cost: new Decimal(1088640),
+        },
+        34: {
+            unlocked() {return hasUpgrade("bst1", 33)},
+            title: "Random upgrade IX:9th Timewalls",
+            description: "x10 to First Number generation.",
+            cost: new Decimal(10255840),
+        },
+        35: {
+            unlocked() {return hasUpgrade("bst1", 34)},
+            title: "Random upgrade X: Roman Number 10",
+            description: "x11 to First Number generation.",
+            cost: new Decimal(106221200),
+        },
+        41: {
+            unlocked() {return hasUpgrade("bst1", 35)},
+            title: "Random upgrade XI:How many?",
+            description: "x12 to First Number generation.",
+            cost: new Decimal(1596672000),
+        },
+        42: {
+            unlocked() {return hasUpgrade("bst1", 41)},
+            title: "Random upgrade XII:Anti-CTNB",
+            description: "x13 to First Number generation.",
+            cost: new Decimal(19639065600),
+        },
+        43: {
+            unlocked() {return hasUpgrade("bst1", 42)},
+            title: "Random upgrade XIII:I ran out of upgrade lol",
+            description: "x14 to First Number generation.",
+            cost: new Decimal(261534873600),
+        },
+        44: {
+            unlocked() {return hasUpgrade("bst1", 43)},
+            title: "Random upgrade XIV:L and W",
+            description: "x15 to First Number generation.",
+            cost: new Decimal(3.7486665e+12),
+        },
+        45: {
+            unlocked() {return hasUpgrade("bst1", 44)},
+            title: "Random upgrade XV:Watch TPOT",
+            description: "x16 to First Number generation.",
+            cost: new Decimal(5.7537672e+13),
+        },
+        51: {
+            unlocked() {return hasUpgrade("bst1", 45)},
+            title: "Random upgrade XVI:This will have 100 Upgrades",
+            description: "x17 to First Number generation.",
+            cost: new Decimal(1.1507534e+15),
+        },
+        52: {
+            unlocked() {return hasUpgrade("bst1", 51)},
+            title: "Random upgrade XVII:Inanimate Battle for Animatic For The",
+            description: "x18 to First Number generation.",
+            cost: new Decimal(1.9918496e+16),
+        },
+        53: {
+            unlocked() {return hasUpgrade("bst1", 52)},
+            title: "Random upgrade XVIII:Friendly Upgrade",
+            description: "x19 to First Number generation.",
+            cost: new Decimal(3.649353e+17),
+        },
+        54: {
+            unlocked() {return hasUpgrade("bst1", 53)},
+            title: "Random upgrade XIX:Welcome to Nowhere",
+            description: "x20 to First Number generation.",
+            cost: new Decimal(7.0554158e+18),
+        },
+        55: {
+            unlocked() {return hasUpgrade("bst1", 54)},
+            title: "Random upgrade XX:20th Upgrade",
+            description: "x21 to First Number generation.",
+            cost: new Decimal(1.4354122e+20),
+        },
+        61: {
+            unlocked() {return hasUpgrade("bst1", 55)},
+            title: "Random upgrade XXI:Think about 2763 breads",
+            description: "x22 to First Number generation.",
+            cost: new Decimal(3.576366e+21),
+        },
+        62: {
+            unlocked() {return hasUpgrade("bst1", 61)},
+            title: "Random upgrade XXII:Black Hole... Black Hole!",
+            description: "x23 to First Number generation.",
+            cost: new Decimal(7.9804052e+22),
+        },
+        63: {
+            unlocked() {return hasUpgrade("bst1", 62)},
+            title: "Random upgrade XXIII: Black Hole Save Me! what is happening?!",
+            description: "x24 to First Number generation.",
+            cost: new Decimal(1.8613452e+24),
+        },
+        211: {
+            unlocked() {return hasUpgrade("bst1", 205)},
+            title: "No more random upgrades? Then WHAT IS THIS",
+            description: "x102 to First Number generation.",
+            cost: new Decimal(2.922044e+162),
+        },
+        345: {
+            unlocked() {return hasUpgrade("bst1", 344)},
+            title: "FINALLY",
+            description: "Unlock II: Game of Randomness",
+            cost: Decimal.pow(2, 1024),
+        },
+    },
 })

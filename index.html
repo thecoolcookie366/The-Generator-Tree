@@ -135,4 +135,14 @@
 		<div class = "bg2" v-bind:style = "tmp.backgroundStyle"></div>
 
 	</div>
+	<div id="music-confirm-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 999999; pointer-events: auto; justify-content: center; align-items: center;">
+		<div style="background: var(--background, #0f0f0f); color: var(--color, #dfdfdf); border: 2px solid var(--color, #dfdfdf); border-radius: 15px; padding: 25px; max-width: 340px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.8);">
+			<h2 style="margin-top: 0;">Enable Music?</h2>
+			<p style="margin-bottom: 20px;">Are you sure you want to do this? You will hear the WORST music that has ever been made. Continue at your own risk.</p>
+			<div style="display: flex; justify-content: center; gap: 15px;">
+				<button class="opt" onclick="confirmMusicEnable(true)">Yes</button>
+				<button class="opt" onclick="confirmMusicEnable(false)">No</button>
+			</div>
+		</div>
+	</div>
 </body>
