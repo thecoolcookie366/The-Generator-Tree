@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Generator Tree",
-	author: "thecoolcookie366",
+	author: "thecoolcookie366 and bitshrub0",
 	pointsName: "money",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -11,8 +11,8 @@ let modInfo = {
 }
 
 let VERSION = {
-	num: "1.12",
-	name: "The Heavy Update",
+	num: "1.13",
+	name: "The \"Fixed It!\" Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -22,7 +22,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	B = medium update <br>
 	C = small update <br>
 	<br>
-	<h2>v1.12</h2><br>
+	<h2>v1.13</h2><br>
 		- You can check the full update changelogs on galaxy!<br>
 		<br>
 	<h1>v1.1</h1><br>
@@ -308,35 +308,39 @@ function getPointGen() {
 			gain = gain.pow(tmp.rad.effect)
 		}
 	}
-	if (hasMilestone('univ', 2)) gain = new Decimal("0")
-	if (hasUpgrade('ult', 11)) gain = gain.add(0.01)
-	if (hasMilestone('mass', 0)) gain = gain.add(0.09)
-	if (hasMilestone('mass', 1)) gain = gain.add(0.9)
-	if (hasMilestone('mass', 2)) gain = gain.mul(player.mass.points.add(1).log10().add(1).max(1))
-	if (hasMilestone('mass', 3)) gain = gain.mul(Decimal.pow(2, getBuyableAmount('mass', 11)))
-	if (hasMilestone('mass', 4)) gain = gain.mul(Decimal.pow(3, getBuyableAmount('mass', 12)))
-	if (hasMilestone('mass', 5)) gain = gain.mul(Decimal.pow(5, getBuyableAmount('mass', 13)))
-	if (hasMilestone('mass', 6)) gain = gain.mul(Decimal.pow(7, getBuyableAmount('mass', 21)))
-	if (hasMilestone('mass', 7)) gain = gain.mul(Decimal.pow(11, getBuyableAmount('mass', 22)))
-	if (hasMilestone('mass', 8)) gain = gain.mul(Decimal.pow(13, getBuyableAmount('mass', 23)))
-	if (hasMilestone('mass', 10)) gain = gain.mul(Decimal.pow(1.1, player.mass.rank))
-	if (hasMilestone('mass', 11)) gain = gain.mul(Decimal.pow(100, player.mass.tier))
-	if (hasMilestone('mass', 12)) gain = gain.mul(Decimal.pow(229, getBuyableAmount('mass', 31)))
-	if (hasMilestone('mass', 14)) gain = gain.mul(Decimal.pow(1583, getBuyableAmount('mass', 32)))
-	if (hasMilestone('mass', 15)) gain = gain.mul(Decimal.pow(10177, getBuyableAmount('mass', 33)))
-	if (hasMilestone('mass', 17)) gain = gain.mul(Decimal.pow(62189, getBuyableAmount('mass', 41)))
-	if (hasMilestone('mass', 18)) gain = gain.mul("1e20")
-	if (hasMilestone('mass', 20)) gain = gain.mul(Decimal.pow(252233, getBuyableAmount('mass', 42)))
-	if (hasMilestone('mass', 21)) gain = gain.mul("1e50")
-	if (hasMilestone('mass', 22)) gain = gain.mul(Decimal.pow(1632899, getBuyableAmount('mass', 43)))
-	if (hasMilestone('mass', 23)) gain = gain.mul("1e111")
-	if (hasMilestone('mass', 25)) gain = gain.add(0.99)
-	if (hasMilestone('mass', 25)) gain = gain.pow(2)
+	if ((hasMilestone('univ', 2)) && (!hasMilestone("mass", 32))) gain = new Decimal("0")
+	if (!hasMilestone("univ", 3)) {
+		if (hasUpgrade('ult', 11)) gain = gain.add(0.01)
+		if (hasMilestone('mass', 0)) gain = gain.add(0.09)
+		if (hasMilestone('mass', 1)) gain = gain.add(0.9)
+		if (hasMilestone('mass', 2)) gain = gain.mul(player.mass.points.add(1).log10().add(1).max(1))
+		if (hasMilestone('mass', 3)) gain = gain.mul(Decimal.pow(2, getBuyableAmount('mass', 11)))
+		if (hasMilestone('mass', 4)) gain = gain.mul(Decimal.pow(3, getBuyableAmount('mass', 12)))
+		if (hasMilestone('mass', 5)) gain = gain.mul(Decimal.pow(5, getBuyableAmount('mass', 13)))
+		if (hasMilestone('mass', 6)) gain = gain.mul(Decimal.pow(7, getBuyableAmount('mass', 21)))
+		if (hasMilestone('mass', 7)) gain = gain.mul(Decimal.pow(11, getBuyableAmount('mass', 22)))
+		if (hasMilestone('mass', 8)) gain = gain.mul(Decimal.pow(13, getBuyableAmount('mass', 23)))
+		if (hasMilestone('mass', 10)) gain = gain.mul(Decimal.pow(1.1, player.mass.rank))
+		if (hasMilestone('mass', 11)) gain = gain.mul(Decimal.pow(100, player.mass.tier))
+		if (hasMilestone('mass', 12)) gain = gain.mul(Decimal.pow(229, getBuyableAmount('mass', 31)))
+		if (hasMilestone('mass', 14)) gain = gain.mul(Decimal.pow(1583, getBuyableAmount('mass', 32)))
+		if (hasMilestone('mass', 15)) gain = gain.mul(Decimal.pow(10177, getBuyableAmount('mass', 33)))
+		if (hasMilestone('mass', 17)) gain = gain.mul(Decimal.pow(62189, getBuyableAmount('mass', 41)))
+		if (hasMilestone('mass', 18)) gain = gain.mul("1e20")
+		if (hasMilestone('mass', 20)) gain = gain.mul(Decimal.pow(252233, getBuyableAmount('mass', 42)))
+		if (hasMilestone('mass', 21)) gain = gain.mul("1e50")
+		if (hasMilestone('mass', 22)) gain = gain.mul(Decimal.pow(1632899, getBuyableAmount('mass', 43)))
+		if (hasMilestone('mass', 23)) gain = gain.mul("1e111")
+		if (hasMilestone('mass', 25)) gain = gain.add(0.99)
+		if (hasMilestone('mass', 25)) gain = gain.pow(2)
+	}
 	if (hasUpgrade("terri", 63)) gain = gain.times(new Decimal(player.terri.points.mag).max(1))
 	if ((hasMilestone('terri', 0)) && (hasUpgrade("terri", 71)) && (hasMilestone("univ", 2))) gain = gain.pow("1.25")
 	if ((hasMilestone('awf', 1)) && (hasUpgrade("terri", 71)) && (hasMilestone("univ", 2))) gain = gain.pow("1.05")
 	if (hasUpgrade("terri", 73)) gain = gain.times(player.points.max(2).log(2))
 	if (hasUpgrade("terri", 73)) gain = gain.times("1e308")
+	if ((hasMilestone("terri", 4))) gain = gain.pow(10)
+	if ((hasMilestone("mass", 31)) && (!hasMilestone("univ", 3))) gain = gain.pow(2)
 	return gain
 }
 
