@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>780186836</title>
+    <style>
+        body {
+            background-color: #09090b;
+            color: #e4e4e7;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+        .container {
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #27272a;
+            padding: 30px;
+            background: #111114;
+            box-shadow: 0 0 25px rgba(0,0,0,0.9);
+        }
+        h1 {
+            font-size: 1.1em;
+            color: #71717a;
+            letter-spacing: 3px;
+            margin-top: 0;
+        }
+        .points-display {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #38bdf8;
+            margin: 15px 0 5px 0;
+        }
+        .pps-display {
+            font-size: 0.9em;
+            color: #a1a1aa;
+            margin-bottom: 20px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #27272a;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #38bdf8;
+            transition: width 0.1s;
+        }
+        .upgrade {
+            background: #18181b;
+            border: 1px solid #3f3f46;
+            color: #e4e4e7;
+            padding: 12px 15px;
+            margin: 10px 0;
+            width: 100%;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.15s;
+        }
+        .upgrade:hover:not(:disabled) {
+            border-color: #38bdf8;
+            background: #1e293b;
+        }
+        .upgrade:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .upg-info {
+            text-align: left;
+        }
+        .upg-title {
+            font-weight: bold;
+            display: block;
+        }
+        .upg-desc {
+            font-size: 0.8em;
+            color: #a1a1aa;
+        }
+        .upg-cost {
+            font-weight: bold;
+            color: #38bdf8;
+            text-align: right;
+        }
+        #win-screen {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px dashed #22c55e;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .hash-box {
+            background: #09090b;
+            border: 1px solid #22c55e;
+            color: #4ade80;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.78em;
+            word-break: break-all;
+            user-select: all;
+            cursor: pointer;
+        }
+        .hash-box:hover {
+            background: #14532d;
+        }
+        /* Top-right corner button + built-in input box */
+        .corner-wrapper {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        .corner-btn {
+            background: #111114;
+            border: 1px solid #3f3f46;
+            color: #71717a;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .corner-btn:hover {
+            color: #38bdf8;
+            border-color: #38bdf8;
+        }
+        .override-box {
+            display: none;
+            background: #111114;
+            border: 1px solid #3f3f46;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            gap: 6px;
+        }
+        .override-box input {
+            background: #09090b;
+            border: 1px solid #3f3f46;
+            color: #e4e4e7;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            padding: 6px 8px;
+            width: 210px;
+            outline: none;
+        }
+        .override-box input:focus {
+            border-color: #38bdf8;
+        }
+        .override-box button {
+            background: #18181b;
+            border: 1px solid #3f3f46;
+            color: #38bdf8;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+        .override-box button:hover {
+            background: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top-right corner override UI -->
+<div class="corner-wrapper">
+    <button class="corner-btn" onclick="toggleOverrideBox()" title="Override">[ * ]</button>
+    <div class="override-box" id="override-box">
+        <input type="text" id="override-input" placeholder="Enter code..." onkeydown="if(event.key==='Enter') submitOverride()">
+        <button onclick="submitOverride()">OK</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1>// Warning //</h1>
+    <p style="font-size: 0.85em; color: #a1a1aa;">Reach <strong>1.00e100</strong> energy to return.</p>
+
+    <div class="points-display" id="points">10.00</div>
+    <div class="pps-display" id="pps">+0.00 / sec</div>
+
+    <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress"></div>
+    </div>
+
+    <button class="upgrade" id="btn-gen" onclick="buyGen()">
+        <div class="upg-info">
+            <span class="upg-title">Generator [<span id="gen-lvl">0</span>]</span>
+            <span class="upg-desc">Produces energy/second</span>
+        </div>
+        <div class="upg-cost" id="gen-cost">10.00</div>
+    </button>
+
+    <button class="upgrade" id="btn-mult" onclick="buyMult()">
+        <div class="upg-info">
+            <span class="upg-title">Amplifier [<span id="mult-lvl">0</span>]</span>
+            <span class="upg-desc">Multiplies energy gain by 3x</span>
+        </div>
+        <div class="upg-cost" id="mult-cost">100.00</div>
+    </button>
+
+    <button class="upgrade" id="btn-exp" onclick="buyExp()">
+        <div class="upg-info">
+            <span class="upg-title">Overclock [<span id="exp-lvl">0</span>]</span>
+            <span class="upg-desc">Raises total production to ^1.08</span>
+        </div>
+        <div class="upg-cost" id="exp-cost">1.00e6</div>
+    </button>
+
+    <div id="win-screen">
+        <strong>Limit reached.</strong><br><br>
+        <span>What now? Well...</span><br><br>
+        <span style="font-size: 0.85em; color: #a1a1aa;">Code (click to copy):</span>
+        <div class="hash-box" id="secret-hash" onclick="copyHash()">Generating...</div>
+        <div id="copy-status" style="font-size: 0.75em; margin-top: 6px; color: #86efac;"></div>
+    </div>
+</div>
+
+<script>
+    // === CUSTOMIZE YOUR SECRET STRINGS HERE ===
+    const HASH_PASSCODE = "1eefe87c6d43a119354c0e7208b717d33f3675607bdea58a097fc22862b05cbf"; // Grants the hash directly
+    const BOOST_PASSCODE = "Iloveplayinggeneratortreewithcheatsandthesamethingforeveryothergame"; // Multiplies current energy by 1e50
+    // ==========================================
+
+    let points = 10;
+    let genLvl = 0;
+    let multLvl = 0;
+    let expLvl = 0;
+    let won = false;
+
+    const GOAL = 1e100;
+
+    function toggleOverrideBox() {
+        const box = document.getElementById('override-box');
+        const input = document.getElementById('override-input');
+        if (box.style.display === 'flex') {
+            box.style.display = 'none';
+        } else {
+            box.style.display = 'flex';
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    function submitOverride() {
+        const input = document.getElementById('override-input');
+        const code = input.value.trim();
+        if (!code) return;
+
+        if (code === HASH_PASSCODE) {
+            won = true;
+            triggerWin();
+            document.getElementById('override-box').style.display = 'none';
+        } else if (code === BOOST_PASSCODE) {
+            points *= 1e50;
+            updateUI();
+            document.getElementById('override-box').style.display = 'none';
+        } else {
+            input.value = '';
+            input.placeholder = 'Invalid code';
+            setTimeout(() => { input.placeholder = 'Enter code...'; }, 1500);
+        }
+    }
+
+    function generateRandomHash() {
+        const bytes = new Uint8Array(30);
+        crypto.getRandomValues(bytes);
+        const body = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+        let sum = 780186836;
+        for (let i = 0; i < body.length; i++) {
+            sum = ((sum << 5) - sum + body.charCodeAt(i)) | 0;
+        }
+        const sig = ((sum >>> 0) & 0xffff).toString(16).padStart(4, '0');
+        return body + sig;
+    }
+
+    function copyHash() {
+        const hashText = document.getElementById('secret-hash').innerText;
+        navigator.clipboard.writeText(hashText);
+        document.getElementById('copy-status').innerText = "Copied!";
+        setTimeout(() => {
+            document.getElementById('copy-status').innerText = "";
+        }, 2000);
+    }
+
+    function format(num) {
+        if (num < 1000) return num.toFixed(2);
+        return num.toExponential(2).replace('+', '');
+    }
+
+    function getGenCost() { return 10 * Math.pow(1.4, genLvl); }
+    function getMultCost() { return 100 * Math.pow(3.5, multLvl); }
+    function getExpCost() { return 1e6 * Math.pow(1e4, expLvl); }
+
+    function getPPS() {
+        if (genLvl === 0) return 0;
+        let base = genLvl * Math.pow(1.15, genLvl - 1);
+        let mult = Math.pow(3, multLvl);
+        let exp = Math.pow(1.08, expLvl);
+        return Math.pow(base * mult, exp);
+    }
+
+    function buyGen() {
+        let cost = getGenCost();
+        if (points >= cost) {
+            points -= cost;
+            genLvl++;
+            updateUI();
+        }
+    }
+
+    function buyMult() {
+        let cost = getMultCost();
+        if (points >= cost) {
+            points -= cost;
+            multLvl++;
+            updateUI();
+        }
+    }
+
+    function buyExp() {
+        let cost = getExpCost();
+        if (points >= cost) {
+            points -= cost;
+            expLvl++;
+            updateUI();
+        }
+    }
+
+    function triggerWin() {
+        document.getElementById('win-screen').style.display = 'block';
+        document.getElementById('secret-hash').innerText = generateRandomHash();
+    }
+
+    function updateUI() {
+        let pps = getPPS();
+        document.getElementById('points').innerText = format(points);
+        document.getElementById('pps').innerText = `+${format(pps)} / sec`;
+
+        let logProgress = points > 1 ? (Math.log10(points) / 100) * 100 : 0;
+        document.getElementById('progress').style.width = Math.min(100, Math.max(0, logProgress)) + '%';
+
+        document.getElementById('gen-lvl').innerText = genLvl;
+        document.getElementById('gen-cost').innerText = format(getGenCost());
+        document.getElementById('btn-gen').disabled = points < getGenCost();
+
+        document.getElementById('mult-lvl').innerText = multLvl;
+        document.getElementById('mult-cost').innerText = format(getMultCost());
+        document.getElementById('btn-mult').disabled = points < getMultCost();
+
+        document.getElementById('exp-lvl').innerText = expLvl;
+        document.getElementById('exp-cost').innerText = format(getExpCost());
+        document.getElementById('btn-exp').disabled = points < getExpCost();
+
+        if (!won && points >= GOAL) {
+            won = true;
+            triggerWin();
+        }
+    }
+
+    setInterval(() => {
+        points += getPPS() / 20;
+        updateUI();
+    }, 50);
+
+    updateUI();
+</script>
+
+</body>
+</html>

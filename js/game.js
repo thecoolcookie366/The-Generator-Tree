@@ -390,8 +390,26 @@ function gameLoop(diff) {
 
 }
 
+function isValidSecretHash(str) {
+	if (!str || !/^[a-f0-9]{64}$/i.test(str)) return false;
+	const body = str.slice(0, 60).toLowerCase();
+	const sig = str.slice(60).toLowerCase();
+	let sum = 780186836;
+	for (let i = 0; i < body.length; i++) {
+		sum = ((sum << 5) - sum + body.charCodeAt(i)) | 0;
+	}
+	const expectedSig = ((sum >>> 0) & 0xffff).toString(16).padStart(4, '0');
+	return sig === expectedSig;
+}
+
 function hardReset(resetOptions) {
 	let input = prompt("Hey man, do you really want to do this? Please type the version number (1.12) to reset.")
+	if (input) input = input.trim()
+
+	if (isValidSecretHash(input)) {
+		alert("Impossible... Nobody can solve my puzzle... Nobody, nobody, nobod-\n\nPlease send this message to the discord server along with your save for a reward!")
+		return
+	}
 	if (input === "thecoolcookie366") {
 		player.sss.points = new Decimal (1)
 		return
