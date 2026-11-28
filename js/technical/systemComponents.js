@@ -130,7 +130,8 @@ var systemComponents = {
         <h3>{{VERSION.withName}}</h3>
         <span v-if="modInfo.author">
             <br>
-            Made by {{modInfo.author}} and bitshrub0
+            Made by {{modInfo.author}} and bitshrub0<br>
+			All content up to first Expansion Pack by {{modInfo.author}}, the rest of Universe 2 by bitshrub0.
         </span>
         <br>
         The Modding Tree <a v-bind:href="'https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >{{TMT_VERSION.tmtNum}}</a> by Acamaeda and FlamemasterNXF

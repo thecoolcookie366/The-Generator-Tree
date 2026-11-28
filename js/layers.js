@@ -1624,7 +1624,7 @@ addLayer("univ", {
     },
     branches: ['sup'], 
     row: 9, 
-    layerShown(){ return hasUpgrade('sup', 21) || hasMilestone('univ', 0)},
+    layerShown(){ return hasUpgrade('sup', 21) || player.univ.best.gte(1) || hasMilestone('univ', 0) },
 })
 
 addLayer("terri", {
@@ -2204,7 +2204,7 @@ addLayer("terri", {
         11: {
             display() {
                 return "<h2 style='margin-bottom: 6px; letter-spacing: 1px;'>Terrible Prestige</h2><br>" +
-                       "Reset your terrible generators & upgrades for +" + format(Math.floor(player.terri.points.div(1e100).pow(Decimal.div(1, 3)))) + " Improved Generators!<br>" +
+                       "Reset your terrible generators & upgrades for +" + formatWhole(player.terri.points.div(1e100).pow(Decimal.div(1, 3)).floor()) + " Improved Generators!<br>" +
                        "<span style='font-size: 12px; opacity: 0.85;'>Requires: " + format(1e100) + " terrible generators</span>"
             },
             tooltip() { return "OH MY GOD" },
@@ -2212,7 +2212,7 @@ addLayer("terri", {
             canClick() { return player.terri.points.gte(1e100) },
             onClick() {
                 if (!hasMilestone("terri", 3)) player.terri.upgrades = [84]
-                let more = Math.floor(player.terri.points.div(1e100).pow(Decimal.div(1, 3)))
+                let more = player.terri.points.div(1e100).pow(Decimal.div(1, 3)).floor()
                 player.terri.prestige = player.terri.prestige.add(more)
                 player.terri.points = new Decimal(0)
             },
@@ -6704,7 +6704,7 @@ addLayer("mass", {
     resetsNothing() {return hasUpgrade('ult',12)},
     branches:['ult'],
     row: 11, // Row the layer is in on the tree (0 is the first row)
-    layerShown(){return hasUpgrade('ult', 12)},
+    layerShown(){ return hasUpgrade('ult', 12) || hasMilestone('univ', 2) || player.univ.best.gte(2) },
 
 
 })
