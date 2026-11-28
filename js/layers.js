@@ -1017,7 +1017,11 @@ addLayer("univ", {
         },
         3: {
             requirementDescription: "<h3><span>The Electric Universe (u3)</span></h3>",
-            effectDescription: "<i>You can feel the electricity from far away.</i><br>Nerf: Money is CAPPED at 1e10, and mass does nothing.<br>Buff: ??? Next update coming soon.",
+            effectDescription() {
+                return "<i>You can feel the electricity from far away.</i><br>" +
+                    "Nerf: Money is CAPPED at 1e10, and mass does nothing.<br>" +
+                    "Buff: <span style='color: #00f5ff;'>" + getUniverseCountdown(3, "2027-01-02T15:00:00+02:00") + "</span>"
+            },
             done() { return player.univ.points.gte(3) },
             style() {
                 if (hasMilestone(this.layer, this.id) && player[this.layer].points.floor().eq(3)) {
@@ -1030,10 +1034,10 @@ addLayer("univ", {
                 }
                 if (hasMilestone(this.layer, this.id)) {
                     return {
-                    'background': 'linear-gradient(135deg, #2b1055 0%, #112233 100%)',
-                    'color': '#a0a0a0',
-                    'box-shadow': '0px 0px 5px rgba(0, 245, 255, 0.2)',
-                    'border-color': '#443366'
+                        'background': 'linear-gradient(135deg, #2b1055 0%, #112233 100%)',
+                        'color': '#a0a0a0',
+                        'box-shadow': '0px 0px 5px rgba(0, 245, 255, 0.2)',
+                        'border-color': '#443366'
                     }
                 }
                 return {

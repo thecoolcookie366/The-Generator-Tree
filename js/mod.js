@@ -670,3 +670,21 @@ function confirmMusicEnable(choice) {
 		updateMusic()
 	}
 }
+
+function getUniverseCountdown(universeNum, isoDateString) {
+	const target = new Date(isoDateString).getTime()
+	const now = Date.now()
+	const diff = target - now
+
+	if (diff <= 0) {
+		return `<b style='color: #4da6ff;'>Universe ${universeNum} is out! Refresh to update! And, well, give it a minute or two.</b>`
+	}
+
+	const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+	const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+	const minutes = Math.floor((diff / (1000 * 60)) % 60)
+	const seconds = Math.floor((diff / 1000) % 60)
+
+	return `Not yet. Universe ${universeNum} releases in <b>${days}d ${hours}h ${minutes}m ${seconds}s.</b>`
+}
+
