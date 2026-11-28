@@ -138,10 +138,31 @@
 	<div id="music-confirm-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 999999; pointer-events: auto; justify-content: center; align-items: center;">
 		<div style="background: var(--background, #0f0f0f); color: var(--color, #dfdfdf); border: 2px solid var(--color, #dfdfdf); border-radius: 15px; padding: 25px; max-width: 340px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.8);">
 			<h2 style="margin-top: 0;">Enable Music?</h2>
-			<p style="margin-bottom: 20px;">Are you sure you want to do this? You will hear the WORST music that has ever been made. Continue at your own risk.</p>
+			<p style="margin-bottom: 20px;">Would you like to turn on background music?</p>
 			<div style="display: flex; justify-content: center; gap: 15px;">
 				<button class="opt" onclick="confirmMusicEnable(true)">Yes</button>
 				<button class="opt" onclick="confirmMusicEnable(false)">No</button>
+			</div>
+		</div>
+	</div>
+	<div id="music-select-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 999999; pointer-events: auto; justify-content: center; align-items: center;">
+		<div style="background: var(--background, #0f0f0f); color: var(--color, #dfdfdf); border: 2px solid #4da6ff; border-radius: 15px; padding: 25px; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(77, 166, 255, 0.35);">
+			<h2 style="margin-top: 0; color: #4da6ff;">Select Music Track</h2>
+			<p style="margin-bottom: 20px;">Choose which background track to play:</p>
+			<div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+				<button class="opt" style="width: 100%;" onclick="selectMusicTrack('bgm2')">Actual Good Music (bitshrub0)</button>
+				<button class="opt" style="width: 100%; background-color: #cc2222; color: #ffffff; border-color: #ff6666;" onclick="promptBgm1Confirm()">my bad music lol (thecoolcookie366)</button>
+				<button class="opt" style="width: 100%; margin-top: 6px;" onclick="closeMusicModals()">Cancel</button>
+			</div>
+		</div>
+	</div>
+	<div id="bgm1-confirm-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 999999; pointer-events: auto; justify-content: center; align-items: center;">
+		<div style="background: var(--background, #0f0f0f); color: var(--color, #dfdfdf); border: 2px solid #ff4444; border-radius: 15px; padding: 25px; max-width: 340px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.8);">
+			<h2 style="margin-top: 0; color: #ff5555;">Are You Sure?!</h2>
+			<p style="margin-bottom: 20px;">Are you sure you want to do this? You will hear the WORST music that has ever been made. Continue at your own risk.</p>
+			<div style="display: flex; justify-content: center; gap: 15px;">
+				<button class="opt" onclick="confirmBgm1(true)">YES!! I LIKE PAIN.</button>
+				<button class="opt" onclick="confirmBgm1(false)">NO!! GET ME OUT.</button>
 			</div>
 		</div>
 	</div>

@@ -21,6 +21,7 @@ function getStartOptions() {
 		music: false,
 		musicVolume: 50,
 		musicExtra: false,
+		musicTrack: "bgm2",
 	}
 }
 

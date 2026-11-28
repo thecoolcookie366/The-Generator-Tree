@@ -577,10 +577,28 @@ function maxTickLength() {
 function fixOldSave(oldVersion){
 }
 
-let bgm = new Audio("resources/bgm.mp3")
+const MUSIC_TRACKS = [
+	{ id: "bgm2", name: "Actual Good Music (bitshrub0)", src: "resources/bgm2.mp3" },
+	{ id: "bgm1", name: "my bad music lol (thecoolcookie366)", src: "resources/bgm.mp3" }
+]
+
+let currentTrackSrc = "resources/bgm2.mp3"
+let bgm = new Audio(currentTrackSrc)
 bgm.loop = true
 
+function getSelectedTrack() {
+	let trackId = options.musicTrack || "bgm2"
+	return MUSIC_TRACKS.find(t => t.id === trackId) || MUSIC_TRACKS[0]
+}
+
 function updateMusic() {
+	let track = getSelectedTrack()
+	if (currentTrackSrc !== track.src) {
+		currentTrackSrc = track.src
+		bgm.src = track.src
+		bgm.load()
+	}
+
 	let vol = (options.musicVolume !== undefined ? options.musicVolume : 50) / 100
 	bgm.volume = vol
 
@@ -591,11 +609,42 @@ function updateMusic() {
 	}
 }
 
+function openMusicSelector() {
+	document.getElementById("music-select-modal").style.display = "flex"
+}
+
+function closeMusicModals() {
+	document.getElementById("music-select-modal").style.display = "none"
+	document.getElementById("bgm1-confirm-modal").style.display = "none"
+}
+
+function selectMusicTrack(trackId) {
+	options.musicTrack = trackId
+	if (typeof saveOptions === "function") saveOptions()
+	updateMusic()
+	closeMusicModals()
+}
+
+function promptBgm1Confirm() {
+	document.getElementById("music-select-modal").style.display = "none"
+	document.getElementById("bgm1-confirm-modal").style.display = "flex"
+}
+
+function confirmBgm1(choice) {
+	if (choice) {
+		selectMusicTrack("bgm1")
+	} else {
+		document.getElementById("bgm1-confirm-modal").style.display = "none"
+		document.getElementById("music-select-modal").style.display = "flex"
+	}
+}
+
 function cycleMusicVolume() {
 	const levels = [100, 75, 50, 25, 0]
 	let current = options.musicVolume !== undefined ? options.musicVolume : 50
 	let nextIndex = (levels.indexOf(current) + 1) % levels.length
 	options.musicVolume = levels[nextIndex]
+	if (typeof saveOptions === "function") saveOptions()
 	updateMusic()
 }
 
