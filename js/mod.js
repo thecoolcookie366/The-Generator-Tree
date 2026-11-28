@@ -391,7 +391,7 @@ var displayThings = [
 ]
 
 function isEndgame() {
-	return player.terri.prestige.gte(1)
+	return player.univ.points.gte(4)
 }
 
 var backgroundStyle = function() {
